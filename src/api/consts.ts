@@ -6,7 +6,7 @@ export enum HttpMethod {
 }
 
 
-export const BASE_API_URL = import.meta.env.VITE_APP_API_URL ?? ''
+export const BASE_API_URL = import.meta.env.VITE_API_URL ?? ''
 
 export const BASE_REQUEST_CONFIG: RequestInit = {
   headers: {
