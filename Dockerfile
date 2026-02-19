@@ -9,10 +9,10 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-ARG VITE_APP_API_URL
-ENV VITE_APP_API_URL=$VITE_APP_API_URL
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
-RUN pnpm build
+RUN pnpm run build-only
 
 FROM nginx:1.27-alpine
 RUN rm -rf /usr/share/nginx/html/*
