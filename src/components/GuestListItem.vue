@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { GuestsViewDto } from '@/api/guests'
+import personIconUrl from '@/assets/person.svg'
 
 const props = defineProps<{
   guest: GuestsViewDto
 }>()
-
-const initial = computed(() => {
-  if (!props.guest.name) {
-    return ''
-  }
-
-  return props.guest.name.charAt(0).toUpperCase()
-})
 
 const drinksText = computed(() => {
   if (!props.guest.preferred_drinks.length) {
@@ -30,18 +23,18 @@ const otherPreferencesText = computed(
 <template>
   <article class="guest-item">
     <header class="guest-header">
-      <div class="avatar-fallback">{{ initial }}</div>
+      <img :src="personIconUrl" alt="" class="avatar-image" />
       <p class="guest-name">{{ guest.name }}</p>
     </header>
 
     <dl class="guest-details">
       <div class="guest-field">
-        <dt>Preferred drinks</dt>
+        <dt>Предпочитаемые напитки:</dt>
         <dd>{{ drinksText }}</dd>
       </div>
 
       <div class="guest-field">
-        <dt>Other preferences</dt>
+        <dt>Другие предпочтения / желания:</dt>
         <dd>{{ otherPreferencesText }}</dd>
       </div>
     </dl>
@@ -52,8 +45,8 @@ const otherPreferencesText = computed(
 .guest-item {
   min-height: 100%;
   border-radius: 10px;
-  border: 1px solid #d4d4d8;
-  background: #f8fafc;
+  border: 1px solid #2d3a50;
+  background: #1a2235;
   padding: 0.75rem;
   display: grid;
   gap: 0.75rem;
@@ -65,23 +58,20 @@ const otherPreferencesText = computed(
   gap: 0.5rem;
 }
 
-.avatar-fallback {
+.avatar-image {
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  display: grid;
-  place-items: center;
   flex-shrink: 0;
-  background: #2a3a56;
-  color: #dbeafe;
-  font-weight: 700;
+  object-fit: cover;
+  filter: brightness(0) invert(0.75);
 }
 
 .guest-name {
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  color: #111827;
+  color: #e4e7ef;
 }
 
 .guest-details {
@@ -96,12 +86,12 @@ const otherPreferencesText = computed(
 }
 
 .guest-field dt {
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: 1rem;
+  color: #8b95a8;
 }
 
 .guest-field dd {
   margin: 0;
-  color: #1f2937;
+  color: #c9d0dc;
 }
 </style>

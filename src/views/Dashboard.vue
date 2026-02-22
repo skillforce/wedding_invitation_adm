@@ -18,16 +18,14 @@ onMounted(async () => {
 <template>
   <div class="dashboard-page">
     <Card class="dashboard-card">
-      <template #title>Dashboard</template>
+      <template #title>Панель управления</template>
       <template #content>
-        <p class="description">You are logged in. Guests list is below.</p>
-
         <Message v-if="guestsStore.error" severity="error" size="small" variant="simple">
           {{ guestsStore.error }}
         </Message>
 
-        <p v-else-if="guestsStore.isLoading">Loading guests...</p>
-        <p v-else-if="guests.length === 0">No guests found.</p>
+        <p v-else-if="guestsStore.isLoading">Загрузка гостей...</p>
+        <p v-else-if="guests.length === 0">Нет гостей в списке.</p>
 
         <GuestsList v-else :guests="guests" />
       </template>
@@ -36,6 +34,13 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.dashboard-page :deep(.dashboard-card) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #e4e7ef;
+}
+
 .dashboard-page {
   padding: 0.5rem;
 }

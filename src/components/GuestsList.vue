@@ -8,13 +8,14 @@ defineProps<{
 </script>
 
 <template>
-  <div class="guests-grid">
+  <section class="guests-grid">
+    <div class="dashboard-title">Ответившие гости:</div>
     <GuestListItem
       v-for="guest in guests"
       :key="guest.id"
       :guest="guest"
     />
-  </div>
+  </section>
 </template>
 
 <style scoped>
@@ -22,6 +23,9 @@ defineProps<{
   margin-top: 1rem;
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.dashboard-title{
+  margin-left: 0.75rem;
+  font-size: 1.25rem;
 }
 </style>

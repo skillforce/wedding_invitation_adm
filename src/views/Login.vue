@@ -1,27 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
 import Card from 'primevue/card'
-import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
-import Password from 'primevue/password'
+import LoginForm from '@/components/LoginForm.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-const loginValue = ref('')
-const passwordValue = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-const onSubmit = async () => {
+const onSubmit = async (login: string, password: string) => {
   isLoading.value = true
   errorMessage.value = ''
 
   try {
-    await authStore.login(loginValue.value, passwordValue.value)
+    await authStore.login(login, password)
     await router.push('/dashboard')
   } catch (error) {
     errorMessage.value =
@@ -37,29 +32,11 @@ const onSubmit = async () => {
     <Card class="login-card">
       <template #title>Sign in to your account</template>
       <template #content>
-        <form class="login-form" @submit.prevent="onSubmit">
-          <Message v-if="errorMessage" severity="error" size="small" variant="simple">
-            {{ errorMessage }}
-          </Message>
-
-          <div class="field">
-            <label for="login">Login</label>
-            <InputText id="login" v-model="loginValue" fluid />
-          </div>
-
-          <div class="field">
-            <label for="password">Password</label>
-            <Password
-              id="password"
-              v-model="passwordValue"
-              :feedback="false"
-              toggle-mask
-              fluid
-            />
-          </div>
-
-          <Button type="submit" label="Sign In" :loading="isLoading" />
-        </form>
+        <LoginForm
+          :is-loading="isLoading"
+          :error-message="errorMessage"
+          @submit="onSubmit"
+        />
       </template>
     </Card>
   </div>
@@ -80,13 +57,4 @@ const onSubmit = async () => {
   border-radius: 8px;
 }
 
-.login-form {
-  display: grid;
-  gap: 1rem;
-}
-
-.field {
-  display: grid;
-  gap: 0.4rem;
-}
 </style>

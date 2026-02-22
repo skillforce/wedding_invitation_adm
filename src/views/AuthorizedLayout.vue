@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
-import AppSidebar from '@/components/AppSidebar.vue'
+import AppSidebar from '@/components/sidebar/AppSidebar.vue'
+import MobileDrawer from '@/components/sidebar/MobileDrawer.vue'
+import MobileMenuButton from '@/components/sidebar/MobileMenuButton.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
@@ -35,21 +36,21 @@ const onLogout = async () => {
   <div class="authorized-layout">
     <AppSidebar
       :collapsed="isSidebarCollapsed"
-      :mobile-open="isMobileSidebarOpen"
       :login="login"
       @toggle="onToggleSidebar"
-      @close-mobile="onCloseMobileSidebar"
+      @logout="onLogout"
+    />
+
+    <MobileDrawer
+      :open="isMobileSidebarOpen"
+      :login="login"
+      @close="onCloseMobileSidebar"
       @logout="onLogout"
     />
 
     <main class="authorized-content">
       <div class="mobile-header">
-        <Button
-          icon="pi pi-bars"
-          text
-          aria-label="Open menu"
-          @click="onOpenMobileSidebar"
-        />
+        <MobileMenuButton @click="onOpenMobileSidebar" />
       </div>
       <RouterView />
     </main>
@@ -67,11 +68,11 @@ const onLogout = async () => {
   min-height: 100dvh;
   display: grid;
   grid-template-columns: auto 1fr;
-  background: #f3f5f8;
+  background: #111827;
 }
 
 .authorized-content {
-  padding: 1rem;
+  padding: 10px 5px ;
   overflow: auto;
 }
 
