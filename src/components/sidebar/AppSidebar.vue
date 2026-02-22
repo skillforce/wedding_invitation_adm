@@ -26,7 +26,7 @@ const navigate = (path: string) => router.push(path)
 <template>
   <aside :class="['app-sidebar', { collapsed }]">
     <div class="sidebar-top">
-      <div class="sidebar-controls">
+      <div :class="['sidebar-controls', { collapsed }]" >
         <SidebarToggle :collapsed="collapsed" @toggle="emit('toggle')" />
       </div>
 
@@ -82,7 +82,11 @@ const navigate = (path: string) => router.push(path)
 .sidebar-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
+}
+
+.sidebar-controls.collapsed {
+  justify-content: center;
 }
 
 .sidebar-nav {

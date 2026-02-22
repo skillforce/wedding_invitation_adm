@@ -45,7 +45,7 @@ defineEmits<{
 .sidebar-toggle-icon {
   width: 30px;
   height: 30px;
-  transform: rotate(90deg);
+  transform: rotate(-90deg);
   transition: transform 0.2s ease;
   opacity: 0.6;
 }
@@ -55,6 +55,6 @@ defineEmits<{
 }
 
 .sidebar-toggle-icon.collapsed {
-  transform: rotate(-90deg);
+  transform: rotate(90deg);
 }
 </style>
