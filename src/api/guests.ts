@@ -1,4 +1,4 @@
-import { BASE_API_URL, BASE_REQUEST_CONFIG, HttpMethod } from '@/api/consts'
+import { apiFetch } from '@/api/consts'
 
 export interface GuestsViewDto {
   id: number
@@ -8,20 +8,9 @@ export interface GuestsViewDto {
 }
 
 export const GUESTS_API = {
-  async getAllGuests(token: string): Promise<GuestsViewDto[]> {
-    const response = await fetch(`${BASE_API_URL}/guests`, {
-      ...BASE_REQUEST_CONFIG,
-      method: HttpMethod.GET,
-      headers: {
-        ...(BASE_REQUEST_CONFIG.headers ?? {}),
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error('Failed to load guests')
-    }
-
-    return (await response.json()) as GuestsViewDto[]
+  async getAllGuests(): Promise<GuestsViewDto[]> {
+    const res = await apiFetch('/guests')
+    if (!res.ok) throw new Error('Failed to load guests')
+    return res.json()
   },
 }

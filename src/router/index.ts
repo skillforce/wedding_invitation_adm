@@ -12,6 +12,10 @@ const routes = [
         path: 'dashboard',
         component: () => import('../views/Dashboard.vue'),
       },
+      {
+        path: 'seating-arrangements',
+        component: () => import('../views/SeatingArrangements.vue'),
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

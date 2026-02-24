@@ -1,4 +1,4 @@
-import { BASE_API_URL, BASE_REQUEST_CONFIG, HttpMethod } from '@/api/consts'
+import { BASE_API_URL, apiFetch } from '@/api/consts'
 
 export interface AuthDto {
   login: string
@@ -17,8 +17,8 @@ export interface MeResponseDto {
 export const AUTH_API = {
   async login(authDto: AuthDto): Promise<AuthResponseDto> {
     const response = await fetch(`${BASE_API_URL}/auth/login`, {
-      ...BASE_REQUEST_CONFIG,
-      method: HttpMethod.POST,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(authDto),
     })
 
@@ -34,15 +34,8 @@ export const AUTH_API = {
     return { accessToken: payload.accessToken }
   },
 
-  async me(token: string): Promise<MeResponseDto> {
-    const response = await fetch(`${BASE_API_URL}/auth/me`, {
-      ...BASE_REQUEST_CONFIG,
-      method: HttpMethod.GET,
-      headers: {
-        ...BASE_REQUEST_CONFIG.headers,
-        Authorization: `Bearer ${token}`,
-      },
-    })
+  async me(): Promise<MeResponseDto> {
+    const response = await apiFetch('/auth/me')
 
     if (!response.ok) {
       throw new Error('Unauthorized')
@@ -54,9 +47,6 @@ export const AUTH_API = {
       throw new Error('Invalid /auth/me response')
     }
 
-    return {
-      id: payload.id,
-      login: payload.login,
-    }
+    return { id: payload.id, login: payload.login }
   },
 }
