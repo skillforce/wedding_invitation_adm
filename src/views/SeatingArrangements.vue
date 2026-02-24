@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 import { jsPDF } from 'jspdf'
@@ -19,9 +19,16 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const stageRef = ref<{ getNode(): Stage } | null>(null)
 
 const { stageConfig, isMobile } = useStageSize(containerRef)
-const { onWheel } = useZoom(stageRef)
+const { onWheel, centerOn } = useZoom(stageRef)
 
-onMounted(() => seatingStore.fetchTables())
+onMounted(async () => {
+  await seatingStore.fetchTables()
+  const rectTable = seatingStore.tables.find((t) => t.shape === 'rect')
+  if (rectTable) {
+    await nextTick()
+    centerOn(rectTable.x, rectTable.y)
+  }
+})
 
 const boardTheme = computed(() => getThemeDefinition(themeStore.theme).board)
 

@@ -14,8 +14,8 @@ export const ROTATION_SNAP = 15 // degrees — increase to reduce sensitivity
 
 // Zoom
 export const SCALE_BY = 1.07
-export const MIN_SCALE = 0.75
-export const MAX_SCALE = 1
+export const MIN_SCALE = 0.5
+export const MAX_SCALE = 1.5
 
 export type KonvaThemePalette = ReturnType<typeof getKonvaThemePalette>
 

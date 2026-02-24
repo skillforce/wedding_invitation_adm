@@ -94,5 +94,17 @@ export function useZoom(stageRef: Ref<{ getNode(): Stage } | null>) {
     }
   })
 
-  return { onWheel }
+  function centerOn(x: number, y: number) {
+    const stage = stageRef.value?.getNode()
+    if (!stage) return
+    const container = stage.container()
+    const scale = stage.scaleX()
+    stage.position({
+      x: container.clientWidth / 2 - x * scale,
+      y: container.clientHeight / 2 - y * scale,
+    })
+    stage.batchDraw()
+  }
+
+  return { onWheel, centerOn }
 }

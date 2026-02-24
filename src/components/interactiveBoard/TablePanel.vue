@@ -37,7 +37,10 @@ function removeGuest(guestId: string) {
   seatingStore.removeGuest(props.table.id, guestId)
 }
 
-
+async function deleteTable() {
+  await seatingStore.deleteTable(props.table.id)
+  emit('close')
+}
 </script>
 
 <template>
@@ -86,6 +89,10 @@ function removeGuest(guestId: string) {
           @click="addGuest"
         />
       </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="delete-table-btn" @click="deleteTable">Delete table</button>
     </div>
   </aside>
 </template>
@@ -308,4 +315,36 @@ function removeGuest(guestId: string) {
   color: var(--board-placeholder);
 }
 
+.panel-footer {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--board-panel-border);
+}
+
+.delete-table-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 7px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+}
+.delete-table-btn:hover {
+  background: #dc2626;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.5);
+}
+
+.delete-table-btn:active {
+  transform: scale(0.97);
+}
 </style>
