@@ -38,7 +38,7 @@ onMounted(async () => {
   background: transparent;
   border: none;
   box-shadow: none;
-  color: #e4e7ef;
+  color: var(--color-text-primary);
 }
 
 .dashboard-page {

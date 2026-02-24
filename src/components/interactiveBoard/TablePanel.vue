@@ -98,9 +98,9 @@ function removeGuest(guestId: string) {
   right: 0;
   height: 100%;
   width: 264px;
-  background: rgba(18, 22, 36, 0.96);
+  background: var(--board-panel-bg);
   backdrop-filter: blur(14px);
-  border-left: 1px solid rgba(184, 148, 63, 0.22);
+  border-left: 1px solid var(--board-panel-border);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -120,7 +120,7 @@ function removeGuest(guestId: string) {
     height: auto;
     max-height: 62dvh;
     border-left: none;
-    border-top: 1px solid rgba(184, 148, 63, 0.22);
+    border-top: 1px solid var(--board-panel-border);
     border-radius: 16px 16px 0 0;
     padding: 10px 16px 24px;
     gap: 14px;
@@ -132,7 +132,7 @@ function removeGuest(guestId: string) {
   display: none;
   width: 36px;
   height: 4px;
-  background: rgba(232, 213, 163, 0.28);
+  background: var(--board-panel-handle);
   border-radius: 2px;
   margin: 0 auto;
   flex-shrink: 0;
@@ -154,11 +154,11 @@ function removeGuest(guestId: string) {
 .name-input {
   flex: 1;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(184, 148, 63, 0.4);
+  background: var(--board-input-bg);
+  border: 1px solid var(--board-input-border);
   border-radius: 7px;
   padding: 7px 10px;
-  color: #e8d5a3;
+  color: var(--board-input-text);
   font-size: 14px;
   font-weight: 700;
   font-family: Georgia, serif;
@@ -167,7 +167,7 @@ function removeGuest(guestId: string) {
 }
 
 .name-input:focus {
-  border-color: rgba(184, 148, 63, 0.85);
+  border-color: var(--board-input-border-focus);
 }
 
 .close-btn {
@@ -175,8 +175,8 @@ function removeGuest(guestId: string) {
   width: 28px;
   height: 28px;
   border: none;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(232, 213, 163, 0.55);
+  background: var(--board-close-bg);
+  color: var(--board-close-text);
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -187,8 +187,8 @@ function removeGuest(guestId: string) {
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #e8d5a3;
+  background: var(--board-close-hover-bg);
+  color: var(--board-close-hover-text);
 }
 
 /* ── Panel section ────────────────────────────────────────────────────────── */
@@ -204,15 +204,15 @@ function removeGuest(guestId: string) {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(232, 213, 163, 0.5);
+  color: var(--board-section-text);
   display: flex;
   align-items: center;
   gap: 7px;
 }
 
 .guest-count {
-  background: rgba(184, 148, 63, 0.2);
-  color: #e8d5a3;
+  background: var(--board-badge-bg);
+  color: var(--board-badge-text);
   border-radius: 10px;
   padding: 1px 7px;
   font-size: 10px;
@@ -231,7 +231,7 @@ function removeGuest(guestId: string) {
 
 .guest-empty {
   font-size: 12px;
-  color: rgba(232, 213, 163, 0.3);
+  color: var(--board-empty-text);
   padding: 10px 0;
   text-align: center;
   font-style: italic;
@@ -241,8 +241,8 @@ function removeGuest(guestId: string) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(184, 148, 63, 0.1);
+  background: var(--board-item-bg);
+  border: 1px solid var(--board-item-border);
   border-radius: 7px;
   padding: 7px 10px;
   gap: 8px;
@@ -250,7 +250,7 @@ function removeGuest(guestId: string) {
 
 .guest-name {
   font-size: 13px;
-  color: #d4c4a0;
+  color: var(--board-item-text);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -264,7 +264,7 @@ function removeGuest(guestId: string) {
   height: 22px;
   border: none;
   background: transparent;
-  color: rgba(220, 130, 130, 0.45);
+  color: var(--board-remove-text);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -275,8 +275,8 @@ function removeGuest(guestId: string) {
 }
 
 .remove-btn:hover {
-  background: rgba(220, 80, 80, 0.15);
-  color: #e09090;
+  background: var(--board-remove-hover-bg);
+  color: var(--board-remove-hover-text);
 }
 
 /* ── Add guest form ───────────────────────────────────────────────────────── */
@@ -290,22 +290,22 @@ function removeGuest(guestId: string) {
 .guest-input {
   flex: 1;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(184, 148, 63, 0.28);
+  background: var(--board-guest-input-bg);
+  border: 1px solid var(--board-guest-input-border);
   border-radius: 7px;
   padding: 7px 10px;
-  color: #e8d5a3;
+  color: var(--board-input-text);
   font-size: 12px;
   outline: none;
   transition: border-color 0.18s;
 }
 
 .guest-input:focus {
-  border-color: rgba(184, 148, 63, 0.7);
+  border-color: var(--board-guest-input-focus);
 }
 
 .guest-input::placeholder {
-  color: rgba(232, 213, 163, 0.28);
+  color: var(--board-placeholder);
 }
 
 </style>

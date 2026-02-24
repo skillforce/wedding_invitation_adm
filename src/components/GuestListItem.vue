@@ -45,8 +45,8 @@ const otherPreferencesText = computed(
 .guest-item {
   min-height: 100%;
   border-radius: 10px;
-  border: 1px solid #2d3a50;
-  background: #1a2235;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
   padding: 0.75rem;
   display: grid;
   gap: 0.75rem;
@@ -64,14 +64,14 @@ const otherPreferencesText = computed(
   border-radius: 999px;
   flex-shrink: 0;
   object-fit: cover;
-  filter: brightness(0) invert(0.75);
+  filter: var(--color-avatar-filter-soft);
 }
 
 .guest-name {
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  color: #e4e7ef;
+  color: var(--color-text-primary);
 }
 
 .guest-details {
@@ -87,11 +87,11 @@ const otherPreferencesText = computed(
 
 .guest-field dt {
   font-size: 1rem;
-  color: #8b95a8;
+  color: var(--color-text-muted);
 }
 
 .guest-field dd {
   margin: 0;
-  color: #c9d0dc;
+  color: var(--color-text-secondary);
 }
 </style>

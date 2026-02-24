@@ -58,9 +58,9 @@ function exportData() {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(26, 31, 46, 0.88);
+  background: var(--board-toolbar-bg);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(184, 148, 63, 0.3);
+  border: 1px solid var(--board-toolbar-border);
   border-radius: 10px;
   padding: 8px 14px;
 }
@@ -68,7 +68,7 @@ function exportData() {
 .board-title {
   font-size: 14px;
   font-weight: 600;
-  color: #e8d5a3;
+  color: var(--board-toolbar-text);
   letter-spacing: 0.03em;
   white-space: nowrap;
 }

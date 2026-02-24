@@ -4,13 +4,16 @@ import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 import { jsPDF } from 'jspdf'
 import { useSeatingStore } from '@/stores/seating'
+import { useThemeStore } from '@/stores/theme'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
 import BoardToolbar from '@/components/interactiveBoard/BoardToolbar.vue'
 import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
+import { getThemeDefinition } from '@/themes'
 
 const seatingStore = useSeatingStore()
+const themeStore = useThemeStore()
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const stageRef = ref<{ getNode(): Stage } | null>(null)
@@ -19,6 +22,8 @@ const { stageConfig, isMobile } = useStageSize(containerRef)
 const { onWheel } = useZoom(stageRef)
 
 onMounted(() => seatingStore.fetchTables())
+
+const boardTheme = computed(() => getThemeDefinition(themeStore.theme).board)
 
 const selectedTableId = ref<string | null>(null)
 const selectedTable = computed(
@@ -47,12 +52,12 @@ function exportPdf() {
   ctx.scale(pixelRatio, pixelRatio)
 
   // Background color
-  ctx.fillStyle = '#1a1f2e'
+  ctx.fillStyle = boardTheme.value.canvasBackground
   ctx.fillRect(0, 0, sw, sh)
 
   // Dot grid pattern (matches board-container CSS)
   const dotSpacing = 28
-  ctx.fillStyle = 'rgba(184, 148, 63, 0.18)'
+  ctx.fillStyle = boardTheme.value.canvasDot
   for (let x = dotSpacing / 2; x < sw; x += dotSpacing) {
     for (let y = dotSpacing / 2; y < sh; y += dotSpacing) {
       ctx.beginPath()
@@ -113,8 +118,8 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
   width: 100%;
   height: calc(100dvh - 20px);
   overflow: hidden;
-  background-color: #1a1f2e;
-  background-image: radial-gradient(circle, rgba(184, 148, 63, 0.18) 1px, transparent 1px);
+  background-color: var(--board-bg);
+  background-image: radial-gradient(circle, var(--board-dot) 1px, transparent 1px);
   background-size: 28px 28px;
   border-radius: 12px;
 }
@@ -127,7 +132,7 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
   z-index: 10;
   margin: 0;
   font-size: 11px;
-  color: rgba(232, 213, 163, 0.4);
+  color: var(--board-hint);
   pointer-events: none;
   white-space: nowrap;
 }

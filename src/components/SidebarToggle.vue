@@ -39,18 +39,20 @@ defineEmits<{
 }
 
 .sidebar-toggle:hover {
-  background: #242f44;
+  background: var(--color-hover);
 }
 
 .sidebar-toggle-icon {
   width: 30px;
   height: 30px;
+  filter: var(--color-icon-filter);
   transform: rotate(-90deg);
   transition: transform 0.2s ease;
   opacity: 0.6;
 }
 
 .sidebar-toggle:hover .sidebar-toggle-icon {
+  filter: var(--color-icon-filter-active);
   opacity: 1;
 }
 

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import LoginForm from '@/components/LoginForm.vue'
 import { useAuthStore } from '@/stores/auth'
+import { AppRoute } from '@/constants/app'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -17,7 +18,7 @@ const onSubmit = async (login: string, password: string) => {
 
   try {
     await authStore.login(login, password)
-    await router.push('/dashboard')
+    await router.push(AppRoute.Dashboard)
   } catch (error) {
     errorMessage.value =
       error instanceof Error ? error.message : 'Login failed'
@@ -48,7 +49,7 @@ const onSubmit = async (login: string, password: string) => {
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: linear-gradient(80deg, #f3f4f6 0%, #76d3bd 100%);
+  background: var(--color-login-gradient);
 }
 
 .login-card {

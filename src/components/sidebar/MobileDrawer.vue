@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProfileCard from '@/components/ProfileCard.vue'
 import { navItems } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
 import closeIconUrl from '@/assets/close.svg'
+import { useAppCommonStore } from '@/stores/app_common'
 
 defineProps<{
   open: boolean
@@ -17,10 +19,22 @@ const emit = defineEmits<{
 
 const route = useRoute()
 const router = useRouter()
+const appCommonStore = useAppCommonStore()
 
-const isActive = (path: string) => route.path === path
+watch(
+  () => route.path,
+  (path) => {
+    if (navItems.some((item) => item.path === path)) {
+      appCommonStore.setSelectedSidebarOption(path)
+    }
+  },
+  { immediate: true },
+)
+
+const isActive = (path: string) => appCommonStore.selectedSidebarOption === path
 
 const navigate = async (path: string) => {
+  appCommonStore.setSelectedSidebarOption(path)
   await router.push(path)
   emit('close')
 }
@@ -67,8 +81,8 @@ const navigate = async (path: string) => {
   z-index: 30;
   max-height: 80dvh;
   border-radius: 16px 16px 0 0;
-  background: #141923;
-  color: #e4e7ef;
+  background: var(--color-sidebar-bg);
+  color: var(--color-text-primary);
   padding: 0.75rem;
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -101,23 +115,23 @@ const navigate = async (path: string) => {
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #e4e7ef;
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #242f44;
+  background: var(--color-hover);
 }
 
 .close-icon {
   width: 20px;
   height: 20px;
-  filter: brightness(0) invert(1) opacity(0.6);
+  filter: var(--color-icon-filter);
 }
 
 .close-btn:hover .close-icon {
-  filter: brightness(0) invert(1);
+  filter: var(--color-icon-filter-active);
 }
 
 .drawer-nav {
@@ -135,30 +149,30 @@ const navigate = async (path: string) => {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: #e4e7ef;
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .nav-btn:hover {
-  background: #242f44;
+  background: var(--color-hover);
 }
 
 .nav-btn.active {
-  background: #1f2737;
+  background: var(--color-active);
 }
 
 .nav-icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  filter: brightness(0) invert(1) opacity(0.6);
+  filter: var(--color-icon-filter);
   transition: filter 0.2s ease;
 }
 
 .nav-btn.active .nav-icon,
 .nav-btn:hover .nav-icon {
-  filter: brightness(0) invert(1);
+  filter: var(--color-icon-filter-active);
 }
 
 .nav-label {

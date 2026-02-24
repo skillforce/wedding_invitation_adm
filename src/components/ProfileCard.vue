@@ -23,9 +23,9 @@ defineProps<{
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  border: 1px solid #2b3446;
+  border: 1px solid var(--color-profile-border);
   border-radius: 12px;
-  background: #1b2433;
+  background: var(--color-surface-soft);
 }
 
 .avatar-image {
@@ -34,7 +34,7 @@ defineProps<{
   border-radius: 999px;
   flex-shrink: 0;
   object-fit: cover;
-  filter: brightness(0) invert(1) opacity(0.6);
+  filter: var(--color-avatar-filter);
 }
 
 .profile-text {
@@ -48,11 +48,11 @@ defineProps<{
 
 .profile-label {
   font-size: 0.75rem;
-  color: #97a4bd;
+  color: var(--color-text-subtle);
 }
 
 .profile-login {
-  color: #edf2ff;
+  color: var(--color-text-strong);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;

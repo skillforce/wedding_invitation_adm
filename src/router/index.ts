@@ -1,37 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { AppChildRoute, AppRoute } from '@/constants/app'
 
 const routes = [
-  { path: '/', component: () => import('../views/Login.vue') },
+  { path: AppRoute.Login, component: () => import('../views/Login.vue') },
   {
-    path: '/',
+    path: AppRoute.Login,
     component: () => import('../views/AuthorizedLayout.vue'),
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'dashboard',
+        path: AppChildRoute.Dashboard,
         component: () => import('../views/Dashboard.vue'),
       },
       {
-        path: 'seating-arrangements',
+        path: AppChildRoute.SeatingArrangements,
         component: () => import('../views/SeatingArrangements.vue'),
       },
     ],
   },
-  { path: '/:pathMatch(.*)*', redirect: '/' },
+  { path: '/:pathMatch(.*)*', redirect: AppRoute.Login },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-})
-
-router.beforeEach((to) => {
-  const authStore = useAuthStore()
-
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return '/'
-  }
 })
 
 export default router

@@ -1,10 +1,7 @@
 import type { SeatingTable, SeatingGuest } from '@/stores/seating'
+import { getThemeDefinition, type ThemeName } from '@/themes'
 
 // ── Visual constants ──────────────────────────────────────────────────────────
-export const TABLE_STROKE = '#b8943f'
-export const TABLE_FILL = '#faf5ee'
-export const SEAT_FILL = '#f5e6e6'
-export const SEAT_STROKE = '#c49a9a'
 export const SEAT_RADIUS = 18
 export const SEAT_OFFSET = 38
 
@@ -19,6 +16,12 @@ export const ROTATION_SNAP = 15 // degrees — increase to reduce sensitivity
 export const SCALE_BY = 1.07
 export const MIN_SCALE = 0.75
 export const MAX_SCALE = 1
+
+export type KonvaThemePalette = ReturnType<typeof getKonvaThemePalette>
+
+export function getKonvaThemePalette(themeName: ThemeName) {
+  return getThemeDefinition(themeName).konva
+}
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
 /** Effective orbit radius for seating — handles both shapes */
@@ -51,10 +54,14 @@ export function tableGroupConfig(table: SeatingTable) {
 }
 
 // ── Circle table configs ──────────────────────────────────────────────────────
-export function selectionRingConfig(table: SeatingTable, isSelected: boolean) {
+export function selectionRingConfig(
+  table: SeatingTable,
+  isSelected: boolean,
+  palette: KonvaThemePalette,
+) {
   return {
     radius: table.radius + 9,
-    stroke: '#e8d5a3',
+    stroke: palette.selectionStroke,
     strokeWidth: 2,
     dash: [6, 4],
     fill: 'transparent',
@@ -63,25 +70,31 @@ export function selectionRingConfig(table: SeatingTable, isSelected: boolean) {
   }
 }
 
-export function tableCircleConfig(table: SeatingTable) {
+export function tableCircleConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
   return {
     radius: table.radius,
-    fill: TABLE_FILL,
-    stroke: TABLE_STROKE,
+    fill: palette.tableFill,
+    stroke: palette.tableStroke,
     strokeWidth: 2.5,
     shadowBlur: 12,
-    shadowColor: 'rgba(0,0,0,0.18)',
+    shadowColor: palette.tableShadowColor,
     shadowOffsetY: 4,
     shadowOpacity: 1,
   }
 }
 
-export function tableNameConfig(table: SeatingTable) {
+export function tableNameConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
   return {
     text: table.name,
     fontSize: 16,
     fontFamily: 'Georgia, serif',
-    fill: '#573716',
+    fill: palette.tableNameFill,
     fontStyle: 'bold',
     align: 'center',
     width: table.radius * 2,
@@ -92,7 +105,11 @@ export function tableNameConfig(table: SeatingTable) {
 }
 
 // ── Rect (newlyweds) table configs ────────────────────────────────────────────
-export function selectionRingRectConfig(table: SeatingTable, isSelected: boolean) {
+export function selectionRingRectConfig(
+  table: SeatingTable,
+  isSelected: boolean,
+  palette: KonvaThemePalette,
+) {
   const w = table.radius * RECT_W + 18
   const h = table.radius * RECT_H + 18
   return {
@@ -101,7 +118,7 @@ export function selectionRingRectConfig(table: SeatingTable, isSelected: boolean
     width: w,
     height: h,
     cornerRadius: 14,
-    stroke: '#e8d5a3',
+    stroke: palette.selectionStroke,
     strokeWidth: 2,
     dash: [6, 4],
     fill: 'transparent',
@@ -110,7 +127,10 @@ export function selectionRingRectConfig(table: SeatingTable, isSelected: boolean
   }
 }
 
-export function tableRectConfig(table: SeatingTable) {
+export function tableRectConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
   const w = table.radius * RECT_W
   const h = table.radius * RECT_H
   return {
@@ -119,37 +139,43 @@ export function tableRectConfig(table: SeatingTable) {
     width: w,
     height: h,
     cornerRadius: 8,
-    fill: TABLE_FILL,
-    stroke: TABLE_STROKE,
+    fill: palette.tableFill,
+    stroke: palette.tableStroke,
     strokeWidth: 2.5,
     shadowBlur: 12,
-    shadowColor: 'rgba(0,0,0,0.18)',
+    shadowColor: palette.tableShadowColor,
     shadowOffsetY: 4,
     shadowOpacity: 1,
   }
 }
 
 /** Two red dots inside the rect, side by side */
-export function newlywedsDotConfig(dotIndex: 0 | 1) {
+export function newlywedsDotConfig(
+  dotIndex: 0 | 1,
+  palette: KonvaThemePalette,
+) {
   const spacing = 22
   return {
     x: dotIndex === 0 ? -spacing / 2 : spacing / 2,
     y: -8,
     radius: 7,
-    fill: '#e05555',
-    stroke: '#b83333',
+    fill: palette.newlywedsDotFill,
+    stroke: palette.newlywedsDotStroke,
     strokeWidth: 1.5,
     listening: false,
   }
 }
 
-export function tableNameRectConfig(table: SeatingTable) {
+export function tableNameRectConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
   const w = table.radius * RECT_W
   return {
     text: table.name,
     fontSize: 13,
     fontFamily: 'Georgia, serif',
-    fill: '#573716',
+    fill: palette.tableNameFill,
     fontStyle: 'bold',
     align: 'center',
     width: w,
@@ -167,19 +193,36 @@ export function guestPosition(table: SeatingTable, index: number) {
   return { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist }
 }
 
-export function seatCircleConfig(table: SeatingTable, index: number) {
+export function seatCircleConfig(
+  table: SeatingTable,
+  index: number,
+  palette: KonvaThemePalette,
+) {
   const { x, y } = guestPosition(table, index)
-  return { x, y, radius: SEAT_RADIUS, fill: SEAT_FILL, stroke: SEAT_STROKE, strokeWidth: 1.5, listening: false }
+  return {
+    x,
+    y,
+    radius: SEAT_RADIUS,
+    fill: palette.seatFill,
+    stroke: palette.seatStroke,
+    strokeWidth: 1.5,
+    listening: false,
+  }
 }
 
-export function guestNameConfig(table: SeatingTable, guest: SeatingGuest, index: number) {
+export function guestNameConfig(
+  table: SeatingTable,
+  guest: SeatingGuest,
+  index: number,
+  palette: KonvaThemePalette,
+) {
   const { x, y } = guestPosition(table, index)
   const label = guest.name.length > 9 ? guest.name.slice(0, 8) + '…' : guest.name
   return {
     text: label,
     fontSize: 14,
     fontWeight: 'bold',
-    fill: '#FFFFFF',
+    fill: palette.guestNameFill,
     align: 'center',
     width: 52,
     offsetX: 26,
@@ -190,7 +233,11 @@ export function guestNameConfig(table: SeatingTable, guest: SeatingGuest, index:
   }
 }
 
-export function connectorConfig(table: SeatingTable, index: number) {
+export function connectorConfig(
+  table: SeatingTable,
+  index: number,
+  palette: KonvaThemePalette,
+) {
   const total = table.guests.length
   const angle = (index / total) * Math.PI * 2 - Math.PI / 2
   // x1/y1: start at the actual shape edge (rect edge or circle circumference)
@@ -202,15 +249,24 @@ export function connectorConfig(table: SeatingTable, index: number) {
   const dist = orbit + SEAT_OFFSET + SEAT_RADIUS
   const x2 = Math.cos(angle) * (dist - SEAT_RADIUS)
   const y2 = Math.sin(angle) * (dist - SEAT_RADIUS)
-  return { points: [x1, y1, x2, y2], stroke: TABLE_STROKE, strokeWidth: 1, opacity: 0.35, listening: false }
+  return {
+    points: [x1, y1, x2, y2],
+    stroke: palette.connectorStroke,
+    strokeWidth: 1,
+    opacity: 0.35,
+    listening: false,
+  }
 }
 
 // ── Rotation handle (rect tables only) ───────────────────────────────────────
-export function rotationHandleLineConfig(table: SeatingTable) {
+export function rotationHandleLineConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
   const h = table.radius * RECT_H
   return {
     points: [0, -(h / 2), 0, -(h / 2 + 18)],
-    stroke: '#e8d5a3',
+    stroke: palette.rotationHandleLine,
     strokeWidth: 1,
     opacity: 0.45,
     listening: false,
@@ -218,14 +274,17 @@ export function rotationHandleLineConfig(table: SeatingTable) {
   }
 }
 
-export function rotationHandleConfig(table: SeatingTable) {
+export function rotationHandleConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
   const h = table.radius * RECT_H
   return {
     x: 0,
     y: -(h / 2 + 28),
     radius: 9,
-    fill: '#b8943f',
-    stroke: '#e8d5a3',
+    fill: palette.rotationHandleFill,
+    stroke: palette.rotationHandleStroke,
     strokeWidth: 1.5,
     draggable: true,
   }

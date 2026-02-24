@@ -5,6 +5,7 @@ import AppSidebar from '@/components/sidebar/AppSidebar.vue'
 import MobileDrawer from '@/components/sidebar/MobileDrawer.vue'
 import MobileMenuButton from '@/components/sidebar/MobileMenuButton.vue'
 import { useAuthStore } from '@/stores/auth'
+import { AppRoute } from '@/constants/app'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -28,7 +29,7 @@ const onCloseMobileSidebar = () => {
 const onLogout = async () => {
   authStore.logout()
   isMobileSidebarOpen.value = false
-  await router.push('/')
+  await router.push(AppRoute.Login)
 }
 </script>
 
@@ -68,7 +69,7 @@ const onLogout = async () => {
   min-height: 100dvh;
   display: grid;
   grid-template-columns: auto 1fr;
-  background: #111827;
+  background: var(--color-bg-app);
 }
 
 .authorized-content {
@@ -99,7 +100,7 @@ const onLogout = async () => {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(8, 11, 16, 0.45);
+    background: var(--color-backdrop);
     z-index: 20;
   }
 }

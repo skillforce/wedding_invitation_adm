@@ -1,5 +1,6 @@
 import dashboardIconUrl from '@/assets/dashboardIcon.svg'
 import seatingsIconUrl from '@/assets/seatings.svg'
+import { AppRoute } from '@/constants/app'
 
 export interface NavItem {
   label: string
@@ -8,6 +9,6 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-  { label: 'Dashboard', iconUrl: dashboardIconUrl, path: '/dashboard' },
-  { label: 'Seating Arrangements', iconUrl: seatingsIconUrl, path: '/seating-arrangements' },
+  { label: 'Dashboard', iconUrl: dashboardIconUrl, path: AppRoute.Dashboard },
+  { label: 'Seating Arrangements', iconUrl: seatingsIconUrl, path: AppRoute.SeatingArrangements },
 ]

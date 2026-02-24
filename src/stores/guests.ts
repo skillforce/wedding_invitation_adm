@@ -21,12 +21,7 @@ export const useGuestsStore = defineStore('guests', {
       this.error = ''
 
       try {
-        const authStore = useAuthStore()
-        if (!authStore.token) {
-          throw new Error('Unauthorized')
-        }
-
-        this.guests = await GUESTS_API.getAllGuests(authStore.token)
+        this.guests = await GUESTS_API.getAllGuests()
       } catch (error) {
         this.error =
           error instanceof Error ? error.message : 'Failed to load guests'

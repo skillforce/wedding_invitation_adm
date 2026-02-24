@@ -1,9 +1,78 @@
+:root {
+  --color-bg-app: #111827;
+  --color-backdrop: rgba(8, 11, 16, 0.45);
+  --color-surface: #1a2235;
+  --color-surface-soft: #1b2433;
+  --color-sidebar-bg: #141923;
+  --color-border: #2e3442;
+  --color-border-strong: #2d3a50;
+  --color-profile-border: #2b3446;
+  --color-text-primary: #e4e7ef;
+  --color-text-secondary: #c9d0dc;
+  --color-text-muted: #8b95a8;
+  --color-text-subtle: #97a4bd;
+  --color-text-strong: #edf2ff;
+  --color-title: #dce3f5;
+  --color-hover: #242f44;
+  --color-active: #1f2737;
+  --color-icon-filter: brightness(0) invert(1) opacity(0.6);
+  --color-icon-filter-active: brightness(0) invert(1);
+  --color-avatar-filter: brightness(0) invert(1) opacity(0.6);
+  --color-avatar-filter-soft: brightness(0) invert(0.75);
+  --color-login-gradient: linear-gradient(80deg, #0f1728 0%, #205d52 100%);
+  --color-theme-switch-bg: #1a2235;
+  --color-theme-switch-border: #2e3442;
+  --color-theme-switch-track: #29364d;
+  --color-theme-switch-thumb: #8ec5b4;
+  --color-theme-switch-label: #dce4f7;
+  --board-bg: #1a1f2e;
+  --board-dot: rgba(184, 148, 63, 0.18);
+  --board-hint: rgba(232, 213, 163, 0.4);
+  --board-toolbar-bg: rgba(26, 31, 46, 0.88);
+  --board-toolbar-border: rgba(184, 148, 63, 0.3);
+  --board-toolbar-text: #e8d5a3;
+  --board-panel-bg: rgba(18, 22, 36, 0.96);
+  --board-panel-border: rgba(184, 148, 63, 0.22);
+  --board-panel-handle: rgba(232, 213, 163, 0.28);
+  --board-input-bg: rgba(255, 255, 255, 0.06);
+  --board-input-border: rgba(184, 148, 63, 0.4);
+  --board-input-border-focus: rgba(184, 148, 63, 0.85);
+  --board-input-text: #e8d5a3;
+  --board-close-bg: rgba(255, 255, 255, 0.06);
+  --board-close-text: rgba(232, 213, 163, 0.55);
+  --board-close-hover-bg: rgba(255, 255, 255, 0.12);
+  --board-close-hover-text: #e8d5a3;
+  --board-section-text: rgba(232, 213, 163, 0.5);
+  --board-badge-bg: rgba(184, 148, 63, 0.2);
+  --board-badge-text: #e8d5a3;
+  --board-empty-text: rgba(232, 213, 163, 0.3);
+  --board-item-bg: rgba(255, 255, 255, 0.04);
+  --board-item-border: rgba(184, 148, 63, 0.1);
+  --board-item-text: #d4c4a0;
+  --board-remove-text: rgba(220, 130, 130, 0.45);
+  --board-remove-hover-bg: rgba(220, 80, 80, 0.15);
+  --board-remove-hover-text: #e09090;
+  --board-guest-input-bg: rgba(255, 255, 255, 0.05);
+  --board-guest-input-border: rgba(184, 148, 63, 0.28);
+  --board-guest-input-focus: rgba(184, 148, 63, 0.7);
+  --board-placeholder: rgba(232, 213, 163, 0.28);
+}
+
 html,
 body,
 #app {
   height: 100%;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
+  transition: background 0.2s ease, color 0.2s ease;
 }

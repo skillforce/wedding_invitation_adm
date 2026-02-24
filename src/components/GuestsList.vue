@@ -27,5 +27,6 @@ defineProps<{
 .dashboard-title{
   margin-left: 0.75rem;
   font-size: 1.25rem;
+  color: var(--color-title);
 }
 </style>

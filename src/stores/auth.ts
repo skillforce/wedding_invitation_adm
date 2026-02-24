@@ -3,7 +3,7 @@ import { AUTH_API, type MeResponseDto } from '@/api/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
+    token: null as string | null,
     user: null as MeResponseDto | null,
     isAuthChecked: false,
   }),
@@ -16,7 +16,6 @@ export const useAuthStore = defineStore('auth', {
     async login(login: string, password: string) {
       const { accessToken } = await AUTH_API.login({ login, password })
       this.token = accessToken
-      localStorage.setItem('token', accessToken)
       await this.fetchMe()
     },
 
@@ -42,7 +41,19 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.token = null
       this.user = null
-      localStorage.removeItem('token')
+    },
+  },
+  persist: {
+    key: 'token',
+    pick: ['token'],
+    serializer: {
+      serialize: (state) => {
+        const token = (state as { token?: string | null }).token
+        return token || ''
+      },
+      deserialize: (value) => ({
+        token: value || null,
+      }),
     },
   },
 })
