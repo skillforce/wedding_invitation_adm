@@ -10,7 +10,7 @@ export interface GuestsViewDto {
 export const GUESTS_API = {
   async getAllGuests(): Promise<GuestsViewDto[]> {
     const res = await apiFetch('/guests')
-    if (!res.ok) throw new Error('Failed to load guests')
+    if (!res.ok) throw new Error('errors.guests.failedToLoad')
     return res.json()
   },
 }

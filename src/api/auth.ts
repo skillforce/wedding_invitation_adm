@@ -23,28 +23,28 @@ export const AUTH_API = {
     })
 
     if (!response.ok) {
-      throw new Error('Login or Password are wrong')
+      throw new Error('errors.auth.invalidCredentials')
     }
 
     const payload = (await response.json()) as Partial<AuthResponseDto>
     if (!payload.accessToken) {
-      throw new Error('No access token in auth response')
+      throw new Error('errors.auth.noAccessToken')
     }
 
     return { accessToken: payload.accessToken }
   },
 
-  async me(): Promise<MeResponseDto> {
-    const response = await apiFetch('/auth/me')
+  async me(token?: string): Promise<MeResponseDto> {
+    const response = await apiFetch('/auth/me', {}, token)
 
     if (!response.ok) {
-      throw new Error('Unauthorized')
+      throw new Error('errors.auth.unauthorized')
     }
 
     const payload = (await response.json()) as Partial<MeResponseDto>
 
     if (typeof payload.id !== 'number' || typeof payload.login !== 'string') {
-      throw new Error('Invalid /auth/me response')
+      throw new Error('errors.auth.invalidMeResponse')
     }
 
     return { id: payload.id, login: payload.login }

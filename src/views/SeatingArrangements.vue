@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 import { jsPDF } from 'jspdf'
@@ -7,27 +8,28 @@ import { useSeatingStore } from '@/stores/seating'
 import { useThemeStore } from '@/stores/theme'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
+import { CANVAS_WORKSPACE_CONFIG } from '@/components/interactiveBoard/tableKonvaConfigs'
 import BoardToolbar from '@/components/interactiveBoard/BoardToolbar.vue'
+import BoardMobileMenu from '@/components/interactiveBoard/BoardMobileMenu.vue'
 import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
 import { getThemeDefinition } from '@/themes'
 
 const seatingStore = useSeatingStore()
 const themeStore = useThemeStore()
+const { t } = useI18n()
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const stageRef = ref<{ getNode(): Stage } | null>(null)
 
 const { stageConfig, isMobile } = useStageSize(containerRef)
-const { onWheel, centerOn } = useZoom(stageRef)
+const { onWheel, fitToStage, zoomToMin, isFitted } = useZoom(stageRef)
+
 
 onMounted(async () => {
   await seatingStore.fetchTables()
-  const rectTable = seatingStore.tables.find((t) => t.shape === 'rect')
-  if (rectTable) {
-    await nextTick()
-    centerOn(rectTable.x, rectTable.y)
-  }
+  await nextTick()
+  zoomToMin()
 })
 
 const boardTheme = computed(() => getThemeDefinition(themeStore.theme).board)
@@ -81,7 +83,7 @@ function exportPdf() {
     const orientation = sw >= sh ? 'landscape' : 'portrait'
     const pdf = new jsPDF({ orientation, unit: 'px', format: [sw, sh] })
     pdf.addImage(dataUrl, 'PNG', 0, 0, sw, sh)
-    pdf.save('рассадка.pdf')
+    pdf.save(t('seating.pdfFileName'))
   }
   img.src = stageDataUrl
 }
@@ -93,10 +95,12 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 
 <template>
   <div ref="containerRef" class="board-container">
-    <BoardToolbar @add-table="seatingStore.addTable()" @export-pdf="exportPdf" />
+    <BoardToolbar :is-fitted="isFitted" @add-table="seatingStore.addTable()" @export-pdf="exportPdf" @fit-canvas="fitToStage()" />
+    <BoardMobileMenu :is-fitted="isFitted" @add-table="seatingStore.addTable()" @export-pdf="exportPdf" @fit-canvas="fitToStage()" />
 
     <v-stage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
       <v-layer>
+        <v-rect :config="CANVAS_WORKSPACE_CONFIG" />
         <TableNode
           v-for="table in seatingStore.tables"
           :key="table.id"

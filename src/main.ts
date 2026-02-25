@@ -10,6 +10,8 @@ import './router/guards'
 import './style.css'
 import 'primeicons/primeicons.css'
 import { useThemeStore } from '@/stores/theme'
+import { useLocaleStore } from '@/stores/locale'
+import i18n from '@/i18n'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -17,6 +19,7 @@ pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 app.use(PrimeVue, {
   theme: {
     preset: Material,
@@ -29,5 +32,7 @@ app.use(VueKonva)
 
 const themeStore = useThemeStore(pinia)
 themeStore.initTheme()
+const localeStore = useLocaleStore(pinia)
+localeStore.initLocale()
 
 app.mount('#app')

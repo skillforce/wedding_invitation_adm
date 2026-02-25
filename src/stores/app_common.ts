@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { AppRoute } from '@/constants/app'
 
 const SIDEBAR_OPTION_STORAGE_KEY = 'sidebar-selected-option'
-const DEFAULT_SIDEBAR_OPTION = AppRoute.Dashboard
+const DEFAULT_SIDEBAR_OPTION = AppRoute.Guests
 
 export const useAppCommonStore = defineStore('app_common', () => {
   const selectedSidebarOption = ref<string>(DEFAULT_SIDEBAR_OPTION)

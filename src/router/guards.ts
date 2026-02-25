@@ -20,7 +20,7 @@ router.beforeEach(async (to) => {
 
   if (to.path === AppRoute.Login && auth.isAuthenticated) {
     const savedPath = appCommon.selectedSidebarOption
-    return NAV_PATH_SET.has(savedPath) ? savedPath : AppRoute.Dashboard
+    return NAV_PATH_SET.has(savedPath) ? savedPath : AppRoute.Guests
   }
 
   return true

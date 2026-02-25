@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import burgerMenuIconUrl from '@/assets/burger_menu_icon.svg'
 
 defineEmits<{
   (event: 'click'): void
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
-  <button class="mobile-menu-btn" aria-label="Open menu" @click="$emit('click')">
-    <img :src="burgerMenuIconUrl" alt="" class="mobile-menu-icon" />
+  <button class="mobile-menu-btn" :aria-label="t('a11y.openMenu')" @click="$emit('click')">
+    <img :src="burgerMenuIconUrl" :alt="t('a11y.burgerMenuIcon')" class="mobile-menu-icon" />
   </button>
 </template>
 

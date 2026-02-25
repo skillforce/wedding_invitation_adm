@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
@@ -16,6 +17,7 @@ const emit = defineEmits<{
 
 const loginValue = ref('')
 const passwordValue = ref('')
+const { t } = useI18n()
 
 const onSubmit = () => {
   emit('submit', loginValue.value, passwordValue.value)
@@ -29,12 +31,12 @@ const onSubmit = () => {
     </Message>
 
     <div class="field">
-      <label for="login">Login</label>
+      <label for="login">{{ t('auth.loginLabel') }}</label>
       <InputText id="login" v-model="loginValue" fluid />
     </div>
 
     <div class="field">
-      <label for="password">Password</label>
+      <label for="password">{{ t('auth.passwordLabel') }}</label>
       <Password
         id="password"
         v-model="passwordValue"
@@ -44,7 +46,7 @@ const onSubmit = () => {
       />
     </div>
 
-    <Button type="submit" label="Sign In" :loading="isLoading" />
+    <Button type="submit" :label="t('auth.signInButton')" :loading="isLoading" />
   </form>
 </template>
 

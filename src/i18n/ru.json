@@ -1,0 +1,90 @@
+{
+  "auth": {
+    "signInTitle": "Войдите в аккаунт",
+    "loginLabel": "Логин",
+    "passwordLabel": "Пароль",
+    "signInButton": "Войти"
+  },
+  "theme": {
+    "dark": "Темная",
+    "light": "Светлая",
+    "switchAriaLabel": "Переключить на тему: {theme}"
+  },
+  "locale": {
+    "switchAriaLabel": "Выбрать язык",
+    "english": "English",
+    "russian": "Русский"
+  },
+  "nav": {
+    "guests": "Гости",
+    "seatingArrangements": "Рассадка гостей",
+    "logout": "Выйти"
+  },
+  "profile": {
+    "loggedAs": "Вы вошли как",
+    "unknownUser": "Неизвестный пользователь"
+  },
+  "guests": {
+    "title": "Гости",
+    "loading": "Загрузка гостей...",
+    "empty": "В списке нет гостей.",
+    "listView": "Список",
+    "gridView": "Сетка",
+    "respondedTitle": "Ответившие гости:",
+    "preferredDrinks": "Предпочитаемые напитки:",
+    "otherPreferences": "Другие предпочтения / желания:",
+    "none": "Нет"
+  },
+  "seating": {
+    "addTable": "Добавить стол",
+    "workspace": "Рабочая зона",
+    "exportData": "Выгрузить данные",
+    "savePdf": "Сохранить PDF",
+    "tableNamePlaceholder": "Название стола...",
+    "sectionGuests": "Гости",
+    "noGuestsYet": "Гостей пока нет",
+    "guestNamePlaceholder": "Имя гостя...",
+    "deleteTable": "Удалить стол",
+    "exportTitle": "Рассадка гостей",
+    "exportSummary": "Всего столов: {tables} | Всего гостей: {guests}",
+    "exportNoGuests": "нет гостей",
+    "exportGuestCount": "Гостей: {count}",
+    "pdfFileName": "рассадка.pdf",
+    "textFileName": "рассадка.txt",
+    "defaultTableName": "Стол {index}"
+  },
+  "a11y": {
+    "sidebarToggle": "Переключить сайдбар",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню",
+    "closePanel": "Закрыть панель",
+    "removeGuest": "Удалить гостя",
+    "addGuest": "Добавить гостя",
+    "menuOptionIcon": "Иконка пункта меню",
+    "logoutIcon": "Иконка выхода",
+    "burgerMenuIcon": "Иконка меню",
+    "closeIcon": "Иконка закрытия",
+    "userAvatar": "Аватар пользователя",
+    "guestAvatar": "Аватар гостя"
+  },
+  "errors": {
+    "auth": {
+      "invalidCredentials": "Неверный логин или пароль",
+      "noAccessToken": "В ответе авторизации нет access token",
+      "unauthorized": "Не авторизован",
+      "invalidMeResponse": "Некорректный ответ /auth/me",
+      "loginFailed": "Ошибка входа"
+    },
+    "guests": {
+      "failedToLoad": "Не удалось загрузить гостей"
+    },
+    "seating": {
+      "failedToLoadTables": "Не удалось загрузить столы",
+      "failedToCreateTable": "Не удалось создать стол",
+      "failedToUpdateTable": "Не удалось обновить стол",
+      "failedToDeleteTable": "Не удалось удалить стол",
+      "failedToAddSeat": "Не удалось добавить место",
+      "failedToRemoveSeat": "Не удалось удалить место"
+    }
+  }
+}

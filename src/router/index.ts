@@ -9,8 +9,8 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       {
-        path: AppChildRoute.Dashboard,
-        component: () => import('../views/Dashboard.vue'),
+        path: AppChildRoute.Guests,
+        component: () => import('../views/Guests.vue'),
       },
       {
         path: AppChildRoute.SeatingArrangements,

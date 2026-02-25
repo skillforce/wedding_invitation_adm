@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import LoginForm from '@/components/LoginForm.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -8,20 +9,28 @@ import { AppRoute } from '@/constants/app'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t, te } = useI18n()
 
 const isLoading = ref(false)
-const errorMessage = ref('')
+const errorMessageKey = ref('')
+
+const errorMessage = computed(() =>
+  errorMessageKey.value ? t(errorMessageKey.value) : '',
+)
 
 const onSubmit = async (login: string, password: string) => {
   isLoading.value = true
-  errorMessage.value = ''
+  errorMessageKey.value = ''
 
   try {
     await authStore.login(login, password)
-    await router.push(AppRoute.Dashboard)
+    await router.push(AppRoute.Guests)
   } catch (error) {
-    errorMessage.value =
-      error instanceof Error ? error.message : 'Login failed'
+    if (error instanceof Error && te(error.message)) {
+      errorMessageKey.value = error.message
+    } else {
+      errorMessageKey.value = 'errors.auth.loginFailed'
+    }
   } finally {
     isLoading.value = false
   }
@@ -31,7 +40,7 @@ const onSubmit = async (login: string, password: string) => {
 <template>
   <div class="login-page">
     <Card class="login-card">
-      <template #title>Sign in to your account</template>
+      <template #title>{{ t('auth.signInTitle') }}</template>
       <template #content>
         <LoginForm
           :is-loading="isLoading"

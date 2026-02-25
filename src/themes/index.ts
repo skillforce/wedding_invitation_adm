@@ -27,12 +27,16 @@ export interface ThemeDefinition {
     rotationHandleStroke: string
     tableShadowColor: string
     connectorStroke: string
+    canvasBorder: string
   }
 }
 
 const themes: Record<ThemeName, ThemeDefinition> = {
   [AppTheme.Dark]: {
     cssVars: {
+      '--z-drawer': '40',
+      '--z-drawer-backdrop': '35',
+      '--z-drawer-trigger': '30',
       '--color-bg-app': '#111827',
       '--color-backdrop': 'rgba(8, 11, 16, 0.45)',
       '--color-surface': '#1a2235',
@@ -110,10 +114,14 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       rotationHandleStroke: '#e8d5a3',
       tableShadowColor: 'rgba(0, 0, 0, 0.18)',
       connectorStroke: '#b8943f',
+      canvasBorder: 'rgba(184, 148, 63, 0.45)',
     },
   },
   [AppTheme.Light]: {
     cssVars: {
+      '--z-drawer': '40',
+      '--z-drawer-backdrop': '35',
+      '--z-drawer-trigger': '30',
       '--color-bg-app': '#dee0e6',
       '--color-backdrop': 'rgba(13, 24, 39, 0.28)',
       '--color-surface': '#ffffff',
@@ -191,6 +199,7 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       rotationHandleStroke: '#2c4a70',
       tableShadowColor: 'rgba(17, 29, 44, 0.2)',
       connectorStroke: '#7a93b3',
+      canvasBorder: 'rgba(79, 111, 149, 0.45)',
     },
   },
 }

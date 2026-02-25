@@ -7,9 +7,9 @@ export enum HttpMethod {
 
 export const BASE_API_URL = import.meta.env.VITE_API_URL ?? ''
 
-export async function apiFetch(path: string, options: RequestInit = {}): Promise<Response> {
-  const token = localStorage.getItem('token')
-  if (!token) throw new Error('Unauthorized')
+export async function apiFetch(path: string, options: RequestInit = {}, authToken?: string | null): Promise<Response> {
+  const token = authToken ?? localStorage.getItem('token')
+  if (!token) throw new Error('errors.auth.unauthorized')
 
   return fetch(`${BASE_API_URL}${path}`, {
     headers: {

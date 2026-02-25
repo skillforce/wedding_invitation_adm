@@ -5,11 +5,11 @@ export enum AppTheme {
 
 export enum AppRoute {
   Login = '/',
-  Dashboard = '/dashboard',
+  Guests = '/guests',
   SeatingArrangements = '/seating-arrangements',
 }
 
 export enum AppChildRoute {
-  Dashboard = 'dashboard',
+  Guests = 'guests',
   SeatingArrangements = 'seating-arrangements',
 }

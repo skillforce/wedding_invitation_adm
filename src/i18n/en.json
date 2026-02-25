@@ -1,0 +1,90 @@
+{
+  "auth": {
+    "signInTitle": "Sign in to your account",
+    "loginLabel": "Login",
+    "passwordLabel": "Password",
+    "signInButton": "Sign In"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "switchAriaLabel": "Switch to {theme} theme"
+  },
+  "locale": {
+    "switchAriaLabel": "Select language",
+    "english": "English",
+    "russian": "Russian"
+  },
+  "nav": {
+    "guests": "Guests",
+    "seatingArrangements": "Seating Arrangements",
+    "logout": "Logout"
+  },
+  "profile": {
+    "loggedAs": "Logged as",
+    "unknownUser": "Unknown user"
+  },
+  "guests": {
+    "title": "Guests",
+    "loading": "Loading guests...",
+    "empty": "No guests in the list.",
+    "listView": "List view",
+    "gridView": "Grid view",
+    "respondedTitle": "Guests who responded:",
+    "preferredDrinks": "Preferred drinks:",
+    "otherPreferences": "Other preferences / wishes:",
+    "none": "None"
+  },
+  "seating": {
+    "addTable": "Add table",
+    "workspace": "Workspace",
+    "exportData": "Export data",
+    "savePdf": "Save PDF",
+    "tableNamePlaceholder": "Table name...",
+    "sectionGuests": "Guests",
+    "noGuestsYet": "No guests yet",
+    "guestNamePlaceholder": "Guest name...",
+    "deleteTable": "Delete table",
+    "exportTitle": "Wedding guest seating",
+    "exportSummary": "Total tables: {tables} | Total guests: {guests}",
+    "exportNoGuests": "no guests",
+    "exportGuestCount": "Guests: {count}",
+    "pdfFileName": "seating-arrangement.pdf",
+    "textFileName": "seating-arrangement.txt",
+    "defaultTableName": "Table {index}"
+  },
+  "a11y": {
+    "sidebarToggle": "Toggle sidebar",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "closePanel": "Close panel",
+    "removeGuest": "Remove guest",
+    "addGuest": "Add guest",
+    "menuOptionIcon": "Menu option icon",
+    "logoutIcon": "Logout icon",
+    "burgerMenuIcon": "Menu icon",
+    "closeIcon": "Close icon",
+    "userAvatar": "User avatar",
+    "guestAvatar": "Guest avatar"
+  },
+  "errors": {
+    "auth": {
+      "invalidCredentials": "Login or password is incorrect",
+      "noAccessToken": "No access token in auth response",
+      "unauthorized": "Unauthorized",
+      "invalidMeResponse": "Invalid /auth/me response",
+      "loginFailed": "Login failed"
+    },
+    "guests": {
+      "failedToLoad": "Failed to load guests"
+    },
+    "seating": {
+      "failedToLoadTables": "Failed to load seating tables",
+      "failedToCreateTable": "Failed to create table",
+      "failedToUpdateTable": "Failed to update table",
+      "failedToDeleteTable": "Failed to delete table",
+      "failedToAddSeat": "Failed to add seat",
+      "failedToRemoveSeat": "Failed to remove seat"
+    }
+  }
+}

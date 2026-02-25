@@ -1,30 +1,29 @@
 import { defineStore } from 'pinia'
 import { GUESTS_API, type GuestsViewDto } from '@/api/guests'
-import { useAuthStore } from '@/stores/auth'
 
 interface GuestsState {
   guests: GuestsViewDto[]
   isLoading: boolean
-  error: string
+  errorKey: string
 }
 
 export const useGuestsStore = defineStore('guests', {
   state: (): GuestsState => ({
     guests: [],
     isLoading: false,
-    error: '',
+    errorKey: '',
   }),
 
   actions: {
     async fetchGuests() {
       this.isLoading = true
-      this.error = ''
+      this.errorKey = ''
 
       try {
         this.guests = await GUESTS_API.getAllGuests()
       } catch (error) {
-        this.error =
-          error instanceof Error ? error.message : 'Failed to load guests'
+        this.errorKey =
+          error instanceof Error ? error.message : 'errors.guests.failedToLoad'
       } finally {
         this.isLoading = false
       }

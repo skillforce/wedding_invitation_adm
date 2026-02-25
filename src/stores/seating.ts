@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { SEATING_ARRANGEMENT_API } from '@/api/seating-arrangement'
+import i18n from '@/i18n'
 
 export interface SeatingGuest {
   id: string
@@ -40,7 +41,7 @@ export const useSeatingStore = defineStore('seating', () => {
   async function addTable() {
     const idx = tables.value.length + 1
     const created = await SEATING_ARRANGEMENT_API.createTable({
-      name: `Table ${idx}`,
+      name: i18n.global.t('seating.defaultTableName', { index: idx }),
       position: { x: 160 + Math.random() * 480, y: 160 + Math.random() * 320 },
       shape: 'circle',
       rotation: 0,

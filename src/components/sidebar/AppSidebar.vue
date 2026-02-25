@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/ProfileCard.vue'
 import SidebarToggle from '@/components/SidebarToggle.vue'
 import { navItems } from './sidebarConfig'
@@ -20,6 +21,7 @@ const emit = defineEmits<{
 const route = useRoute()
 const router = useRouter()
 const appCommonStore = useAppCommonStore()
+const { t } = useI18n()
 
 watch(
   () => route.path,
@@ -42,11 +44,9 @@ const onClickOption = async (path: string) => {
 <template>
   <aside :class="['app-sidebar', { collapsed }]">
     <div class="sidebar-top">
-      <div :class="['sidebar-controls', { collapsed }]" >
-        <SidebarToggle :collapsed="collapsed" @toggle="emit('toggle')" />
-      </div>
 
-      <ProfileCard v-if="!collapsed" :login="login" />
+
+      <ProfileCard :collapsed="collapsed" :login="login" />
     </div>
 
     <nav class="sidebar-nav">
@@ -57,18 +57,21 @@ const onClickOption = async (path: string) => {
         :class="{ active: isActive(item.path), collapsed }"
         @click="onClickOption(item.path)"
       >
-        <img :src="item.iconUrl" class="nav-icon" alt="" />
-        <span v-if="!collapsed" class="nav-label">{{ item.label }}</span>
+        <img :src="item.iconUrl" class="nav-icon" :alt="t('a11y.menuOptionIcon')" />
+        <span v-if="!collapsed" class="nav-label">{{ t(item.labelKey) }}</span>
       </button>
     </nav>
-
+    <div :class="['sidebar-controls', { collapsed }]" >
+      <SidebarToggle :collapsed="collapsed" @toggle="emit('toggle')" />
+    </div>
     <button
       class="nav-btn logout-btn"
       :class="{ collapsed }"
+      :aria-label="t('nav.logout')"
       @click="emit('logout')"
     >
-      <img :src="logoutIconUrl" class="nav-icon" alt="" />
-      <span v-if="!collapsed" class="nav-label">Logout</span>
+      <img :src="logoutIconUrl" class="nav-icon" :alt="t('a11y.logoutIcon')" />
+      <span v-if="!collapsed" class="nav-label">{{ t('nav.logout') }}</span>
     </button>
   </aside>
 </template>

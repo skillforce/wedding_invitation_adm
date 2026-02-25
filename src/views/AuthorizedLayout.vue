@@ -56,11 +56,6 @@ const onLogout = async () => {
       <RouterView />
     </main>
 
-    <div
-      v-if="isMobileSidebarOpen"
-      class="mobile-backdrop"
-      @click="onCloseMobileSidebar"
-    />
   </div>
 </template>
 
@@ -81,10 +76,6 @@ const onLogout = async () => {
   display: none;
 }
 
-.mobile-backdrop {
-  display: none;
-}
-
 @media (max-width: 768px) {
   .authorized-layout {
     grid-template-columns: 1fr;
@@ -94,14 +85,6 @@ const onLogout = async () => {
     display: flex;
     justify-content: flex-start;
     margin-bottom: 0.75rem;
-  }
-
-  .mobile-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: var(--color-backdrop);
-    z-index: 20;
   }
 }
 </style>

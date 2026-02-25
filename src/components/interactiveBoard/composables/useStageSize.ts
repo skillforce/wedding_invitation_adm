@@ -31,7 +31,7 @@ export function useStageSize(containerRef: Ref<HTMLDivElement | null>) {
   const stageConfig = computed(() => ({
     width: stageWidth.value,
     height: stageHeight.value,
-    draggable: true,
+    draggable: !isMobile.value,
   }))
 
   return { stageConfig, isMobile }

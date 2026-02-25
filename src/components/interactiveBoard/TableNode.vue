@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { KonvaEventObject } from 'konva/lib/Node'
+import type { Stage } from 'konva/lib/Stage'
 import type { SeatingTable } from '@/stores/seating'
 import { useThemeStore } from '@/stores/theme'
 import {
   getKonvaThemePalette,
   tableGroupConfig,
+  tableDragBoundFunc,
   selectionRingConfig,
   selectionRingRectConfig,
   tableCircleConfig,
@@ -36,10 +38,19 @@ const konvaTheme = computed(() => getKonvaThemePalette(themeStore.theme))
 
 // ── State ─────────────────────────────────────────────────────────────────────
 const isRotating = ref(false)
+const stageRef = ref<Stage | null>(null)
 
 // Disable group dragging while the rotation handle is active, so the two
 // gestures can never interfere with each other.
-const groupConfig = computed(() => ({ ...tableGroupConfig(props.table), draggable: !isRotating.value }))
+const groupConfig = computed(() => ({
+  ...tableGroupConfig(props.table),
+  draggable: !isRotating.value,
+  dragBoundFunc: (pos: { x: number; y: number }) => {
+    const stage = stageRef.value
+    if (!stage) return pos
+    return tableDragBoundFunc(pos, stage as Stage)
+  },
+}))
 
 // ── Group drag / cursor ───────────────────────────────────────────────────────
 function onMouseEnter(e: KonvaEventObject<MouseEvent>) {
@@ -51,6 +62,7 @@ function onMouseLeave(e: KonvaEventObject<MouseEvent>) {
 }
 
 function onDragStart(e: KonvaEventObject<MouseEvent>) {
+  stageRef.value = e.target.getStage() as Stage
   e.target.getStage()!.container().style.cursor = 'grabbing'
 }
 

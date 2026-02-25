@@ -1,6 +1,8 @@
 import type { SeatingTable, SeatingGuest } from '@/stores/seating'
 import { getThemeDefinition, type ThemeName } from '@/themes'
-
+import { useThemeStore } from "@/stores/theme.ts";
+import type { Stage } from "konva/lib/Stage";
+const themeStore = useThemeStore()
 // ── Visual constants ──────────────────────────────────────────────────────────
 export const SEAT_RADIUS = 18
 export const SEAT_OFFSET = 38
@@ -14,8 +16,22 @@ export const ROTATION_SNAP = 15 // degrees — increase to reduce sensitivity
 
 // Zoom
 export const SCALE_BY = 1.07
-export const MIN_SCALE = 0.5
-export const MAX_SCALE = 1.5
+export const MIN_SCALE = 0.4
+export const MAX_SCALE = 1
+
+// Virtual canvas — all tables live within this space
+export const CANVAS_WIDTH = 1600
+export const CANVAS_HEIGHT = 900
+
+
+export const CANVAS_WORKSPACE_CONFIG = {
+  x: 0, y: 0,
+  width: CANVAS_WIDTH, height: CANVAS_HEIGHT,
+  stroke: getKonvaThemePalette(themeStore.theme).canvasBorder,
+  strokeWidth: 4,
+  fill: 'transparent',
+  listening: false,
+}
 
 export type KonvaThemePalette = ReturnType<typeof getKonvaThemePalette>
 
@@ -51,6 +67,27 @@ function rectEdgeDist(table: SeatingTable, angle: number): number {
 // ── Group config ──────────────────────────────────────────────────────────────
 export function tableGroupConfig(table: SeatingTable) {
   return { x: table.x, y: table.y, draggable: true, rotation: table.rotation ?? 0 }
+}
+
+export function tableDragBoundFunc(
+  pos: { x: number; y: number },
+  stage:Stage,
+) {
+  const scale = stage.scaleX()
+  const stagePos = stage.position()
+
+  // Convert stage-space position to canvas-space
+  const canvasX = (pos.x - stagePos.x) / scale
+  const canvasY = (pos.y - stagePos.y) / scale
+
+  const clampedX = Math.max(0, Math.min(CANVAS_WIDTH, canvasX))
+  const clampedY = Math.max(0, Math.min(CANVAS_HEIGHT, canvasY))
+
+  // Convert back to stage-space
+  return {
+    x: clampedX * scale + stagePos.x,
+    y: clampedY * scale + stagePos.y,
+  }
 }
 
 // ── Circle table configs ──────────────────────────────────────────────────────

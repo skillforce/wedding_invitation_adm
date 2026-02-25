@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import personIconUrl from '@/assets/person.svg'
 
 defineProps<{
   login?: string
+  collapsed?: boolean
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
-  <div class="profile-card">
-    <img :src="personIconUrl" alt="User avatar" class="avatar-image" />
-
-    <div class="profile-text">
-      <p class="profile-label">Logged as</p>
-      <p class="profile-login">{{ login || 'Unknown user' }}</p>
+  <div :class="['profile-card', { collapsed }]">
+    <img :src="personIconUrl" :alt="t('a11y.userAvatar')" class="avatar-image" />
+    <div v-if="!collapsed" class="profile-text">
+      <p class="profile-label">{{ t('profile.loggedAs') }}</p>
+      <p class="profile-login">{{ login || t('profile.unknownUser') }}</p>
     </div>
   </div>
 </template>
@@ -26,6 +29,10 @@ defineProps<{
   border: 1px solid var(--color-profile-border);
   border-radius: 12px;
   background: var(--color-surface-soft);
+}
+
+.profile-card.collapsed {
+  padding: 0.45rem;
 }
 
 .avatar-image {

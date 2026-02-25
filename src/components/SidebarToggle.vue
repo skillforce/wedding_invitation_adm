@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import arrowIconUrl from '@/assets/arrow.svg'
 
 defineProps<{
@@ -8,18 +9,20 @@ defineProps<{
 defineEmits<{
   (event: 'toggle'): void
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
   <button
     class="sidebar-toggle"
-    aria-label="Toggle sidebar"
+    :aria-label="t('a11y.sidebarToggle')"
     @click="$emit('toggle')"
   >
     <img
       :src="arrowIconUrl"
       :class="['sidebar-toggle-icon', { collapsed }]"
-      alt="Toggle sidebar"
+      :alt="t('a11y.sidebarToggle')"
     />
   </button>
 </template>

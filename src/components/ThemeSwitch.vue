@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
-import { AppTheme } from "@/constants/app.ts";
 
 const themeStore = useThemeStore()
 const { isDarkTheme } = storeToRefs(themeStore)
+const { t } = useI18n()
+
+const currentThemeLabel = computed(() =>
+  isDarkTheme.value ? t('theme.dark') : t('theme.light'),
+)
+const nextThemeLabel = computed(() =>
+  isDarkTheme.value ? t('theme.light') : t('theme.dark'),
+)
 
 const toggleTheme = () => {
   themeStore.toggleTheme()
@@ -16,10 +25,10 @@ const toggleTheme = () => {
     type="button"
     class="theme-switch"
     :class="{ dark: isDarkTheme }"
-    :aria-label="`Switch to ${isDarkTheme ? AppTheme.Dark : AppTheme.Light} theme`"
+    :aria-label="t('theme.switchAriaLabel', { theme: nextThemeLabel })"
     @click="toggleTheme"
   >
-    <span class="theme-switch-label">{{ isDarkTheme ? AppTheme.Dark : AppTheme.Light }}</span>
+    <span class="theme-switch-label">{{ currentThemeLabel }}</span>
     <span class="theme-switch-track">
       <span class="theme-switch-thumb" />
     </span>

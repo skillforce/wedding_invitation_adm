@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import { useSeatingStore, type SeatingTable } from '@/stores/seating'
 
@@ -7,6 +8,7 @@ const props = defineProps<{ table: SeatingTable }>()
 const emit = defineEmits<{ close: [] }>()
 
 const seatingStore = useSeatingStore()
+const { t } = useI18n()
 
 const editingName = ref(props.table.name)
 const newGuestName = ref('')
@@ -45,31 +47,30 @@ async function deleteTable() {
 
 <template>
   <aside class="side-panel">
-    <!-- Drag handle — visible only on mobile -->
     <div class="drawer-handle" />
 
     <div class="panel-header">
       <input
         v-model="editingName"
         class="name-input"
-        placeholder="Table name…"
+        :placeholder="t('seating.tableNamePlaceholder')"
         @blur="saveName"
         @keydown.enter="($event.target as HTMLInputElement).blur()"
       />
-      <button class="close-btn" aria-label="Close panel" @click="emit('close')">✕</button>
+      <button class="close-btn" :aria-label="t('a11y.closePanel')" @click="emit('close')">✕</button>
     </div>
 
     <div class="panel-section">
       <p class="section-label">
-        Guests
+        {{ t('seating.sectionGuests') }}
         <span class="guest-count">{{ table.guests.length }}</span>
       </p>
 
       <ul class="guest-list">
-        <li v-if="table.guests.length === 0" class="guest-empty">No guests yet</li>
+        <li v-if="table.guests.length === 0" class="guest-empty">{{ t('seating.noGuestsYet') }}</li>
         <li v-for="guest in table.guests" :key="guest.id" class="guest-item">
           <span class="guest-name">{{ guest.name }}</span>
-          <button class="remove-btn" aria-label="Remove guest" @click="removeGuest(guest.id)">✕</button>
+          <button class="remove-btn" :aria-label="t('a11y.removeGuest')" @click="removeGuest(guest.id)">✕</button>
         </li>
       </ul>
 
@@ -78,27 +79,26 @@ async function deleteTable() {
           ref="newGuestInputRef"
           v-model="newGuestName"
           class="guest-input"
-          placeholder="Guest name…"
+          :placeholder="t('seating.guestNamePlaceholder')"
           @keydown.enter="addGuest"
         />
         <Button
           icon="pi pi-user-plus"
           size="small"
           :disabled="!newGuestName.trim()"
-          aria-label="Add guest"
+          :aria-label="t('a11y.addGuest')"
           @click="addGuest"
         />
       </div>
     </div>
 
     <div class="panel-footer">
-      <button class="delete-table-btn" @click="deleteTable">Delete table</button>
+      <button class="delete-table-btn" @click="deleteTable">{{ t('seating.deleteTable') }}</button>
     </div>
   </aside>
 </template>
 
 <style scoped>
-/* ── Side panel (desktop) ─────────────────────────────────────────────────── */
 .side-panel {
   position: absolute;
   top: 0;
@@ -116,7 +116,6 @@ async function deleteTable() {
   overflow-y: auto;
 }
 
-/* ── Bottom drawer (mobile) ───────────────────────────────────────────────── */
 @media (max-width: 639px) {
   .side-panel {
     top: auto;
@@ -151,11 +150,11 @@ async function deleteTable() {
   }
 }
 
-/* ── Panel header ─────────────────────────────────────────────────────────── */
 .panel-header {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 30px 0;
 }
 
 .name-input {

@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
     async login(login: string, password: string) {
       const { accessToken } = await AUTH_API.login({ login, password })
       this.token = accessToken
-      await this.fetchMe()
+      this.user = await AUTH_API.me(accessToken)
     },
 
     async fetchMe() {
