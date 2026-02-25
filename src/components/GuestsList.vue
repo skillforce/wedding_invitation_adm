@@ -53,4 +53,10 @@ const { t } = useI18n()
   display: grid;
   gap: 0.75rem;
 }
+
+@media screen and (max-width: 640px) {
+  .guests-title {
+   margin-bottom: 20px;
+  }
+}
 </style>
