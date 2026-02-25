@@ -165,7 +165,7 @@ async function deleteTable() {
   border-radius: 7px;
   padding: 7px 10px;
   color: var(--board-input-text);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   font-family: Georgia, serif;
   outline: none;
@@ -301,7 +301,7 @@ async function deleteTable() {
   border-radius: 7px;
   padding: 7px 10px;
   color: var(--board-input-text);
-  font-size: 12px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.18s;
 }

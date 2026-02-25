@@ -60,4 +60,8 @@ const onSubmit = () => {
   display: grid;
   gap: 0.4rem;
 }
+
+.field :deep(input) {
+  font-size: 16px;
+}
 </style>
