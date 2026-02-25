@@ -1,4 +1,4 @@
-import { BASE_API_URL, apiFetch } from '@/api/consts'
+import { BASE_API_URL, apiFetch, parseApiError } from '@/api/consts'
 
 export interface AuthDto {
   login: string
@@ -23,7 +23,7 @@ export const AUTH_API = {
     })
 
     if (!response.ok) {
-      throw new Error('errors.auth.invalidCredentials')
+      throw await parseApiError(response)
     }
 
     const payload = (await response.json()) as Partial<AuthResponseDto>

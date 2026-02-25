@@ -1,0 +1,1 @@
+API WEDDING LINK https://api.wedding.vpname.cc/api/swagger

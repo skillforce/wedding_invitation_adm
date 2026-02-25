@@ -3,11 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
 import Password from 'primevue/password'
 
 defineProps<{
-  errorMessage?: string
   isLoading?: boolean
 }>()
 
@@ -26,10 +24,6 @@ const onSubmit = () => {
 
 <template>
   <form class="login-form" @submit.prevent="onSubmit" @keyup.enter="onSubmit">
-    <Message v-if="errorMessage" severity="error" size="small" variant="simple">
-      {{ errorMessage }}
-    </Message>
-
     <div class="field">
       <label for="login">{{ t('auth.loginLabel') }}</label>
       <InputText id="login" v-model="loginValue" fluid />

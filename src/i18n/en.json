@@ -68,6 +68,7 @@
     "guestAvatar": "Guest avatar"
   },
   "errors": {
+    "internalServerError": "Internal server error",
     "auth": {
       "invalidCredentials": "Login or password is incorrect",
       "noAccessToken": "No access token in auth response",

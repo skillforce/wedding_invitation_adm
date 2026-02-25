@@ -1,4 +1,4 @@
-import { apiFetch } from '@/api/consts'
+import { apiFetch, parseApiError } from '@/api/consts'
 
 export interface GuestsViewDto {
   id: number
@@ -10,7 +10,7 @@ export interface GuestsViewDto {
 export const GUESTS_API = {
   async getAllGuests(): Promise<GuestsViewDto[]> {
     const res = await apiFetch('/guests')
-    if (!res.ok) throw new Error('errors.guests.failedToLoad')
+    if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 }

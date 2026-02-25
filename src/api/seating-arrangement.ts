@@ -1,4 +1,4 @@
-import { apiFetch } from '@/api/consts'
+import { apiFetch, parseApiError } from '@/api/consts'
 
 export interface SeatingSeatDto {
   id: string
@@ -33,7 +33,7 @@ const BASE = '/seating-arrangements'
 export const SEATING_ARRANGEMENT_API = {
   async getTables(): Promise<SeatingTableDto[]> {
     const res = await apiFetch(`${BASE}/tables`)
-    if (!res.ok) throw new Error('errors.seating.failedToLoadTables')
+    if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
@@ -42,7 +42,7 @@ export const SEATING_ARRANGEMENT_API = {
       method: 'POST',
       body: JSON.stringify(dto),
     })
-    if (!res.ok) throw new Error('errors.seating.failedToCreateTable')
+    if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
@@ -51,13 +51,13 @@ export const SEATING_ARRANGEMENT_API = {
       method: 'PUT',
       body: JSON.stringify(dto),
     })
-    if (!res.ok) throw new Error('errors.seating.failedToUpdateTable')
+    if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
   async deleteTable(id: string): Promise<void> {
     const res = await apiFetch(`${BASE}/tables/${id}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('errors.seating.failedToDeleteTable')
+    if (!res.ok) throw await parseApiError(res)
   },
 
   async addSeat(tableId: string, name: string): Promise<SeatingSeatDto> {
@@ -65,12 +65,12 @@ export const SEATING_ARRANGEMENT_API = {
       method: 'POST',
       body: JSON.stringify({ name }),
     })
-    if (!res.ok) throw new Error('errors.seating.failedToAddSeat')
+    if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
   async removeSeat(tableId: string, seatId: string): Promise<void> {
     const res = await apiFetch(`${BASE}/tables/${tableId}/seats/${seatId}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('errors.seating.failedToRemoveSeat')
+    if (!res.ok) throw await parseApiError(res)
   },
 }

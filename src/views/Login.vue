@@ -1,36 +1,28 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import LoginForm from '@/components/LoginForm.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useAppCommonStore } from '@/stores/app_common'
 import { AppRoute } from '@/constants/app'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { t, te } = useI18n()
+const appCommon = useAppCommonStore()
+const { t } = useI18n()
 
 const isLoading = ref(false)
-const errorMessageKey = ref('')
-
-const errorMessage = computed(() =>
-  errorMessageKey.value ? t(errorMessageKey.value) : '',
-)
 
 const onSubmit = async (login: string, password: string) => {
   isLoading.value = true
-  errorMessageKey.value = ''
 
   try {
     await authStore.login(login, password)
     await router.push(AppRoute.Guests)
   } catch (error) {
-    if (error instanceof Error && te(error.message)) {
-      errorMessageKey.value = error.message
-    } else {
-      errorMessageKey.value = 'errors.auth.loginFailed'
-    }
+    appCommon.showError(error)
   } finally {
     isLoading.value = false
   }
@@ -44,7 +36,6 @@ const onSubmit = async (login: string, password: string) => {
       <template #content>
         <LoginForm
           :is-loading="isLoading"
-          :error-message="errorMessage"
           @submit="onSubmit"
         />
       </template>

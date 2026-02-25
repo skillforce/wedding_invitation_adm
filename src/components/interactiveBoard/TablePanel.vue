@@ -133,7 +133,6 @@ async function deleteTable() {
   }
 }
 
-/* ── Drawer handle ────────────────────────────────────────────────────────── */
 .drawer-handle {
   display: none;
   width: 36px;
@@ -197,7 +196,6 @@ async function deleteTable() {
   color: var(--board-close-hover-text);
 }
 
-/* ── Panel section ────────────────────────────────────────────────────────── */
 .panel-section {
   display: flex;
   flex-direction: column;
@@ -225,7 +223,6 @@ async function deleteTable() {
   font-weight: 600;
 }
 
-/* ── Guest list ───────────────────────────────────────────────────────────── */
 .guest-list {
   list-style: none;
   margin: 0;
@@ -285,7 +282,6 @@ async function deleteTable() {
   color: var(--board-remove-hover-text);
 }
 
-/* ── Add guest form ───────────────────────────────────────────────────────── */
 .add-guest-form {
   display: flex;
   gap: 6px;

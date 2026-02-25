@@ -68,6 +68,7 @@
     "guestAvatar": "Аватар гостя"
   },
   "errors": {
+    "internalServerError": "Внутренняя ошибка сервера",
     "auth": {
       "invalidCredentials": "Неверный логин или пароль",
       "noAccessToken": "В ответе авторизации нет access token",

@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
-import Message from 'primevue/message'
 import { useGuestsStore } from '@/stores/guests'
 import GuestsList from '@/components/GuestsList.vue'
 
@@ -23,11 +22,7 @@ onMounted(async () => {
     <Card class="guests-card">
       <template #title>{{ t('guests.title') }}</template>
       <template #content>
-        <Message v-if="guestsStore.errorKey" severity="error" size="small" variant="simple">
-          {{ t(guestsStore.errorKey) }}
-        </Message>
-
-        <p v-else-if="guestsStore.isLoading">{{ t('guests.loading') }}</p>
+        <p v-if="guestsStore.isLoading">{{ t('guests.loading') }}</p>
         <p v-else-if="guests.length === 0">{{ t('guests.empty') }}</p>
 
         <GuestsList v-else :guests="guests" v-model="viewMode" />

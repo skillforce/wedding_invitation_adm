@@ -46,6 +46,7 @@ const konvaTheme = computed(() => getKonvaThemePalette(themeStore.theme))
 // ── State ─────────────────────────────────────────────────────────────────────
 const isRotating = ref(false)
 const stageRef = ref<Stage | null>(null)
+const handleStartPos = ref<{ x: number; y: number } | null>(null)
 
 // Disable group dragging while the rotation handle is active, so the two
 // gestures can never interfere with each other.
@@ -100,11 +101,16 @@ function snapRotation(deg: number) {
 
 function onHandleDragStart(e: KonvaEventObject<DragEvent>) {
   e.cancelBubble = true
+  handleStartPos.value = { x: e.target.x(), y: e.target.y() }
   isRotating.value = true
 }
 
 function onHandleDragEnd(e: KonvaEventObject<DragEvent>) {
   e.cancelBubble = true
+  if (handleStartPos.value) {
+    e.target.position(handleStartPos.value)
+  }
+  handleStartPos.value = null
   isRotating.value = false
   // Flush any pending rAF so the final angle is always committed
   if (rafId !== null) {
@@ -120,11 +126,17 @@ function onHandleDragEnd(e: KonvaEventObject<DragEvent>) {
 function onHandleDragMove(e: KonvaEventObject<DragEvent>) {
   e.cancelBubble = true
   const handle = e.target
+  if (handleStartPos.value) {
+    handle.position(handleStartPos.value)
+  }
   const group = handle.getParent()!
-  const absHandle = handle.getAbsolutePosition()
+  const pointerPos = handle.getStage()?.getPointerPosition()
+  if (!pointerPos) {
+    return
+  }
   const absGroup = group.getAbsolutePosition()
 
-  const angleDeg = Math.atan2(absHandle.y - absGroup.y, absHandle.x - absGroup.x) * (180 / Math.PI)
+  const angleDeg = Math.atan2(pointerPos.y - absGroup.y, pointerPos.x - absGroup.x) * (180 / Math.PI)
   pendingRotation = (angleDeg + 90 + 360) % 360
 
   if (rafId === null) {
