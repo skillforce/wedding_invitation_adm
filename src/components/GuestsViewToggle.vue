@@ -34,4 +34,10 @@ const { t } = useI18n()
   display: flex;
   gap: 0.25rem;
 }
+
+@media screen and (max-width: 640px) {
+  .view-toggle {
+   display: none;
+  }
+}
 </style>
