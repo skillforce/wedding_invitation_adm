@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Layer as VLayer, Rect as VRect, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
-import { jsPDF } from 'jspdf'
 import { useSeatingStore } from '@/stores/seating'
 import { useThemeStore } from '@/stores/theme'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
@@ -45,7 +45,8 @@ function onStageClick(e: KonvaEventObject<Event>) {
   }
 }
 
-function exportPdf() {
+async function exportPdf() {
+  const { jsPDF } = await import('jspdf')
   const stage = stageRef.value?.getNode()
   if (!stage) return
 
@@ -98,9 +99,9 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
     <BoardToolbar :is-fitted="isFitted" @add-table="seatingStore.addTable()" @export-pdf="exportPdf" @fit-canvas="fitToStage()" />
     <BoardMobileMenu :is-fitted="isFitted" @add-table="seatingStore.addTable()" @export-pdf="exportPdf" @fit-canvas="fitToStage()" />
 
-    <v-stage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
-      <v-layer>
-        <v-rect :config="CANVAS_WORKSPACE_CONFIG" />
+    <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
+      <VLayer>
+        <VRect :config="CANVAS_WORKSPACE_CONFIG" />
         <TableNode
           v-for="table in seatingStore.tables"
           :key="table.id"
@@ -110,8 +111,8 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
           @dragend="(id, x, y) => seatingStore.updateTablePosition(id, x, y)"
           @rotate="(id, deg) => seatingStore.setTableRotation(id, deg)"
         />
-      </v-layer>
-    </v-stage>
+      </VLayer>
+    </VStage>
 
     <Transition :name="panelTransition">
       <TablePanel

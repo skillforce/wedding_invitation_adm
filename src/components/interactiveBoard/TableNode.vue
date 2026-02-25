@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import {
+  Circle as VCircle,
+  Group as VGroup,
+  Line as VLine,
+  Rect as VRect,
+  Text as VText,
+} from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 import type { SeatingTable } from '@/stores/seating'
@@ -138,7 +145,7 @@ function onHandleClick(e: KonvaEventObject<MouseEvent>) {
 </script>
 
 <template>
-  <v-group
+  <VGroup
     :config="groupConfig"
     @click="() => emit('select', table.id)"
     @tap="() => emit('select', table.id)"
@@ -149,16 +156,16 @@ function onHandleClick(e: KonvaEventObject<MouseEvent>) {
   >
     <!-- ── Rect (newlyweds) table ── -->
     <template v-if="table.shape === 'rect'">
-      <v-rect :config="selectionRingRectConfig(table, isSelected, konvaTheme)" />
-      <v-rect :config="tableRectConfig(table, konvaTheme)" />
-      <v-circle :config="newlywedsDotConfig(0, konvaTheme)" />
-      <v-circle :config="newlywedsDotConfig(1, konvaTheme)" />
-      <v-text :config="tableNameRectConfig(table, konvaTheme)" />
+      <VRect :config="selectionRingRectConfig(table, isSelected, konvaTheme)" />
+      <VRect :config="tableRectConfig(table, konvaTheme)" />
+      <VCircle :config="newlywedsDotConfig(0, konvaTheme)" />
+      <VCircle :config="newlywedsDotConfig(1, konvaTheme)" />
+      <VText :config="tableNameRectConfig(table, konvaTheme)" />
 
       <!-- Rotation handle — only when selected -->
       <template v-if="isSelected">
-        <v-line :config="rotationHandleLineConfig(table, konvaTheme)" />
-        <v-circle
+        <VLine :config="rotationHandleLineConfig(table, konvaTheme)" />
+        <VCircle
           :config="rotationHandleConfig(table, konvaTheme)"
           @mouseenter="onHandleMouseEnter"
           @mouseleave="onHandleMouseLeave"
@@ -173,16 +180,16 @@ function onHandleClick(e: KonvaEventObject<MouseEvent>) {
 
     <!-- ── Circle table (default) ── -->
     <template v-else>
-      <v-circle :config="selectionRingConfig(table, isSelected, konvaTheme)" />
-      <v-circle :config="tableCircleConfig(table, konvaTheme)" />
-      <v-text :config="tableNameConfig(table, konvaTheme)" />
+      <VCircle :config="selectionRingConfig(table, isSelected, konvaTheme)" />
+      <VCircle :config="tableCircleConfig(table, konvaTheme)" />
+      <VText :config="tableNameConfig(table, konvaTheme)" />
     </template>
 
     <!-- ── Seats (shared for both shapes) ── -->
     <template v-for="(guest, idx) in table.guests" :key="guest.id">
-      <v-line :config="connectorConfig(table, idx, konvaTheme)" />
-      <v-circle :config="seatCircleConfig(table, idx, konvaTheme)" />
-      <v-text :config="guestNameConfig(table, guest, idx, konvaTheme)" />
+      <VLine :config="connectorConfig(table, idx, konvaTheme)" />
+      <VCircle :config="seatCircleConfig(table, idx, konvaTheme)" />
+      <VText :config="guestNameConfig(table, guest, idx, konvaTheme)" />
     </template>
-  </v-group>
+  </VGroup>
 </template>

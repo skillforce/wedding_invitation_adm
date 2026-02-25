@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import Material from '@primeuix/themes/material'
-import VueKonva from 'vue-konva'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
@@ -28,7 +27,6 @@ app.use(PrimeVue, {
     },
   },
 })
-app.use(VueKonva)
 
 const themeStore = useThemeStore(pinia)
 themeStore.initTheme()
