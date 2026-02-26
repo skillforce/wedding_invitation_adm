@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { GuestsViewDto } from '@/api/guests'
+import type { GuestDetailViewDto } from '@/api/guests'
 import personIconUrl from '@/assets/person.svg'
 
 const props = defineProps<{
-  guest: GuestsViewDto
+  guest: GuestDetailViewDto
   viewMode: 'grid' | 'list'
 }>()
 const { t } = useI18n()
 
 const drinksText = computed(() => {
-  if (!props.guest.preferred_drinks.length) {
+  if (!props.guest.response?.preferred_drinks.length) {
     return t('guests.none')
   }
 
-  return props.guest.preferred_drinks.join(', ')
+  return props.guest.response.preferred_drinks.join(', ')
 })
 
 const otherPreferencesText = computed(
-  () => props.guest.other_preferences?.trim() || t('guests.none'),
+  () => props.guest.response?.other_preferences?.trim() || t('guests.none'),
 )
 </script>
 
@@ -39,6 +39,11 @@ const otherPreferencesText = computed(
       <div class="guest-field">
         <dt>{{ t('guests.otherPreferences') }}</dt>
         <dd class="guest-field-value">{{ otherPreferencesText }}</dd>
+      </div>
+
+      <div v-if="guest.response?.plus_one" class="guest-field">
+        <dt>{{ t('guests.plusOne') }}</dt>
+        <dd class="guest-field-value">{{ guest.response.plus_one_name || t('guests.yes') }}</dd>
       </div>
     </dl>
   </article>

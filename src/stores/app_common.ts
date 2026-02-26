@@ -10,6 +10,7 @@ const DEFAULT_SIDEBAR_OPTION = AppRoute.Guests
 export const useAppCommonStore = defineStore('app_common', () => {
   const selectedSidebarOption = ref<string>(DEFAULT_SIDEBAR_OPTION)
   const errorMessage = ref<string | null>(null)
+  const isLoading = ref(false)
 
   function setSelectedSidebarOption(path: string) {
     if (!path) {
@@ -33,12 +34,23 @@ export const useAppCommonStore = defineStore('app_common', () => {
     errorMessage.value = null
   }
 
+  function showSpinner() {
+    isLoading.value = true
+  }
+
+  function hideSpinner() {
+    isLoading.value = false
+  }
+
   return {
     selectedSidebarOption,
     errorMessage,
+    isLoading,
     setSelectedSidebarOption,
     showError,
     clearError,
+    showSpinner,
+    hideSpinner,
   }
 }, {
   persist: {

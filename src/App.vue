@@ -2,9 +2,11 @@
 import ThemeSwitch from '@/components/ThemeSwitch.vue'
 import LocaleSwitch from '@/components/LocaleSwitch.vue'
 import GlobalErrorAlert from '@/components/GlobalErrorAlert.vue'
+import GlobalSpinner from '@/components/GlobalSpinner.vue'
 </script>
 
 <template>
+  <GlobalSpinner />
   <GlobalErrorAlert />
   <RouterView />
   <div class="global-controls">

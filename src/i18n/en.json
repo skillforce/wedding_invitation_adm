@@ -33,7 +33,19 @@
     "respondedTitle": "Guests who responded:",
     "preferredDrinks": "Preferred drinks:",
     "otherPreferences": "Other preferences / wishes:",
-    "none": "None"
+    "none": "None",
+    "yes": "Yes",
+    "plusOne": "Plus one:",
+    "answered": "Answered",
+    "notAnswered": "Not answered",
+    "filterAll": "All",
+    "noMatchingGuests": "No guests match this filter.",
+    "addGuestPlaceholder": "Guest name (3–20 chars)",
+    "addGuestButton": "Add guest",
+    "tabs": {
+      "responses": "Responses",
+      "manage": "Guests"
+    }
   },
   "seating": {
     "addTable": "Add table",
@@ -77,7 +89,9 @@
       "loginFailed": "Login failed"
     },
     "guests": {
-      "failedToLoad": "Failed to load guests"
+      "failedToLoad": "Failed to load guests",
+      "failedToCreate": "Failed to add guest",
+      "duplicateGuest": "A guest with this name already exists"
     },
     "seating": {
       "failedToLoadTables": "Failed to load seating tables",

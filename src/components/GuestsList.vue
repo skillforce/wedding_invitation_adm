@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import type { GuestsViewDto } from '@/api/guests'
+import type { GuestDetailViewDto } from '@/api/guests'
 import GuestListItem from '@/components/GuestListItem.vue'
 import GuestsViewToggle from '@/components/GuestsViewToggle.vue'
 
 defineProps<{
-  guests: GuestsViewDto[]
+  guests: GuestDetailViewDto[]
 }>()
 
 const viewMode = defineModel<'grid' | 'list'>({ required: true })

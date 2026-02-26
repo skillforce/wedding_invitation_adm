@@ -33,7 +33,19 @@
     "respondedTitle": "Ответившие гости:",
     "preferredDrinks": "Предпочитаемые напитки:",
     "otherPreferences": "Другие предпочтения / желания:",
-    "none": "Нет"
+    "none": "Нет",
+    "yes": "Да",
+    "plusOne": "Плюс один:",
+    "answered": "Ответил",
+    "notAnswered": "Не ответил",
+    "filterAll": "Все",
+    "noMatchingGuests": "Нет гостей по этому фильтру.",
+    "addGuestPlaceholder": "Имя гостя (3–20 символов)",
+    "addGuestButton": "Добавить",
+    "tabs": {
+      "responses": "Ответы",
+      "manage": "Гости"
+    }
   },
   "seating": {
     "addTable": "Добавить стол",
@@ -77,7 +89,9 @@
       "loginFailed": "Ошибка входа"
     },
     "guests": {
-      "failedToLoad": "Не удалось загрузить гостей"
+      "failedToLoad": "Не удалось загрузить гостей",
+      "failedToCreate": "Не удалось добавить гостя",
+      "duplicateGuest": "Гость с таким именем уже существует"
     },
     "seating": {
       "failedToLoadTables": "Не удалось загрузить столы",
