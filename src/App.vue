@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ThemeSwitch from '@/components/ThemeSwitch.vue'
-import LocaleSwitch from '@/components/LocaleSwitch.vue'
-import GlobalErrorAlert from '@/components/shared/GlobalErrorAlert.vue'
-import GlobalSpinner from '@/components/shared/GlobalSpinner.vue'
+import ThemeSwitch from '@/components/shared/ThemeSwitch.vue'
+import LocaleSwitch from '@/components/shared/LocaleSwitch.vue'
+import GlobalErrorAlert from '@/components/global/GlobalErrorAlert.vue'
+import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 </script>
 
 <template>

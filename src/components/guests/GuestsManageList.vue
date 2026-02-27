@@ -2,9 +2,9 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Select from 'primevue/select'
-import type { GuestDetailViewDto } from '@/api/guests'
-import GuestManageListItem from '@/components/GuestManageListItem.vue'
-import AddGuestForm from '@/components/AddGuestForm.vue'
+import type { GuestDetailViewDto } from '@/api/guests.ts'
+import GuestManageListItem from '@/components/guests/GuestManageListItem.vue'
+import AddGuestForm from '@/components/guests/AddGuestForm.vue'
 
 const props = defineProps<{
   guests: GuestDetailViewDto[]

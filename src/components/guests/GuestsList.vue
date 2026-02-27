@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import type { GuestDetailViewDto } from '@/api/guests'
-import GuestListItem from '@/components/GuestListItem.vue'
-import GuestsViewToggle from '@/components/GuestsViewToggle.vue'
+import type { GuestDetailViewDto } from '@/api/guests.ts'
+import GuestListItem from '@/components/guests/GuestListItem.vue'
+import GuestsViewToggle from '@/components/guests/GuestsViewToggle.vue'
 
 defineProps<{
   guests: GuestDetailViewDto[]

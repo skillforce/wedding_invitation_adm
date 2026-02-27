@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useLocaleStore } from '@/stores/locale'
+import { useLocaleStore } from '@/stores/locale.ts'
 import type { AppLocale } from '@/i18n'
 
 const localeStore = useLocaleStore()

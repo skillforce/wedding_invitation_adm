@@ -8,8 +8,8 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import { useGuestsStore } from '@/stores/guests'
-import GuestsList from '@/components/GuestsList.vue'
-import GuestsManageList from '@/components/GuestsManageList.vue'
+import GuestsList from '@/components/guests/GuestsList.vue'
+import GuestsManageList from '@/components/guests/GuestsManageList.vue'
 
 const guestsStore = useGuestsStore()
 const guests = computed(() => guestsStore.guests)

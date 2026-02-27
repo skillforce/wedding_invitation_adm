@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { GuestDetailViewDto } from '@/api/guests'
+import type { GuestDetailViewDto } from '@/api/guests.ts'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
 
 const props = defineProps<{

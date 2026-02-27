@@ -2,8 +2,8 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
-import type { GuestDetailViewDto } from '@/api/guests'
-import { useAuthStore } from '@/stores/auth'
+import type { GuestDetailViewDto } from '@/api/guests.ts'
+import { useAuthStore } from '@/stores/auth.ts'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
 
 const props = defineProps<{

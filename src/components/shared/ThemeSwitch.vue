@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/theme'
+import { useThemeStore } from '@/stores/theme.ts'
 
 const themeStore = useThemeStore()
 const { isDarkTheme } = storeToRefs(themeStore)

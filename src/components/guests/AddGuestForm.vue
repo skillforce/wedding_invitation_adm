@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
@@ -23,7 +23,7 @@ function submitAdd() {
 }
 
 
-const isAddGuestButtonDisabled = newGuestName.value.trim().length < 3
+const isAddGuestButtonDisabled = computed(() => newGuestName.value.trim().length < 3)
 </script>
 
 <template>
@@ -32,8 +32,7 @@ const isAddGuestButtonDisabled = newGuestName.value.trim().length < 3
       v-model="newGuestName"
       :placeholder="t('guests.addGuestPlaceholder')"
       class="add-input"
-      :minlength="3"
-      :maxlength="20"
+
     />
     <Button
       type="submit"
