@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppCommonStore } from '@/stores/app_common'
+import { useAppCommonStore } from '@/stores/app_common.ts'
 
 const appCommon = useAppCommonStore()
 </script>

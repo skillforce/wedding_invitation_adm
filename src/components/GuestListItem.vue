@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { GuestDetailViewDto } from '@/api/guests'
-import personIconUrl from '@/assets/person.svg'
+import UserAvatar from '@/components/shared/UserAvatar.vue'
 
 const props = defineProps<{
   guest: GuestDetailViewDto
@@ -26,7 +26,7 @@ const otherPreferencesText = computed(
 <template>
   <article :class="['guest-item', viewMode === 'grid' ? 'guest-item--grid' : 'guest-item--list']">
     <header class="guest-header">
-      <img :src="personIconUrl" :alt="t('a11y.guestAvatar')" class="avatar-image" />
+      <UserAvatar :size="40" :alt="t('a11y.guestAvatar')" />
       <p class="guest-name">{{ guest.name }}</p>
     </header>
 
@@ -65,15 +65,6 @@ const otherPreferencesText = computed(
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
-}
-
-.avatar-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  flex-shrink: 0;
-  object-fit: cover;
-  filter: var(--color-avatar-filter-soft);
 }
 
 .guest-name {

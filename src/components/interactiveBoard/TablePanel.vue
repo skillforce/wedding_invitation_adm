@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Button from 'primevue/button'
 import { useSeatingStore, type SeatingTable } from '@/stores/seating'
+import TableGuestList from './TableGuestList.vue'
 
 const props = defineProps<{ table: SeatingTable }>()
 const emit = defineEmits<{ close: [] }>()
@@ -11,14 +11,11 @@ const seatingStore = useSeatingStore()
 const { t } = useI18n()
 
 const editingName = ref(props.table.name)
-const newGuestName = ref('')
-const newGuestInputRef = ref<HTMLInputElement | null>(null)
 
 watch(
   () => props.table.id,
   () => {
     editingName.value = props.table.name
-    newGuestName.value = ''
   },
 )
 
@@ -26,17 +23,6 @@ function saveName() {
   if (editingName.value.trim()) {
     seatingStore.renameTable(props.table.id, editingName.value.trim())
   }
-}
-
-function addGuest() {
-  if (!newGuestName.value.trim()) return
-  seatingStore.addGuest(props.table.id, newGuestName.value.trim())
-  newGuestName.value = ''
-  newGuestInputRef.value?.focus()
-}
-
-function removeGuest(guestId: string) {
-  seatingStore.removeGuest(props.table.id, guestId)
 }
 
 async function deleteTable() {
@@ -60,37 +46,7 @@ async function deleteTable() {
       <button class="close-btn" :aria-label="t('a11y.closePanel')" @click="emit('close')">✕</button>
     </div>
 
-    <div class="panel-section">
-      <p class="section-label">
-        {{ t('seating.sectionGuests') }}
-        <span class="guest-count">{{ table.guests.length }}</span>
-      </p>
-
-      <ul class="guest-list">
-        <li v-if="table.guests.length === 0" class="guest-empty">{{ t('seating.noGuestsYet') }}</li>
-        <li v-for="guest in table.guests" :key="guest.id" class="guest-item">
-          <span class="guest-name">{{ guest.name }}</span>
-          <button class="remove-btn" :aria-label="t('a11y.removeGuest')" @click="removeGuest(guest.id)">✕</button>
-        </li>
-      </ul>
-
-      <div class="add-guest-form">
-        <input
-          ref="newGuestInputRef"
-          v-model="newGuestName"
-          class="guest-input"
-          :placeholder="t('seating.guestNamePlaceholder')"
-          @keydown.enter="addGuest"
-        />
-        <Button
-          icon="pi pi-user-plus"
-          size="small"
-          :disabled="!newGuestName.trim()"
-          :aria-label="t('a11y.addGuest')"
-          @click="addGuest"
-        />
-      </div>
-    </div>
+    <TableGuestList :table="table" />
 
     <div class="panel-footer">
       <button class="delete-table-btn" @click="deleteTable">{{ t('seating.deleteTable') }}</button>
@@ -196,120 +152,6 @@ async function deleteTable() {
   color: var(--board-close-hover-text);
 }
 
-.panel-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.section-label {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--board-section-text);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.guest-count {
-  background: var(--board-badge-bg);
-  color: var(--board-badge-text);
-  border-radius: 10px;
-  padding: 1px 7px;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.guest-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.guest-empty {
-  font-size: 12px;
-  color: var(--board-empty-text);
-  padding: 10px 0;
-  text-align: center;
-  font-style: italic;
-}
-
-.guest-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--board-item-bg);
-  border: 1px solid var(--board-item-border);
-  border-radius: 7px;
-  padding: 7px 10px;
-  gap: 8px;
-}
-
-.guest-name {
-  font-size: 13px;
-  color: var(--board-item-text);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.remove-btn {
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border: none;
-  background: transparent;
-  color: var(--board-remove-text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  border-radius: 4px;
-  transition: background 0.15s, color 0.15s;
-}
-
-.remove-btn:hover {
-  background: var(--board-remove-hover-bg);
-  color: var(--board-remove-hover-text);
-}
-
-.add-guest-form {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-top: 2px;
-}
-
-.guest-input {
-  flex: 1;
-  min-width: 0;
-  background: var(--board-guest-input-bg);
-  border: 1px solid var(--board-guest-input-border);
-  border-radius: 7px;
-  padding: 7px 10px;
-  color: var(--board-input-text);
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.18s;
-}
-
-.guest-input:focus {
-  border-color: var(--board-guest-input-focus);
-}
-
-.guest-input::placeholder {
-  color: var(--board-placeholder);
-}
-
 .panel-footer {
   margin-top: auto;
   padding-top: 8px;
@@ -334,6 +176,7 @@ async function deleteTable() {
   transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
 }
+
 .delete-table-btn:hover {
   background: #dc2626;
   box-shadow: 0 4px 14px rgba(239, 68, 68, 0.5);

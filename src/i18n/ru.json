@@ -40,6 +40,7 @@
     "notAnswered": "Не ответил",
     "filterAll": "Все",
     "noMatchingGuests": "Нет гостей по этому фильтру.",
+    "invitationUrlPlaceholder": "URL сайта приглашения",
     "addGuestPlaceholder": "Имя гостя (3–20 символов)",
     "addGuestButton": "Добавить",
     "tabs": {
@@ -72,6 +73,7 @@
     "closePanel": "Закрыть панель",
     "removeGuest": "Удалить гостя",
     "addGuest": "Добавить гостя",
+    "copyInvitationLink": "Скопировать ссылку приглашения",
     "menuOptionIcon": "Иконка пункта меню",
     "logoutIcon": "Иконка выхода",
     "burgerMenuIcon": "Иконка меню",
@@ -91,7 +93,8 @@
     "guests": {
       "failedToLoad": "Не удалось загрузить гостей",
       "failedToCreate": "Не удалось добавить гостя",
-      "duplicateGuest": "Гость с таким именем уже существует"
+      "duplicateGuest": "Гость с таким именем уже существует",
+      "invalidUrl": "Введите корректный URL, начинающийся с http:// или https://"
     },
     "seating": {
       "failedToLoadTables": "Не удалось загрузить столы",

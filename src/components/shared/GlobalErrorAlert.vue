@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useAppCommonStore } from '@/stores/app_common'
+import { useAppCommonStore } from '@/stores/app_common.ts'
 
 const DISMISS_MS = 5000
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import personIconUrl from '@/assets/person.svg'
+import UserAvatar from '@/components/shared/UserAvatar.vue'
 
 defineProps<{
   login?: string
@@ -12,7 +12,7 @@ const { t } = useI18n()
 
 <template>
   <div :class="['profile-card', { collapsed }]">
-    <img :src="personIconUrl" :alt="t('a11y.userAvatar')" class="avatar-image" />
+    <UserAvatar :size="44" :alt="t('a11y.userAvatar')" variant="default" />
     <div v-if="!collapsed" class="profile-text">
       <p class="profile-label">{{ t('profile.loggedAs') }}</p>
       <p class="profile-login">{{ login || t('profile.unknownUser') }}</p>
@@ -33,15 +33,6 @@ const { t } = useI18n()
 
 .profile-card.collapsed {
   padding: 0.45rem;
-}
-
-.avatar-image {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  flex-shrink: 0;
-  object-fit: cover;
-  filter: var(--color-avatar-filter);
 }
 
 .profile-text {

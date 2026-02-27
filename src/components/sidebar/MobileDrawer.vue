@@ -3,6 +3,7 @@ import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/ProfileCard.vue'
+import NavButton from './NavButton.vue'
 import { navItems } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
 import { useAppCommonStore } from '@/stores/app_common'
@@ -48,22 +49,22 @@ const navigate = async (path: string) => {
       <ProfileCard :login="login" />
 
       <nav class="drawer-nav">
-        <button
+        <NavButton
           v-for="item in navItems"
           :key="item.path"
-          class="nav-btn"
-          :class="{ active: isActive(item.path) }"
+          :icon-url="item.iconUrl"
+          :label="t(item.labelKey)"
+          :active="isActive(item.path)"
           @click="navigate(item.path)"
-        >
-          <img :src="item.iconUrl" class="nav-icon" :alt="t('a11y.menuOptionIcon')" />
-          <span class="nav-label">{{ t(item.labelKey) }}</span>
-        </button>
+        />
       </nav>
 
-      <button class="nav-btn logout-btn" :aria-label="t('nav.logout')" @click="emit('logout')">
-        <img :src="logoutIconUrl" class="nav-icon" :alt="t('a11y.logoutIcon')" />
-        <span class="nav-label">{{ t('nav.logout') }}</span>
-      </button>
+      <NavButton
+        :icon-url="logoutIconUrl"
+        :label="t('nav.logout')"
+        :icon-alt="t('a11y.logoutIcon')"
+        @click="emit('logout')"
+      />
     </div>
   </BottomDrawer>
 </template>
@@ -82,43 +83,4 @@ const navigate = async (path: string) => {
   align-content: start;
 }
 
-.nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.nav-btn:hover {
-  background: var(--color-hover);
-}
-
-.nav-btn.active {
-  background: var(--color-active);
-}
-
-.nav-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  filter: var(--color-icon-filter);
-  transition: filter 0.2s ease;
-}
-
-.nav-btn.active .nav-icon,
-.nav-btn:hover .nav-icon {
-  filter: var(--color-icon-filter-active);
-}
-
-.nav-label {
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
 </style>

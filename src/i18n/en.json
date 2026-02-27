@@ -40,6 +40,7 @@
     "notAnswered": "Not answered",
     "filterAll": "All",
     "noMatchingGuests": "No guests match this filter.",
+    "invitationUrlPlaceholder": "Invitation site URL",
     "addGuestPlaceholder": "Guest name (3–20 chars)",
     "addGuestButton": "Add guest",
     "tabs": {
@@ -72,6 +73,7 @@
     "closePanel": "Close panel",
     "removeGuest": "Remove guest",
     "addGuest": "Add guest",
+    "copyInvitationLink": "Copy invitation link",
     "menuOptionIcon": "Menu option icon",
     "logoutIcon": "Logout icon",
     "burgerMenuIcon": "Menu icon",
@@ -91,7 +93,8 @@
     "guests": {
       "failedToLoad": "Failed to load guests",
       "failedToCreate": "Failed to add guest",
-      "duplicateGuest": "A guest with this name already exists"
+      "duplicateGuest": "A guest with this name already exists",
+      "invalidUrl": "Please enter a valid URL starting with http:// or https://"
     },
     "seating": {
       "failedToLoadTables": "Failed to load seating tables",

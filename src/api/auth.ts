@@ -12,6 +12,7 @@ export interface AuthResponseDto {
 export interface MeResponseDto {
   id: number
   login: string
+  invitationUrl: string | null
 }
 
 export const AUTH_API = {
@@ -47,6 +48,10 @@ export const AUTH_API = {
       throw new Error('errors.auth.invalidMeResponse')
     }
 
-    return { id: payload.id, login: payload.login }
+    return {
+      id: payload.id,
+      login: payload.login,
+      invitationUrl: payload.invitationUrl ?? null,
+    }
   },
 }

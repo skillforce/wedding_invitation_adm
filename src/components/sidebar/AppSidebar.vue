@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/ProfileCard.vue'
 import SidebarToggle from '@/components/SidebarToggle.vue'
+import NavButton from './NavButton.vue'
 import { navItems } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
 import { useAppCommonStore } from '@/stores/app_common'
@@ -50,29 +51,27 @@ const onClickOption = async (path: string) => {
     </div>
 
     <nav class="sidebar-nav">
-      <button
+      <NavButton
         v-for="item in navItems"
         :key="item.path"
-        class="nav-btn"
-        :class="{ active: isActive(item.path), collapsed }"
+        :icon-url="item.iconUrl"
+        :label="t(item.labelKey)"
+        :active="isActive(item.path)"
+        :collapsed="collapsed"
         @click="onClickOption(item.path)"
-      >
-        <img :src="item.iconUrl" class="nav-icon" :alt="t('a11y.menuOptionIcon')" />
-        <span v-if="!collapsed" class="nav-label">{{ t(item.labelKey) }}</span>
-      </button>
+      />
     </nav>
-    <div :class="['sidebar-controls', { collapsed }]" >
+    <div :class="['sidebar-controls', { collapsed }]">
       <SidebarToggle :collapsed="collapsed" @toggle="emit('toggle')" />
     </div>
-    <button
-      class="nav-btn logout-btn"
-      :class="{ collapsed }"
-      :aria-label="t('nav.logout')"
+    <NavButton
+      :icon-url="logoutIconUrl"
+      :label="t('nav.logout')"
+      :icon-alt="t('a11y.logoutIcon')"
+      :collapsed="collapsed"
+      class="logout-btn"
       @click="emit('logout')"
-    >
-      <img :src="logoutIconUrl" class="nav-icon" :alt="t('a11y.logoutIcon')" />
-      <span v-if="!collapsed" class="nav-label">{{ t('nav.logout') }}</span>
-    </button>
+    />
   </aside>
 </template>
 
@@ -112,51 +111,6 @@ const onClickOption = async (path: string) => {
   display: grid;
   gap: 0.5rem;
   align-content: start;
-}
-
-.nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.nav-btn:hover {
-  background: var(--color-hover);
-}
-
-.nav-btn.active {
-  background: var(--color-active);
-}
-
-.nav-btn.collapsed {
-  justify-content: center;
-  padding: 0.5rem;
-}
-
-.nav-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  filter: var(--color-icon-filter);
-  transition: filter 0.2s ease;
-}
-
-.nav-btn.active .nav-icon,
-.nav-btn:hover .nav-icon {
-  filter: var(--color-icon-filter-active);
-}
-
-.nav-label {
-  font-size: 0.9rem;
-  white-space: nowrap;
 }
 
 .logout-btn {
