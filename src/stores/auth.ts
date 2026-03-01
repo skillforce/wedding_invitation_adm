@@ -20,7 +20,11 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async fetchMe() {
-      this.user = await AUTH_API.me()
+      if (!this.token) {
+        throw new Error('errors.auth.unauthorized')
+      }
+
+      this.user = await AUTH_API.me(this.token)
     },
 
     async checkAuthOnAppOpen() {

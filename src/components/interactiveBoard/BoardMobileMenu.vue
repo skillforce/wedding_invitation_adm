@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { Stage } from 'konva/lib/Stage'
 import burgerIconUrl from '@/assets/burger_menu_icon.svg'
 import BottomDrawer from '@/components/shared/BottomDrawer.vue'
 import { useExportData } from './composables/useExportData'
+import ExportPdf from './ExportPdf.vue'
 
-defineProps<{ isFitted: boolean }>()
-const emit = defineEmits<{ addTable: []; exportPdf: []; fitCanvas: [] }>()
+defineProps<{ isFitted: boolean; stageRef: { getNode(): Stage } | null }>()
+const emit = defineEmits<{ addTable: []; fitCanvas: [] }>()
 
 const open = ref(false)
 const { t } = useI18n()
@@ -23,11 +25,6 @@ function addTable() {
 
 function fitCanvas() {
   emit('fitCanvas')
-  close()
-}
-
-function exportPdf() {
-  emit('exportPdf')
   close()
 }
 
@@ -53,10 +50,12 @@ function exportData() {
           <i class="pi pi-download" />
           <span>{{ t('seating.exportData') }}</span>
         </button>
-        <button class="action-btn" @click="exportPdf">
-          <i class="pi pi-file-pdf" />
-          <span>{{ t('seating.savePdf') }}</span>
-        </button>
+        <ExportPdf :stage-ref="stageRef" v-slot="{ onClick }">
+          <button class="action-btn" @click="() => { onClick(); close() }">
+            <i class="pi pi-file-pdf" />
+            <span>{{ t('seating.savePdf') }}</span>
+          </button>
+        </ExportPdf>
       </nav>
     </BottomDrawer>
 

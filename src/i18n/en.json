@@ -18,6 +18,7 @@
   "nav": {
     "guests": "Guests",
     "seatingArrangements": "Seating Arrangements",
+    "budget": "Budget",
     "logout": "Logout"
   },
   "profile": {
@@ -80,6 +81,68 @@
     "closeIcon": "Close icon",
     "userAvatar": "User avatar",
     "guestAvatar": "Guest avatar"
+  },
+  "budget": {
+    "title": "Wedding Budget",
+    "empty": "Add a section and expense items",
+    "paid": "Paid",
+    "name": "Name",
+    "estimated": "Estimated",
+    "actual": "Actual",
+    "deviation": "Deviation",
+    "priorityColumn": "Priority",
+    "itemNamePlaceholder": "Item name...",
+    "notKnownYet": "Not known",
+    "addButton": "Add",
+    "addItem": "Add item",
+    "addSection": "Add section",
+    "deleteItem": "Delete item",
+    "deleteSection": "Delete section",
+    "editName": "Edit name",
+    "save": "Save",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "newSectionTitle": "New section",
+    "newItemTitle": "New budget item",
+    "sectionNamePlaceholder": "Section name...",
+    "nameRequired": "Name cannot be empty",
+    "limitMustBePositive": "Limit must be greater than zero",
+    "cancel": "Cancel",
+    "confirm": "Add",
+    "summary": {
+      "budgetLimit": "Budget limit",
+      "planned": "Planned",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "saved": "Saved"
+    },
+    "priority": {
+      "must": "Must have",
+      "want": "Want",
+      "maybe": "Optional"
+    },
+    "chart": {
+      "used": "used",
+      "must": "Must have (!)",
+      "want": "Want (♥)",
+      "maybe": "Optional (?)"
+    },
+    "export": {
+      "button": "Export to Excel",
+      "section": "Section",
+      "deviation": "Deviation",
+      "total": "Total",
+      "subtotal": "Section subtotal",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "sidebar": {
+      "distribution": "Distribution by priority",
+      "budgetLimit": "Budget limit",
+      "doubleClickToEdit": "Double-click to edit",
+      "legend": "Legend",
+      "currency": "Currency"
+    }
   },
   "errors": {
     "internalServerError": "Internal server error",

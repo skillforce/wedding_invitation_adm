@@ -30,12 +30,14 @@ async function copyLink() {
 
 <template>
   <div class="guest-row">
-    <UserAvatar :size="28" :alt="t('a11y.guestAvatar')" />
+    <UserAvatar :size="28" :alt="t('a11y.guestAvatar')" class="guest-avatar" />
     <span class="guest-name">{{ guest.name }}</span>
     <span :class="['status-badge', guest.is_already_answered ? 'status--answered' : 'status--pending']">
-      {{ guest.is_already_answered ? t('guests.answered') : t('guests.notAnswered') }}
+      <span class="status-text">{{ guest.is_already_answered ? t('guests.answered') : t('guests.notAnswered') }}</span>
+      <i v-if="!guest.is_already_answered" class="pi pi-clock status-icon" />
     </span>
     <Button
+      class="link-btn"
       v-if="invitationUrl"
       :icon="copied ? 'pi pi-check' : 'pi pi-link'"
       size="small"
@@ -46,6 +48,7 @@ async function copyLink() {
       @click="copyLink"
     />
     <Button
+      class="link-btn"
       icon="pi pi-trash"
       size="small"
       severity="danger"
@@ -62,7 +65,7 @@ async function copyLink() {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.35rem 0.6rem;
   border-radius: 8px;
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
@@ -94,5 +97,34 @@ async function copyLink() {
 .status--pending {
   background: color-mix(in srgb, var(--p-surface-400) 20%, transparent);
   color: var(--color-text-muted);
+}
+
+.status-icon {
+  display: none;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .status--pending .status-text {
+    display: none;
+  }
+
+  .status--pending .status-icon {
+    display: inline;
+  }
+
+  .status-badge {
+    padding: 0.15rem 0.35rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .guest-avatar{
+    display: none;
+  }
+  .link-btn {
+    width: 20px;
+    height: 20px;
+  }
 }
 </style>

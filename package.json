@@ -25,7 +25,8 @@
     "vue": "^3.5.27",
     "vue-i18n": "^11.2.8",
     "vue-konva": "^3.3.0",
-    "vue-router": "^5.0.1"
+    "vue-router": "^5.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",

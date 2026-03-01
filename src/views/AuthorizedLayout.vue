@@ -61,15 +61,17 @@ const onLogout = async () => {
 
 <style scoped>
 .authorized-layout {
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   display: grid;
   grid-template-columns: auto 1fr;
   background: var(--color-bg-app);
 }
 
 .authorized-content {
-  padding: 10px 5px ;
+  padding: 10px 5px;
   overflow: auto;
+  min-height: 0;
 }
 
 .mobile-header {

@@ -9,16 +9,17 @@ const NAV_PATH_SET = new Set(navItems.map((item) => item.path))
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
   const appCommon = useAppCommonStore()
+  const isLoginRoute = to.path === AppRoute.Login
 
   if (!auth.isAuthChecked) {
     await auth.checkAuthOnAppOpen()
   }
 
-  if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    return AppRoute.Login
+  if (!isLoginRoute && !auth.isAuthenticated) {
+    return { path: AppRoute.Login, replace: true }
   }
 
-  if (to.path === AppRoute.Login && auth.isAuthenticated) {
+  if (isLoginRoute && auth.isAuthenticated) {
     const savedPath = appCommon.selectedSidebarOption
     return NAV_PATH_SET.has(savedPath) ? savedPath : AppRoute.Guests
   }

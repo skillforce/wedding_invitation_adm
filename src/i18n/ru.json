@@ -18,6 +18,7 @@
   "nav": {
     "guests": "Гости",
     "seatingArrangements": "Рассадка гостей",
+    "budget": "Бюджет",
     "logout": "Выйти"
   },
   "profile": {
@@ -80,6 +81,68 @@
     "closeIcon": "Иконка закрытия",
     "userAvatar": "Аватар пользователя",
     "guestAvatar": "Аватар гостя"
+  },
+  "budget": {
+    "title": "Бюджет свадьбы",
+    "empty": "Добавьте раздел и статьи расходов",
+    "paid": "Оплачено",
+    "name": "Название",
+    "estimated": "Предв. цена",
+    "actual": "Факт. цена",
+    "deviation": "Отклонение",
+    "priorityColumn": "Важность",
+    "itemNamePlaceholder": "Название статьи...",
+    "notKnownYet": "Не известно",
+    "addButton": "Добавить",
+    "addItem": "Добавить статью",
+    "addSection": "Добавить раздел",
+    "deleteItem": "Удалить статью",
+    "deleteSection": "Удалить раздел",
+    "editName": "Редактировать название",
+    "save": "Сохранить",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "newSectionTitle": "Новый раздел",
+    "newItemTitle": "Новая статья расходов",
+    "sectionNamePlaceholder": "Название раздела...",
+    "nameRequired": "Название не может быть пустым",
+    "limitMustBePositive": "Лимит должен быть больше нуля",
+    "cancel": "Отмена",
+    "confirm": "Добавить",
+    "summary": {
+      "budgetLimit": "Лимит бюджета",
+      "planned": "Запланировано оплатить",
+      "paid": "Оплачено",
+      "remaining": "Остаток",
+      "saved": "Экономия"
+    },
+    "priority": {
+      "must": "Обязательно",
+      "want": "Хочется",
+      "maybe": "Можно без"
+    },
+    "chart": {
+      "used": "использовано",
+      "must": "Обязательно (!)",
+      "want": "Хочется (♥)",
+      "maybe": "Можно без (?)"
+    },
+    "export": {
+      "button": "Экспорт в Excel",
+      "section": "Раздел",
+      "deviation": "Отклонение",
+      "total": "Итого",
+      "subtotal": "Итого по разделу",
+      "yes": "Да",
+      "no": "Нет"
+    },
+    "sidebar": {
+      "distribution": "Распределение по важности",
+      "budgetLimit": "Лимит бюджета",
+      "doubleClickToEdit": "Двойной клик — изменить",
+      "legend": "Обозначения",
+      "currency": "Валюта"
+    }
   },
   "errors": {
     "internalServerError": "Внутренняя ошибка сервера",

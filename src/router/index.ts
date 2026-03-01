@@ -16,6 +16,10 @@ const routes = [
         path: AppChildRoute.SeatingArrangements,
         component: () => import('../views/SeatingArrangements.vue'),
       },
+      {
+        path: AppChildRoute.Budget,
+        component: () => import('../views/Budget.vue'),
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: AppRoute.Login },

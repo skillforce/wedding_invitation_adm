@@ -78,12 +78,13 @@ const onClickOption = async (path: string) => {
 <style scoped>
 .app-sidebar {
   width: 260px;
+  overflow: hidden;
   border-right: 1px solid var(--color-border);
   background: var(--color-sidebar-bg);
   color: var(--color-text-primary);
   padding: 0.75rem;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
   gap: 1rem;
   transition: width 0.2s ease;
 }
@@ -111,6 +112,8 @@ const onClickOption = async (path: string) => {
   display: grid;
   gap: 0.5rem;
   align-content: start;
+  overflow:hidden;
+  min-height: 0;
 }
 
 .logout-btn {
