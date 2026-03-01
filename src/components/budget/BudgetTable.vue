@@ -7,7 +7,6 @@ import BudgetSectionRow from './BudgetSection.vue'
 import BudgetRow from './BudgetTableRow/BudgetRowDesktop.vue'
 import BudgetMobileCard from './BudgetMobileCard.vue'
 import BudgetTableHeader from './BudgetTableHeader.vue'
-import BudgetTableFooter from './BudgetTableFooter.vue'
 
 const store = useBudgetStore()
 const { t } = useI18n()
