@@ -61,12 +61,12 @@ defineExpose({ open })
         :error-message="t('budget.nameRequired')"
         :autofocus="true"
         :maxlength="100"
-        @keydown.enter="confirm"
+        @keyup.enter.prevent.stop="confirm"
       />
     </div>
     <template #footer>
       <Button :label="t('budget.cancel')" severity="secondary" text @click="visible = false" />
-      <Button :label="t('budget.confirm')" @click="confirm" />
+      <Button :label="t('budget.confirm')" @click="confirm"  />
     </template>
   </Dialog>
 </template>
