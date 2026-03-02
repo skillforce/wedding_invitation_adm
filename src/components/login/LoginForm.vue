@@ -23,7 +23,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <form class="login-form" @submit.prevent="onSubmit" @keyup.enter="onSubmit">
+  <form class="login-form" @submit.prevent="onSubmit">
     <div class="field">
       <label for="login">{{ t('auth.loginLabel') }}</label>
       <InputText id="login" v-model="loginValue" fluid />

@@ -27,7 +27,7 @@ const onCloseMobileSidebar = () => {
 }
 
 const onLogout = async () => {
-  authStore.logout()
+  await authStore.logout()
   isMobileSidebarOpen.value = false
   await router.push(AppRoute.Login)
 }

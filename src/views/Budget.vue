@@ -4,7 +4,7 @@ import Card from 'primevue/card'
 import SummaryBar from '@/components/budget/summary/SummaryBar.vue'
 import BudgetTable from '@/components/budget/BudgetTable.vue'
 import AddRowMenu from '@/components/budget/AddRowMenu.vue'
-import ExportExcel from '@/components/budget/ExportExcel.vue'
+import ExportExcel from "@/components/budget/ExportExcel.vue";
 
 const { t } = useI18n()
 </script>
@@ -13,7 +13,7 @@ const { t } = useI18n()
   <div class="budget-page">
     <div class="page-header">
       <h1 class="page-title">{{ t('budget.title') }}</h1>
-      <ExportExcel />
+
     </div>
 
     <SummaryBar class="summary-bar" />
@@ -25,11 +25,13 @@ const { t } = useI18n()
             <BudgetTable />
             <div class="add-row-footer">
               <AddRowMenu />
+              <ExportExcel />
             </div>
           </template>
         </Card>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -85,6 +87,8 @@ const { t } = useI18n()
 
 .add-row-footer {
   padding: 0.75rem 1rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .sidebar-col {

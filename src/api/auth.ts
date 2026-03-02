@@ -5,34 +5,65 @@ export interface AuthDto {
   password: string
 }
 
-export interface AuthResponseDto {
-  accessToken: string
-}
-
 export interface MeResponseDto {
   id: number
   login: string
   invitationUrl: string | null
 }
 
+export interface LoginResponseDto extends MeResponseDto {
+  accessToken: string
+}
+
 export const AUTH_API = {
-  async login(authDto: AuthDto): Promise<AuthResponseDto> {
+  async login(authDto: AuthDto): Promise<LoginResponseDto> {
     const response = await fetch(`${BASE_API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(authDto),
+      credentials: 'include',
     })
 
     if (!response.ok) {
       throw await parseApiError(response)
     }
 
-    const payload = (await response.json()) as Partial<AuthResponseDto>
+    const payload = (await response.json()) as Partial<LoginResponseDto>
+    if (!payload.accessToken || typeof payload.id !== 'number' || typeof payload.login !== 'string') {
+      throw new Error('errors.auth.noAccessToken')
+    }
+
+    return {
+      accessToken: payload.accessToken,
+      id: payload.id,
+      login: payload.login,
+      invitationUrl: payload.invitationUrl ?? null,
+    }
+  },
+
+  async refresh(): Promise<string> {
+    const response = await fetch(`${BASE_API_URL}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      throw new Error('errors.auth.unauthorized')
+    }
+
+    const payload = (await response.json()) as Partial<{ accessToken: string }>
     if (!payload.accessToken) {
       throw new Error('errors.auth.noAccessToken')
     }
 
-    return { accessToken: payload.accessToken }
+    return payload.accessToken
+  },
+
+  async logout(): Promise<void> {
+    await fetch(`${BASE_API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    })
   },
 
   async me(token?: string): Promise<MeResponseDto> {

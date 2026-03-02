@@ -14,9 +14,9 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(login: string, password: string) {
-      const { accessToken } = await AUTH_API.login({ login, password })
+      const { accessToken, id, invitationUrl } = await AUTH_API.login({ login, password })
       this.token = accessToken
-      this.user = await AUTH_API.me(accessToken)
+      this.user = { id, login, invitationUrl }
     },
 
     async fetchMe() {
@@ -36,13 +36,15 @@ export const useAuthStore = defineStore('auth', {
       try {
         await this.fetchMe()
       } catch {
-        this.logout()
+        this.token = null
+        this.user = null
       } finally {
         this.isAuthChecked = true
       }
     },
 
-    logout() {
+    async logout() {
+      await AUTH_API.logout()
       this.token = null
       this.user = null
     },
