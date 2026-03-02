@@ -3,11 +3,14 @@ import ThemeSwitch from '@/components/shared/ThemeSwitch.vue'
 import LocaleSwitch from '@/components/shared/LocaleSwitch.vue'
 import GlobalErrorAlert from '@/components/global/GlobalErrorAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
+import { useRouter } from 'vue-router'
 import { configureApiAuth } from '@/api/consts'
 import { AUTH_API } from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
+import { AppRoute } from '@/constants/app'
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 configureApiAuth(
   async () => {
@@ -15,7 +18,10 @@ configureApiAuth(
     authStore.token = token
     return token
   },
-  () => authStore.logout(),
+  async () => {
+    await authStore.logout()
+    await router.push(AppRoute.Login)
+  },
 )
 </script>
 

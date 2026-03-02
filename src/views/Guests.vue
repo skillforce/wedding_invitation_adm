@@ -18,9 +18,7 @@ const viewMode = ref<'grid' | 'list'>('grid')
 const { t } = useI18n()
 
 onMounted(async () => {
-  if (!guestsStore.guests.length) {
     await guestsStore.fetchGuests()
-  }
 })
 </script>
 

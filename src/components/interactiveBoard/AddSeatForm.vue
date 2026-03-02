@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 
@@ -18,7 +18,7 @@ function addGuest() {
   inputRef.value?.focus()
 }
 
-const isAddGuestBtnDisabled = !newGuestName.value.trim()
+const isAddGuestBtnDisabled = computed(() => !newGuestName.value.trim())
 </script>
 
 <template>
