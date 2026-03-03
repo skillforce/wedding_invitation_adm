@@ -88,6 +88,7 @@ const simpleCards = computed(() => [
   gap: 0.45rem;
   min-height: 6.25rem;
   transition: box-shadow 0.2s ease;
+  box-shadow: var(--shadow-card);
 }
 
 .summary-card:hover {

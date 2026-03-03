@@ -72,10 +72,10 @@ const { t } = useI18n()
   min-width: 0;
 }
 
-.table-card :deep(.p-card-body),
-.table-card :deep(.p-card) {
-  border-radius: 10px;
+.table-card {
   overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border-radius: 12px;
 }
 
 .table-card :deep(.p-card-body),

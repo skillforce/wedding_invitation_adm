@@ -79,7 +79,8 @@ const onClickOption = async (path: string) => {
 .app-sidebar {
   width: 260px;
   overflow: hidden;
-  border-right: 1px solid var(--color-border);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
   background: var(--color-sidebar-bg);
   color: var(--color-text-primary);
   padding: 0.75rem;
@@ -87,10 +88,11 @@ const onClickOption = async (path: string) => {
   grid-template-rows: auto 1fr auto auto;
   gap: 1rem;
   transition: width 0.2s ease;
+  box-shadow: var(--shadow-card);
 }
 
 .app-sidebar.collapsed {
-  width: 78px;
+  width: 90px;
 }
 
 .sidebar-top {

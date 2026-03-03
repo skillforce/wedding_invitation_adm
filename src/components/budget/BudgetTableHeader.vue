@@ -30,7 +30,7 @@ const { t } = useI18n()
 }
 
 .budget-grid.table-header {
-  padding: 15px 0;
+  padding: 15px 15px;
 }
 
 .table-header > :nth-child(2),

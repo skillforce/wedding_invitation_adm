@@ -5,17 +5,18 @@ import AppSidebar from '@/components/sidebar/AppSidebar.vue'
 import MobileDrawer from '@/components/sidebar/MobileDrawer.vue'
 import MobileMenuButton from '@/components/sidebar/MobileMenuButton.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useAppCommonStore } from '@/stores/app_common'
 import { AppRoute } from '@/constants/app'
 
 const authStore = useAuthStore()
+const appCommonStore = useAppCommonStore()
 const router = useRouter()
-const isSidebarCollapsed = ref(false)
 const isMobileSidebarOpen = ref(false)
 
 const login = computed(() => authStore.user?.login)
 
 const onToggleSidebar = () => {
-  isSidebarCollapsed.value = !isSidebarCollapsed.value
+  appCommonStore.toggleSidebar()
 }
 
 const onOpenMobileSidebar = () => {
@@ -36,7 +37,7 @@ const onLogout = async () => {
 <template>
   <div class="authorized-layout">
     <AppSidebar
-      :collapsed="isSidebarCollapsed"
+      :collapsed="appCommonStore.isSidebarCollapsed"
       :login="login"
       @toggle="onToggleSidebar"
       @logout="onLogout"
@@ -66,6 +67,8 @@ const onLogout = async () => {
   display: grid;
   grid-template-columns: auto 1fr;
   background: var(--color-bg-app);
+  padding: 0.75rem;
+  gap: 0.75rem;
 }
 
 .authorized-content {

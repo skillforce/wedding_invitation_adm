@@ -5,12 +5,18 @@ import { ApiError } from '@/api/consts'
 import i18n from '@/i18n'
 
 const SIDEBAR_OPTION_STORAGE_KEY = 'sidebar-selected-option'
+const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed'
 const DEFAULT_SIDEBAR_OPTION = AppRoute.Guests
 
 export const useAppCommonStore = defineStore('app_common', () => {
   const selectedSidebarOption = ref<string>(DEFAULT_SIDEBAR_OPTION)
+  const isSidebarCollapsed = ref(false)
   const errorMessage = ref<string | null>(null)
   const isLoading = ref(false)
+
+  function toggleSidebar() {
+    isSidebarCollapsed.value = !isSidebarCollapsed.value
+  }
 
   function setSelectedSidebarOption(path: string) {
     if (!path) {
@@ -44,26 +50,34 @@ export const useAppCommonStore = defineStore('app_common', () => {
 
   return {
     selectedSidebarOption,
+    isSidebarCollapsed,
     errorMessage,
     isLoading,
     setSelectedSidebarOption,
+    toggleSidebar,
     showError,
     clearError,
     showSpinner,
     hideSpinner,
   }
 }, {
-  persist: {
-    key: SIDEBAR_OPTION_STORAGE_KEY,
-    pick: ['selectedSidebarOption'],
-    serializer: {
-      serialize: (state) => {
-        const option = (state as { selectedSidebarOption?: string }).selectedSidebarOption
-        return option || DEFAULT_SIDEBAR_OPTION
+  persist: [
+    {
+      key: SIDEBAR_OPTION_STORAGE_KEY,
+      pick: ['selectedSidebarOption'],
+      serializer: {
+        serialize: (state) => {
+          const option = (state as { selectedSidebarOption?: string }).selectedSidebarOption
+          return option || DEFAULT_SIDEBAR_OPTION
+        },
+        deserialize: (value) => ({
+          selectedSidebarOption: value || DEFAULT_SIDEBAR_OPTION,
+        }),
       },
-      deserialize: (value) => ({
-        selectedSidebarOption: value || DEFAULT_SIDEBAR_OPTION,
-      }),
     },
-  },
+    {
+      key: SIDEBAR_COLLAPSED_KEY,
+      pick: ['isSidebarCollapsed'],
+    },
+  ],
 })

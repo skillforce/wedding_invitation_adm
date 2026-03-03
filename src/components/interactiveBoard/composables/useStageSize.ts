@@ -8,6 +8,8 @@ export function useStageSize(containerRef: Ref<HTMLDivElement | null>) {
 
   let resizeObserver: ResizeObserver | null = null
 
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
   onMounted(() => {
     if (!containerRef.value) return
     stageWidth.value = containerRef.value.clientWidth
@@ -15,16 +17,20 @@ export function useStageSize(containerRef: Ref<HTMLDivElement | null>) {
     isMobile.value = containerRef.value.clientWidth < 640
 
     resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        stageWidth.value = entry.contentRect.width
-        stageHeight.value = entry.contentRect.height
-        isMobile.value = entry.contentRect.width < 640
-      }
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => {
+        for (const entry of entries) {
+          stageWidth.value = entry.contentRect.width
+          stageHeight.value = entry.contentRect.height
+          isMobile.value = entry.contentRect.width < 640
+        }
+      }, 250)
     })
     resizeObserver.observe(containerRef.value)
   })
 
   onUnmounted(() => {
+    if (debounceTimer) clearTimeout(debounceTimer)
     resizeObserver?.disconnect()
   })
 

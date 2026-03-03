@@ -94,6 +94,7 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       '--board-guest-input-border': 'rgba(184, 148, 63, 0.28)',
       '--board-guest-input-focus': 'rgba(184, 148, 63, 0.7)',
       '--board-placeholder': 'rgba(232, 213, 163, 0.28)',
+      '--shadow-card': '0 4px 12px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.15)',
     },
     board: {
       canvasBackground: '#1a1f2e',
@@ -179,6 +180,7 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       '--board-guest-input-border': 'rgba(112, 136, 166, 0.4)',
       '--board-guest-input-focus': 'rgba(73, 115, 164, 0.75)',
       '--board-placeholder': 'rgba(71, 90, 114, 0.42)',
+      '--shadow-card': '0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.07)',
     },
     board: {
       canvasBackground: '#bdbaba',

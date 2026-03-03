@@ -1,19 +1,35 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
 
-defineProps<{
+const props = defineProps<{
   login?: string
   collapsed?: boolean
 }>()
 
 const { t } = useI18n()
+
+const showText = ref(!props.collapsed)
+let textTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(
+  () => props.collapsed,
+  (val) => {
+    if (textTimer) clearTimeout(textTimer)
+    if (val) {
+      showText.value = false
+    } else {
+      textTimer = setTimeout(() => { showText.value = true }, 200)
+    }
+  },
+)
 </script>
 
 <template>
   <div :class="['profile-card', { collapsed }]">
     <UserAvatar :size="44" :alt="t('a11y.userAvatar')" variant="default" />
-    <div v-if="!collapsed" class="profile-text">
+    <div v-if="showText" class="profile-text">
       <p class="profile-label">{{ t('profile.loggedAs') }}</p>
       <p class="profile-login">{{ login || t('profile.unknownUser') }}</p>
     </div>

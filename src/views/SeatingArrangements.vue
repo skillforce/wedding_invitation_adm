@@ -75,12 +75,13 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 .board-container {
   position: relative;
   width: 100%;
-  height: calc(100dvh - 20px);
+  height: 100%;
   overflow: hidden;
   background-color: var(--board-bg);
   background-image: radial-gradient(circle, var(--board-dot) 1px, transparent 1px);
   background-size: 28px 28px;
   border-radius: 12px;
+  box-shadow: var(--shadow-card);
 }
 
 .board-hint {

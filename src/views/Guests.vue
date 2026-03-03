@@ -68,6 +68,8 @@ onMounted(async () => {
 .guests-page :deep(.p-tabs) {
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
+
 }
 
 .guests-page :deep(.p-card-body) {

@@ -4,8 +4,8 @@ import { useThemeStore } from "@/stores/theme.ts";
 import type { Stage } from "konva/lib/Stage";
 const themeStore = useThemeStore()
 // ── Visual constants ──────────────────────────────────────────────────────────
-export const SEAT_RADIUS = 18
-export const SEAT_OFFSET = 38
+export const SEAT_RADIUS = 15
+export const SEAT_OFFSET = 20
 
 // Rect table proportions (relative to radius)
 export const RECT_W = 2.4   // width  = radius * RECT_W
@@ -290,7 +290,7 @@ export function connectorConfig(
     points: [x1, y1, x2, y2],
     stroke: palette.connectorStroke,
     strokeWidth: 1,
-    opacity: 0.35,
+    opacity:0.65,
     listening: false,
   }
 }
