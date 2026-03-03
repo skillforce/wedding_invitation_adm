@@ -79,7 +79,7 @@ const onClickOption = async (path: string) => {
 .app-sidebar {
   width: 260px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 30px;
   border: 1px solid var(--color-border);
   background: var(--color-sidebar-bg);
   color: var(--color-text-primary);

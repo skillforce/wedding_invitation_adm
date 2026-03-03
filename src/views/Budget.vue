@@ -1,16 +1,25 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import SummaryBar from '@/components/budget/summary/SummaryBar.vue'
 import BudgetTable from '@/components/budget/BudgetTable.vue'
 import AddRowMenu from '@/components/budget/AddRowMenu.vue'
-import ExportExcel from "@/components/budget/ExportExcel.vue";
+import ExportExcel from "@/components/budget/ExportExcel.vue"
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useBudgetStore } from '@/stores/budget'
 
 const { t } = useI18n()
+const budgetStore = useBudgetStore()
+
+onMounted(() => {
+  budgetStore.fetchBudget()
+})
 </script>
 
 <template>
   <div class="budget-page">
+    <ConfirmDialog />
     <div class="page-header">
       <h1 class="page-title">{{ t('budget.title') }}</h1>
 
@@ -116,5 +125,16 @@ const { t } = useI18n()
   .add-row-footer {
     padding: 0.5rem 0.6rem;
   }
+}
+</style>
+
+<style>
+.p-confirmdialog {
+  max-width: min(24rem, calc(100vw - 2rem));
+}
+
+.p-confirmdialog .p-dialog-content {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 </style>

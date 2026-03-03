@@ -1,4 +1,4 @@
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { BudgetItem } from '@/types/budget'
 import { useBudgetStore } from '@/stores/budget'
 
@@ -27,20 +27,6 @@ export function useBudgetItem(getItem: () => BudgetItem) {
     const item = getItem()
     if (item.actualCost === null) return null
     return item.actualCost - item.estimatedCost
-  })
-
-  onMounted(() => {
-    if (store.pendingFocusItemId === getItem().id) {
-      store.pendingFocusItemId = null
-      startEdit()
-    }
-  })
-
-  watch(() => store.pendingFocusItemId, (id) => {
-    if (id === getItem().id) {
-      store.pendingFocusItemId = null
-      startEdit()
-    }
   })
 
   return { store, isEditing, editName, editNameInvalid, startEdit, commitName, deviation }

@@ -8,10 +8,12 @@ import type { BudgetItem } from '@/types/budget'
 import PriorityBadge from '../PriorityBadge.vue'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import { useBudgetItem } from './useBudgetItem'
+import { useBudgetConfirm } from '../useBudgetConfirm'
 
 const props = defineProps<{ item: BudgetItem }>()
 
 const { t } = useI18n()
+const { confirmDeleteItem } = useBudgetConfirm()
 const { store, isEditing, editName, editNameInvalid, startEdit, commitName, deviation } =
   useBudgetItem(() => props.item)
 
@@ -39,15 +41,12 @@ function onActualChange(val: number | null) {
 
 <template>
   <div class="budget-row budget-grid">
-    <!-- Spacer: aligns with section collapse button column -->
     <div />
 
-    <!-- Paid -->
     <div class="cell-center">
       <Checkbox v-model="paidModel" :binary="true" :aria-label="t('budget.paid')" />
     </div>
 
-    <!-- Name -->
     <div class="col-name">
       <template v-if="isEditing">
         <InputWithError
@@ -56,7 +55,7 @@ function onActualChange(val: number | null) {
           :error-message="t('budget.nameRequired')"
           :show-save="true"
           :autofocus="true"
-          :maxlength="120"
+          :maxlength="50"
           class="row-input"
           @save="commitName"
           @cancel="isEditing = false"
@@ -78,7 +77,6 @@ function onActualChange(val: number | null) {
       </template>
     </div>
 
-    <!-- Estimated -->
     <div class="col-estimated">
       <InputNumber
         v-model="estimatedDraft"
@@ -89,7 +87,6 @@ function onActualChange(val: number | null) {
       />
     </div>
 
-    <!-- Actual -->
     <div class="col-actual">
       <InputNumber
         v-model="actualDraft"
@@ -101,7 +98,6 @@ function onActualChange(val: number | null) {
       />
     </div>
 
-    <!-- Deviation -->
     <div class="col-deviation">
       <span
         v-if="deviation !== null"
@@ -112,12 +108,10 @@ function onActualChange(val: number | null) {
       <span v-else class="deviation-empty">—</span>
     </div>
 
-    <!-- Priority -->
     <div class="cell-center">
       <PriorityBadge :priority="item.priority" @click="store.cyclePriority(item.id)" />
     </div>
 
-    <!-- Delete -->
     <div class="cell-center">
       <Button
         icon="pi pi-trash"
@@ -126,7 +120,7 @@ function onActualChange(val: number | null) {
         rounded
         size="small"
         :aria-label="t('budget.deleteItem')"
-        @click="store.deleteItem(item.id)"
+        @click="confirmDeleteItem(item.id, item.name)"
       />
     </div>
   </div>

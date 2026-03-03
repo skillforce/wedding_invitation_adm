@@ -61,9 +61,6 @@ onMounted(async () => {
   color: var(--color-text-primary);
 }
 
-.guests-page {
-  padding: 0.5rem;
-}
 
 .guests-page :deep(.p-tabs) {
   border-radius: 12px;
@@ -78,11 +75,11 @@ onMounted(async () => {
 
 @media (max-width: 480px) {
   .guests-page :deep(.p-tab) {
-    padding: 0.5rem 0.75rem;
+    padding: 0.75rem 0.75rem;
   }
 
   .guests-page :deep(.p-card-body) {
-    padding: 0.75rem;
+    padding: 0.85rem;
   }
 }
 </style>

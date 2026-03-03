@@ -109,6 +109,10 @@
     "limitMustBePositive": "Limit must be greater than zero",
     "cancel": "Cancel",
     "confirm": "Add",
+    "confirmDeleteSection": "Delete section \"{name}\" and all its items?",
+    "confirmDeleteItem": "Delete item \"{name}\"?",
+    "confirmDeleteHeader": "Confirm deletion",
+    "delete": "Delete",
     "summary": {
       "budgetLimit": "Budget limit",
       "planned": "Planned",
@@ -166,6 +170,16 @@
       "failedToDeleteTable": "Failed to delete table",
       "failedToAddSeat": "Failed to add seat",
       "failedToRemoveSeat": "Failed to remove seat"
+    },
+    "budget": {
+      "failedToLoad": "Failed to load budget",
+      "failedToUpdate": "Failed to update budget",
+      "failedToCreateSection": "Failed to create section",
+      "failedToUpdateSection": "Failed to update section",
+      "failedToDeleteSection": "Failed to delete section",
+      "failedToCreateItem": "Failed to create item",
+      "failedToUpdateItem": "Failed to update item",
+      "failedToDeleteItem": "Failed to delete item"
     }
   }
 }

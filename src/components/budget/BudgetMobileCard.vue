@@ -7,11 +7,13 @@ import { useBudgetStore } from '@/stores/budget'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import BudgetRowMobile from './BudgetTableRow/BudgetRowMobile.vue'
 import AddNameDialog from './AddNameDialog.vue'
+import { useBudgetConfirm } from './useBudgetConfirm'
 
 const props = defineProps<{ section: BudgetSection; index: number }>()
 
 const store = useBudgetStore()
 const { t } = useI18n()
+const { confirmDeleteSection } = useBudgetConfirm()
 
 const items = computed(() =>
   store.rows.filter(
@@ -21,12 +23,9 @@ const items = computed(() =>
 
 const total = computed(() => store.getSectionTotal(props.section.id))
 
-// ── Section name editing ──────────────────────────────────────
 const isEditingSection = ref(false)
 const editSectionName = ref(props.section.name)
 const sectionNameInvalid = computed(() => !editSectionName.value.trim())
-
-watch(() => props.section.name, (v) => { editSectionName.value = v })
 
 function commitSectionName() {
   if (editSectionName.value.trim()) {
@@ -40,7 +39,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
 
 <template>
   <div class="mobile-card">
-    <!-- Card header -->
     <div class="card-header">
       <button
         class="collapse-btn"
@@ -58,7 +56,7 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
             :error-message="t('budget.nameRequired')"
             :show-save="true"
             :autofocus="true"
-            :maxlength="100"
+            :maxlength="50"
             class="section-name-input"
             @save="commitSectionName"
             @cancel="isEditingSection = false"
@@ -95,11 +93,10 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
         text
         rounded
         :aria-label="t('budget.deleteSection')"
-        @click="store.deleteSection(section.id)"
+        @click="confirmDeleteSection(section.id, section.name)"
       />
     </div>
 
-    <!-- Items -->
     <template v-if="!section.collapsed">
       <div v-if="items.length === 0" class="empty-items">
         {{ t('budget.empty') }}
@@ -120,7 +117,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-/* ── Card header ─────────────────────────────────────────────── */
 .card-header {
   display: flex;
   align-items: center;
@@ -200,7 +196,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   }
 }
 
-/* ── Empty state ─────────────────────────────────────────────── */
 .empty-items {
   padding: 1rem 0.75rem;
   font-size: 0.85rem;

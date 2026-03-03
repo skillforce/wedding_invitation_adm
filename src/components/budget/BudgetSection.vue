@@ -6,6 +6,7 @@ import type { BudgetSection } from '@/types/budget'
 import { useBudgetStore } from '@/stores/budget'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import AddNameDialog from './AddNameDialog.vue'
+import { useBudgetConfirm } from './useBudgetConfirm'
 
 const props = defineProps<{
   section: BudgetSection
@@ -14,6 +15,7 @@ const props = defineProps<{
 
 const store = useBudgetStore()
 const { t } = useI18n()
+const { confirmDeleteSection } = useBudgetConfirm()
 
 const total = computed(() => store.getSectionTotal(props.section.id))
 
@@ -38,7 +40,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
 
 <template>
   <div class="budget-section-row">
-    <!-- Collapse arrow — sits in the collapse column (36px) -->
     <button
       class="collapse-btn"
       :aria-label="section.collapsed ? t('budget.expand') : t('budget.collapse')"
@@ -49,12 +50,9 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
 
 
 
-    <!-- Spacer matching the paid-checkbox column -->
     <span class="paid-spacer" />
 
-    <!-- Name group -->
     <div class="section-name-group">
-      <!-- Edit mode -->
       <template v-if="isEditing">
         <InputWithError
           v-model="editName"
@@ -62,14 +60,13 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
           :error-message="t('budget.nameRequired')"
           :show-save="true"
           :autofocus="true"
-          :maxlength="100"
+          :maxlength="50"
           class="name-input"
           @save="commitEdit"
           @cancel="isEditing = false"
         />
       </template>
 
-      <!-- Display mode -->
       <template v-else>
         <span class="name-text">{{ index }}. {{ section.name }}</span>
         <Button
@@ -101,7 +98,7 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
       rounded
       size="small"
       :aria-label="t('budget.deleteSection')"
-      @click="store.deleteSection(section.id)"
+      @click="confirmDeleteSection(section.id, section.name)"
     />
   </div>
 
@@ -138,14 +135,12 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   background: var(--color-surface-hover, rgba(0, 0, 0, 0.05));
 }
 
-/* Mirrors the paid-checkbox column width so the name aligns with item rows */
 .paid-spacer {
   display: block;
   width: 80px;
   flex-shrink: 0;
 }
 
-/* Name group — grows to fill available space */
 .section-name-group {
   flex: 1;
   display: flex;

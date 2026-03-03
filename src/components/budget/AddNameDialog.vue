@@ -8,7 +8,7 @@ import InputWithError from '@/components/shared/InputWithError.vue'
 
 const props = defineProps<{
   mode: 'section' | 'item'
-  sectionId?: string
+  sectionId?: number
 }>()
 
 const store = useBudgetStore()
@@ -60,7 +60,7 @@ defineExpose({ open })
         :invalid="isInvalid"
         :error-message="t('budget.nameRequired')"
         :autofocus="true"
-        :maxlength="100"
+        :maxlength="50"
         @keyup.enter.prevent.stop="confirm"
       />
     </div>

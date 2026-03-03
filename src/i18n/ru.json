@@ -109,6 +109,10 @@
     "limitMustBePositive": "Лимит должен быть больше нуля",
     "cancel": "Отмена",
     "confirm": "Добавить",
+    "confirmDeleteSection": "Удалить раздел «{name}» и все его статьи?",
+    "confirmDeleteItem": "Удалить статью «{name}»?",
+    "confirmDeleteHeader": "Подтверждение удаления",
+    "delete": "Удалить",
     "summary": {
       "budgetLimit": "Лимит бюджета",
       "planned": "Запланировано оплатить",
@@ -166,6 +170,16 @@
       "failedToDeleteTable": "Не удалось удалить стол",
       "failedToAddSeat": "Не удалось добавить место",
       "failedToRemoveSeat": "Не удалось удалить место"
+    },
+    "budget": {
+      "failedToLoad": "Не удалось загрузить бюджет",
+      "failedToUpdate": "Не удалось обновить бюджет",
+      "failedToCreateSection": "Не удалось создать раздел",
+      "failedToUpdateSection": "Не удалось обновить раздел",
+      "failedToDeleteSection": "Не удалось удалить раздел",
+      "failedToCreateItem": "Не удалось создать позицию",
+      "failedToUpdateItem": "Не удалось обновить позицию",
+      "failedToDeleteItem": "Не удалось удалить позицию"
     }
   }
 }

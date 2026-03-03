@@ -11,8 +11,8 @@ import BudgetTableHeader from './BudgetTableHeader.vue'
 const store = useBudgetStore()
 const { t } = useI18n()
 
-const sectionNumbers = computed<Map<string, number>>(() => {
-  const map = new Map<string, number>()
+const sectionNumbers = computed<Map<number, number>>(() => {
+  const map = new Map<number, number>()
   let n = 1
   for (const row of store.rows) {
     if (row.type === 'section') map.set(row.id, n++)
@@ -35,7 +35,6 @@ function isVisible(index: number): boolean {
 
 <template>
   <div class="budget-table">
-    <!-- Desktop table (hidden on mobile via CSS) -->
     <div class="desktop-view">
       <BudgetTableHeader />
 
@@ -53,7 +52,6 @@ function isVisible(index: number): boolean {
       </div>
     </div>
 
-    <!-- Mobile cards (hidden on desktop via CSS) -->
     <div class="mobile-view">
       <div v-if="store.rows.length === 0" class="empty-state">
         {{ t('budget.empty') }}
@@ -71,14 +69,12 @@ function isVisible(index: number): boolean {
 </template>
 
 <style scoped>
-/* Single source of truth for the column layout */
 .budget-table {
   --budget-grid-cols: 36px 80px 1fr 130px 130px 100px 80px 36px;
   border-radius: 0;
   overflow: hidden;
 }
 
-/* Shared grid class — applied to header and each item row */
 :deep(.budget-grid) {
   display: grid;
   grid-template-columns: var(--budget-grid-cols);
@@ -88,7 +84,6 @@ function isVisible(index: number): boolean {
   border-radius: 0;
 }
 
-/* Children must not inflate columns */
 :deep(.budget-grid > *) {
   min-width: 0;
 }

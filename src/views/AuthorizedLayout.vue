@@ -84,6 +84,7 @@ const onLogout = async () => {
 @media (max-width: 768px) {
   .authorized-layout {
     grid-template-columns: 1fr;
+    padding: 0.05rem;
   }
 
   .mobile-header {

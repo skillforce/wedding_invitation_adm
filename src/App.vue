@@ -45,4 +45,12 @@ configureApiAuth(
   align-items: center;
   gap: 0.5rem;
 }
+@media (max-width: 768px) {
+  .global-controls {
+    top: 0.5rem;
+    right: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 </style>

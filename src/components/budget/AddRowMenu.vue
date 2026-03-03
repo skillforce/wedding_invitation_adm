@@ -21,7 +21,6 @@ const dialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
 </template>
 
 <style scoped>
-/* On mobile: hide the label, show icon only */
 @media (max-width: 767px) {
   .add-section-btn :deep(.p-button-label) {
     display: none;

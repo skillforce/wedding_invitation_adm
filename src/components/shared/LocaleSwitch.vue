@@ -42,7 +42,8 @@ const localeOptions = computed(() => [
   border: 1px solid var(--color-theme-switch-border);
   border-radius: 999px;
   background: var(--color-theme-switch-bg);
-  padding: 0.2rem 0.45rem;
+  padding: 0.35rem 0.45rem;
+  width: 100%
 }
 
 .locale-select {
@@ -70,5 +71,11 @@ const localeOptions = computed(() => [
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (max-width: 768px) {
+  .locale-switch{
+    padding: 0.15rem 0.45rem;
+  }
 }
 </style>

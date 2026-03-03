@@ -2,31 +2,47 @@ export type Priority = 'must' | 'want' | 'maybe'
 
 export type BudgetCurrency = 'RUB' | 'USD' | 'BYN'
 
+export interface BudgetItemDto {
+  id: number
+  name: string
+  estimatedCost: number
+  actualCost: number | null
+  priority: Priority
+  paid: boolean
+}
+
+export interface BudgetSectionDto {
+  id: number
+  name: string
+  items: BudgetItemDto[]
+}
+
+export interface BudgetDto {
+  id: number
+  budgetLimit: number
+  currency: BudgetCurrency
+  sections: BudgetSectionDto[]
+}
+
 export interface BudgetSection {
-  id: string
+  id: number
   type: 'section'
   name: string
   collapsed?: boolean
 }
 
 export interface BudgetItem {
-  id: string
+  id: number
   type: 'item'
-  sectionId: string
+  sectionId: number
   name: string
   estimatedCost: number
   actualCost: number | null
   priority: Priority
   paid: boolean
-  notes?: string
 }
 
 export type BudgetRow = BudgetSection | BudgetItem
-
-export interface BudgetState {
-  rows: BudgetRow[]
-  budgetLimit: number
-}
 
 export interface BudgetTotals {
   planned: number

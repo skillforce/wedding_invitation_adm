@@ -7,17 +7,18 @@ import type { BudgetItem } from '@/types/budget'
 import PriorityBadge from '../PriorityBadge.vue'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import { useBudgetItem } from './useBudgetItem'
+import { useBudgetConfirm } from '../useBudgetConfirm'
 
 const props = defineProps<{ item: BudgetItem }>()
 
 const { t } = useI18n()
+const { confirmDeleteItem } = useBudgetConfirm()
 const { store, isEditing, editName, editNameInvalid, startEdit, commitName, deviation } =
   useBudgetItem(() => props.item)
 </script>
 
 <template>
   <div class="card-item">
-    <!-- Row 1: checkbox + name + priority + delete -->
     <div class="item-main">
       <Checkbox
         :model-value="item.paid"
@@ -33,7 +34,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
           :error-message="t('budget.nameRequired')"
           :show-save="true"
           :autofocus="true"
-          :maxlength="120"
+          :maxlength="50"
           class="item-name-input"
           @save="commitName"
           @cancel="isEditing = false"
@@ -62,11 +63,10 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
         rounded
         size="small"
         :aria-label="t('budget.deleteItem')"
-        @click="store.deleteItem(item.id)"
+        @click="confirmDeleteItem(item.id, item.name)"
       />
     </div>
 
-    <!-- Row 2: estimated / actual / deviation -->
     <div class="item-amounts">
       <div class="amount-field">
         <span class="amount-label">{{ t('budget.estimated') }}</span>
@@ -113,7 +113,6 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   border-bottom: none;
 }
 
-/* Row 1 */
 .item-main {
   display: flex;
   align-items: center;
@@ -154,7 +153,6 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   opacity: 1;
 }
 
-/* Row 2 */
 .item-amounts {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

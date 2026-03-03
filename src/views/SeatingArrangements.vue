@@ -98,6 +98,17 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 }
 
 @media (max-width: 639px) {
+  :global(.authorized-content) {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow-y: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  .board-container {
+    min-height: 0;
+  }
+
   .board-hint {
     bottom: 68px;
   }

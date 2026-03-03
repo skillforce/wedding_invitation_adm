@@ -73,6 +73,7 @@ body,
 
 body {
   margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--color-bg-app);
   color: var(--color-text-primary);
   transition: background 0.2s ease, color 0.2s ease;

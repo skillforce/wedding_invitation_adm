@@ -23,7 +23,6 @@ async function exportExcel() {
       maybe: t('budget.priority.maybe'),
     }
 
-    // Columns: Name | Estimated | Actual | Deviation | Priority | Paid
     const headers: SheetRow = [
       t('budget.name'),
       t('budget.estimated'),
@@ -35,7 +34,6 @@ async function exportExcel() {
 
     const sheetRows: SheetRow[] = [headers]
 
-    // Group items by section for subtotals
     let currentSection: BudgetSection | null = null
     let sectionItems: BudgetItem[] = []
 
@@ -48,10 +46,8 @@ async function exportExcel() {
         return a !== null ? s + a : s
       }, 0)
 
-      // Section header row
       sheetRows.push([`▶  ${currentSection.name.toUpperCase()}`, subtotalEst, subtotalAct || null, null, '', ''])
 
-      // Item rows (indented)
       for (const item of sectionItems) {
         const actual = item.actualCost ?? (item.paid ? item.estimatedCost : null)
         const deviation = actual !== null ? actual - item.estimatedCost : null
@@ -65,7 +61,6 @@ async function exportExcel() {
         ])
       }
 
-      // Section subtotal row
       if (sectionItems.length > 1) {
         sheetRows.push([
           `  ${t('budget.export.subtotal')}`,
@@ -91,7 +86,6 @@ async function exportExcel() {
     }
     flushSection()
 
-    // Grand total row
     const { totals } = store
     sheetRows.push([
       t('budget.export.total').toUpperCase(),

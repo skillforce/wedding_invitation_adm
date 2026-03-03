@@ -2,7 +2,7 @@ import { AppTheme } from '@/constants/app'
 
 export const THEME_STORAGE_KEY = 'app-theme'
 export const THEME_NAMES = [AppTheme.Dark, AppTheme.Light] as const
-export const DEFAULT_THEME = AppTheme.Dark
+export const DEFAULT_THEME = AppTheme.Light
 
 export type ThemeName = AppTheme
 

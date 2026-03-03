@@ -5,8 +5,51 @@ import {
   applyTheme,
   DEFAULT_THEME,
   THEME_NAMES,
+  isThemeName,
   type ThemeName,
 } from '@/themes'
+
+interface PersistedThemeState {
+  theme?: ThemeName
+}
+
+function parsePersistedTheme(raw: string | null): ThemeName | null {
+  if (!raw) {
+    return null
+  }
+
+  if (isThemeName(raw)) {
+    return raw
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as PersistedThemeState | string
+
+    if (typeof parsed === 'string') {
+      return isThemeName(parsed) ? parsed : null
+    }
+
+    return isThemeName(parsed.theme ?? null) ? parsed.theme! : null
+  } catch {
+    return null
+  }
+}
+
+function getStoredTheme(): ThemeName | null {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  return parsePersistedTheme(localStorage.getItem('app-theme'))
+}
+
+function getSystemPreferredTheme(): ThemeName {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return AppTheme.Light
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? AppTheme.Dark : AppTheme.Light
+}
 
 export const useThemeStore = defineStore('theme', () => {
   const theme = ref<ThemeName>(DEFAULT_THEME)
@@ -19,6 +62,7 @@ export const useThemeStore = defineStore('theme', () => {
       return
     }
 
+    theme.value = getStoredTheme() ?? getSystemPreferredTheme()
     applyTheme(theme.value)
     initialized.value = true
   }
@@ -50,11 +94,12 @@ export const useThemeStore = defineStore('theme', () => {
     pick: ['theme'],
     serializer: {
       serialize: (state) => {
-        const theme = (state as { theme?: ThemeName }).theme
-        return theme === AppTheme.Light ? AppTheme.Light : DEFAULT_THEME
+        const persistedTheme = (state as PersistedThemeState).theme
+        const safeTheme = isThemeName(persistedTheme ?? null) ? persistedTheme : DEFAULT_THEME
+        return JSON.stringify({ theme: safeTheme })
       },
       deserialize: (value) => ({
-        theme: value === AppTheme.Light ? AppTheme.Light : DEFAULT_THEME,
+        theme: parsePersistedTheme(value) ?? DEFAULT_THEME,
       }),
     },
   },
