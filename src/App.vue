@@ -28,7 +28,9 @@ configureApiAuth(
 <template>
   <GlobalSpinner />
   <GlobalErrorAlert />
-  <RouterView />
+  <div class="router">
+    <RouterView />
+  </div>
   <div class="global-controls">
     <LocaleSwitch />
     <ThemeSwitch />
@@ -36,6 +38,14 @@ configureApiAuth(
 </template>
 
 <style scoped>
+
+.router {
+  view-transition-name: page;
+}
+
+.global-controls {
+  view-transition-name: controls;
+}
 .global-controls {
   position: fixed;
   top: 0.7rem;

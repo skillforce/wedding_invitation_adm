@@ -82,3 +82,13 @@ body {
 input, textarea, select {
   font-size: 16px;
 }
+
+::view-transition-old(controls),
+::view-transition-new(controls) {
+  animation-duration: 400ms;
+}
+
+::view-transition-old(page),
+::view-transition-new(page) {
+  animation-duration: 200ms;
+}

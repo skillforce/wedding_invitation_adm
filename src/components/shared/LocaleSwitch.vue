@@ -11,7 +11,16 @@ const { t } = useI18n()
 
 const selectedLocale = computed({
   get: () => locale.value,
-  set: (value: AppLocale) => localeStore.setLocale(value),
+  set: (value: AppLocale) => {
+    if (!document.startViewTransition) {
+      localeStore.setLocale(value)
+      return
+    }
+    document.startViewTransition(() => {
+      localeStore.setLocale(value)
+    })
+
+  },
 })
 
 const localeOptions = computed(() => [

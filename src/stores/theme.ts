@@ -78,7 +78,14 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   function toggleTheme() {
-    setTheme(theme.value === AppTheme.Dark ? AppTheme.Light : AppTheme.Dark)
+    if (!document.startViewTransition) {
+      setTheme(theme.value === AppTheme.Dark ? AppTheme.Light : AppTheme.Dark)
+      return
+    }
+
+    document.startViewTransition(() => {
+      setTheme(theme.value === AppTheme.Dark ? AppTheme.Light : AppTheme.Dark)
+    })
   }
 
   return {
