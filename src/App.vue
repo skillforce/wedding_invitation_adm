@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ThemeSwitch from '@/components/shared/ThemeSwitch.vue'
-import LocaleSwitch from '@/components/shared/LocaleSwitch.vue'
+import ThemeSwitch from '@/components/global/ThemeSwitch.vue'
+import LocaleSwitch from '@/components/global/LocaleSwitch.vue'
 import GlobalErrorAlert from '@/components/global/GlobalErrorAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 import { useRouter } from 'vue-router'
@@ -44,16 +44,14 @@ configureApiAuth(
 }
 
 .global-controls {
-  view-transition-name: controls;
-}
-.global-controls {
   position: fixed;
   top: 0.7rem;
-  right: 0.7rem;
+  right: 2rem;
   z-index: 60;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  view-transition-name: controls;
 }
 @media (max-width: 768px) {
   .global-controls {

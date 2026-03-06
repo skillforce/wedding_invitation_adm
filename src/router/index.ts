@@ -20,6 +20,10 @@ const routes = [
         path: AppChildRoute.Budget,
         component: () => import('../views/Budget.vue'),
       },
+      {
+        path: AppChildRoute.Checklist,
+        component: () => import('../views/Checklist.vue'),
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: AppRoute.Login },

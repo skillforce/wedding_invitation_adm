@@ -43,12 +43,13 @@ watch(
   gap: 0.75rem;
   padding: 0.75rem;
   border: 1px solid var(--color-profile-border);
-  border-radius: 12px;
+  border-radius: 24px;
   background: var(--color-surface-soft);
 }
 
 .profile-card.collapsed {
   padding: 0.45rem;
+  justify-content: center;
 }
 
 .profile-text {

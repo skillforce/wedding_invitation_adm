@@ -19,6 +19,7 @@
     "guests": "Гости",
     "seatingArrangements": "Рассадка гостей",
     "budget": "Бюджет",
+    "checklist": "Чеклист",
     "logout": "Выйти"
   },
   "profile": {
@@ -146,6 +147,26 @@
       "doubleClickToEdit": "Двойной клик — изменить",
       "legend": "Обозначения",
       "currency": "Валюта"
+    }
+  },
+  "checklist": {
+    "eyebrow": "Ваше Свадебное Путешествие",
+    "title_the": "Свадебный",
+    "title_checklist": "Чеклист",
+    "tasks_progress": "{done} из {total} задач выполнено",
+    "done": "Готово",
+    "empty": "Нет задач по этому фильтру.",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "filter": {
+      "all": "Все",
+      "todo": "Не сделано",
+      "done": "Готово",
+      "priority": "Важные"
+    },
+    "celebration": {
+      "title": "Всё готово!",
+      "subtitle": "Вы готовы к своему большому дню"
     }
   },
   "errors": {

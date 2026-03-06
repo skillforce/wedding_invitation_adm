@@ -19,6 +19,7 @@
     "guests": "Guests",
     "seatingArrangements": "Seating Arrangements",
     "budget": "Budget",
+    "checklist": "Checklist",
     "logout": "Logout"
   },
   "profile": {
@@ -146,6 +147,26 @@
       "doubleClickToEdit": "Double-click to edit",
       "legend": "Legend",
       "currency": "Currency"
+    }
+  },
+  "checklist": {
+    "eyebrow": "Your Wedding Journey",
+    "title_the": "The",
+    "title_checklist": "Checklist",
+    "tasks_progress": "{done} of {total} tasks complete",
+    "done": "Done",
+    "empty": "No tasks match this filter.",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "filter": {
+      "all": "All",
+      "todo": "To Do",
+      "done": "Done",
+      "priority": "Priority"
+    },
+    "celebration": {
+      "title": "All Done!",
+      "subtitle": "You're ready for your big day"
     }
   },
   "errors": {
