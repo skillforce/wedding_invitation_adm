@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
+import { CHECKLIST_API } from '@/api/checklist'
+import type { ChecklistPhaseDto, ChecklistItemDto } from '@/api/checklist'
+import { useAppCommonStore } from '@/stores/app_common'
 
 export interface Task {
   id: string
@@ -18,137 +21,42 @@ export interface Phase {
   tasks: Task[]
 }
 
-const STORAGE_KEY = 'wedding-checklist-v3'
-
-function buildDefaultPhases(): Phase[] {
-  return [
-    {
-      id: 'p1',
-      name: '',
-      timeline: '12–10 months before',
-      icon: 'pi pi-sparkles',
-      tasks: [],
-    },
-    {
-      id: 'p2',
-      name: '',
-      timeline: '9–7 months before',
-      icon: 'pi pi-users',
-      tasks: [],
-    },
-    {
-      id: 'p3',
-      name: '',
-      timeline: '6–4 months before',
-      icon: 'pi pi-palette',
-      tasks: [],
-    },
-    {
-      id: 'p4',
-      name: '',
-      timeline: '3–1 months before',
-      icon: 'pi pi-clock',
-      tasks: [],
-    },
-    {
-      id: 'p5',
-      name: '',
-      timeline: 'Last 7 days',
-      icon: 'pi pi-heart',
-      tasks: [],
-    },
-  ]
-}
-
-function normalizeTask(rawTask: unknown): Task | null {
-  if (!rawTask || typeof rawTask !== 'object') return null
-
-  const task = rawTask as {
-    id?: unknown
-    title?: unknown
-    note?: unknown
-    completed?: unknown
-    priority?: unknown
-    comment?: unknown
-  }
-
-  const title = typeof task.title === 'string' ? task.title.trim() : ''
-  if (!title) return null
-
+function mapItem(item: ChecklistItemDto): Task {
   return {
-    id: typeof task.id === 'string' ? task.id : `task-${Date.now()}`,
-    title,
-    note: typeof task.note === 'string' ? task.note.trim() : '',
-    completed: Boolean(task.completed),
-    priority: task.priority === 'high' ? 'high' : 'normal',
-    comment: typeof task.comment === 'string' && task.comment.trim() ? task.comment.trim() : undefined,
+    id: item.id,
+    title: item.title,
+    note: item.note ?? '',
+    comment: item.comment ?? undefined,
+    completed: item.completed,
+    priority: item.priority,
   }
 }
 
-function normalizePhase(rawPhase: unknown): Phase | null {
-  if (!rawPhase || typeof rawPhase !== 'object') return null
-
-  const phase = rawPhase as {
-    id?: unknown
-    name?: unknown
-    timeline?: unknown
-    icon?: unknown
-    tasks?: unknown
-  }
-
-  const phaseId = typeof phase.id === 'string' ? phase.id : `custom-${Date.now()}`
-  const defaultPhase = buildDefaultPhases().find((item) => item.id === phaseId)
-
+function mapPhase(phase: ChecklistPhaseDto): Phase {
   return {
-    id: phaseId,
-    name: typeof phase.name === 'string' ? phase.name.trim() : defaultPhase?.name ?? '',
-    timeline: typeof phase.timeline === 'string' ? phase.timeline.trim() : defaultPhase?.timeline ?? '',
-    icon: typeof phase.icon === 'string' && phase.icon ? phase.icon : defaultPhase?.icon ?? 'pi pi-sparkles',
-    tasks: Array.isArray(phase.tasks)
-      ? phase.tasks.map(normalizeTask).filter((task): task is Task => task !== null)
-      : [],
+    id: phase.id,
+    name: phase.name ?? '',
+    timeline: phase.timeline ?? '',
+    icon: phase.icon ?? 'pi pi-sparkles',
+    tasks: phase.items.map(mapItem),
   }
 }
 
-function loadStoredPhases(): Phase[] | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-
-    const parsed = JSON.parse(raw)
-    const savedPhases = Array.isArray(parsed) ? parsed : parsed.phases
-    if (!Array.isArray(savedPhases)) return null
-
-    return savedPhases
-      .map(normalizePhase)
-      .filter((phase): phase is Phase => phase !== null)
-  } catch {
-    return null
+function createKeyedDebounce(ms: number) {
+  const timers = new Map<string, ReturnType<typeof setTimeout>>()
+  return function debounced(key: string, fn: () => void): void {
+    const existing = timers.get(key)
+    if (existing) clearTimeout(existing)
+    timers.set(key, setTimeout(() => {
+      timers.delete(key)
+      fn()
+    }, ms))
   }
-}
-
-function loadState(): Phase[] {
-  const defaults = buildDefaultPhases()
-  const storedPhases = loadStoredPhases()
-  if (!storedPhases) return defaults
-
-  const storedById = new Map(storedPhases.map((phase) => [phase.id, phase]))
-  const mergedDefaults = defaults.map((defaultPhase) => storedById.get(defaultPhase.id) ?? defaultPhase)
-  const customPhases = storedPhases.filter((phase) => !defaults.some((defaultPhase) => defaultPhase.id === phase.id))
-
-  return [...mergedDefaults, ...customPhases]
 }
 
 export const useChecklistStore = defineStore('wedding-checklist', () => {
-  const phases = ref<Phase[]>(loadState())
-
-  watch(
-    phases,
-    (value) => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ phases: value }))
-    },
-    { deep: true },
-  )
+  const phases = ref<Phase[]>([])
+  const debouncedSave = createKeyedDebounce(600)
 
   const allTasks = computed(() => phases.value.flatMap((phase) => phase.tasks))
   const totalCount = computed(() => allTasks.value.length)
@@ -161,101 +69,225 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     () => allTasks.value.filter((task) => task.priority === 'high' && task.completed).length,
   )
 
-  function toggleTask(phaseId: string, taskId: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  async function fetchChecklist(): Promise<void> {
+    const appCommon = useAppCommonStore()
+    appCommon.showSpinner()
+    try {
+      const dto = await CHECKLIST_API.getChecklist()
+      phases.value = dto.phases.map(mapPhase)
+    } catch {
+      appCommon.showError(new Error('errors.checklist.failedToLoad'))
+    } finally {
+      appCommon.hideSpinner()
+    }
+  }
+
+  async function toggleTask(phaseId: string, taskId: string): Promise<void> {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (!phase) return
-    const task = phase.tasks.find((item) => item.id === taskId)
+    const task = phase.tasks.find((t) => t.id === taskId)
     if (!task) return
+
     task.completed = !task.completed
+    try {
+      const result = await CHECKLIST_API.toggleItem(phaseId, taskId)
+      task.completed = result.completed
+    } catch {
+      task.completed = !task.completed
+      useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+    }
   }
 
-  function renamePhase(phaseId: string, name: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  function renamePhase(phaseId: string, name: string): void {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (phase) phase.name = name.trim()
+
+    debouncedSave(`phase-name-${phaseId}`, async () => {
+      try {
+        await CHECKLIST_API.updatePhase(phaseId, { name: name.trim() || null })
+      } catch {
+        useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+      }
+    })
   }
 
-  function updatePhaseTimeline(phaseId: string, timeline: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  function updatePhaseTimeline(phaseId: string, timeline: string): void {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (phase) phase.timeline = timeline.trim()
+
+    debouncedSave(`phase-timeline-${phaseId}`, async () => {
+      try {
+        await CHECKLIST_API.updatePhase(phaseId, { timeline: timeline.trim() || null })
+      } catch {
+        useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+      }
+    })
   }
 
-  function updatePhaseIcon(phaseId: string, icon: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  function updatePhaseIcon(phaseId: string, icon: string): void {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (phase) phase.icon = icon
-  }
 
-  function removePhase(phaseId: string) {
-    phases.value = phases.value.filter((phase) => phase.id !== phaseId)
-  }
-
-  function addPhase(name: string, icon: string) {
-    phases.value.push({
-      id: `custom-${Date.now()}`,
-      name: name.trim(),
-      timeline: '',
-      icon,
-      tasks: [],
+    debouncedSave(`phase-icon-${phaseId}`, async () => {
+      try {
+        await CHECKLIST_API.updatePhase(phaseId, { icon })
+      } catch {
+        useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+      }
     })
   }
 
-  function addTask(phaseId: string, title: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
-    if (!phase) return
-    phase.tasks.push({
-      id: `task-${Date.now()}`,
-      title: title.trim(),
-      note: '',
-      completed: false,
-      priority: 'normal',
-    })
+  async function removePhase(phaseId: string): Promise<void> {
+    const index = phases.value.findIndex((p) => p.id === phaseId)
+    if (index === -1) return
+
+    const [removed] = phases.value.splice(index, 1)
+    try {
+      await CHECKLIST_API.deletePhase(phaseId)
+    } catch {
+      phases.value.splice(index, 0, removed)
+      useAppCommonStore().showError(new Error('errors.checklist.failedToDeletePhase'))
+    }
   }
 
-  function removeTask(phaseId: string, taskId: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
-    if (!phase) return
-    phase.tasks = phase.tasks.filter((task) => task.id !== taskId)
+  async function addPhase(name: string, icon: string): Promise<void> {
+    const appCommon = useAppCommonStore()
+    appCommon.showSpinner()
+    try {
+      const dto = await CHECKLIST_API.createPhase({ name: name.trim(), icon })
+      phases.value.push(mapPhase(dto))
+    } catch {
+      appCommon.showError(new Error('errors.checklist.failedToCreatePhase'))
+    } finally {
+      appCommon.hideSpinner()
+    }
   }
 
-  function updateTaskTitle(phaseId: string, taskId: string, title: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  async function addTask(phaseId: string, title: string): Promise<void> {
+    const appCommon = useAppCommonStore()
+    appCommon.showSpinner()
+    try {
+      const dto = await CHECKLIST_API.createItem(phaseId, { title: title.trim() })
+      const phase = phases.value.find((p) => p.id === phaseId)
+      if (phase) phase.tasks.push(mapItem(dto))
+    } catch {
+      appCommon.showError(new Error('errors.checklist.failedToCreateTask'))
+    } finally {
+      appCommon.hideSpinner()
+    }
+  }
+
+  async function removeTask(phaseId: string, taskId: string): Promise<void> {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (!phase) return
-    const task = phase.tasks.find((item) => item.id === taskId)
+
+    const index = phase.tasks.findIndex((t) => t.id === taskId)
+    if (index === -1) return
+
+    const [removed] = phase.tasks.splice(index, 1)
+    try {
+      await CHECKLIST_API.deleteItem(phaseId, taskId)
+    } catch {
+      phase.tasks.splice(index, 0, removed)
+      useAppCommonStore().showError(new Error('errors.checklist.failedToDeleteTask'))
+    }
+  }
+
+  function updateTaskTitle(phaseId: string, taskId: string, title: string): void {
+    const phase = phases.value.find((p) => p.id === phaseId)
+    if (!phase) return
+    const task = phase.tasks.find((t) => t.id === taskId)
     if (task) task.title = title
+
+    debouncedSave(`task-title-${taskId}`, async () => {
+      try {
+        await CHECKLIST_API.updateItem(phaseId, taskId, { title })
+      } catch {
+        useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+      }
+    })
   }
 
-  function updateTaskNote(phaseId: string, taskId: string, note: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  function updateTaskNote(phaseId: string, taskId: string, note: string): void {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (!phase) return
-    const task = phase.tasks.find((item) => item.id === taskId)
+    const task = phase.tasks.find((t) => t.id === taskId)
     if (task) task.note = note
+
+    debouncedSave(`task-note-${taskId}`, async () => {
+      try {
+        await CHECKLIST_API.updateItem(phaseId, taskId, { note: note || null })
+      } catch {
+        useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+      }
+    })
   }
 
-  function updateTaskComment(phaseId: string, taskId: string, comment: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  function updateTaskComment(phaseId: string, taskId: string, comment: string): void {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (!phase) return
-    const task = phase.tasks.find((item) => item.id === taskId)
+    const task = phase.tasks.find((t) => t.id === taskId)
     if (task) task.comment = comment || undefined
+
+    debouncedSave(`task-comment-${taskId}`, async () => {
+      try {
+        await CHECKLIST_API.updateItem(phaseId, taskId, { comment: comment || null })
+      } catch {
+        useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+      }
+    })
   }
 
-  function togglePriority(phaseId: string, taskId: string) {
-    const phase = phases.value.find((item) => item.id === phaseId)
+  async function togglePriority(phaseId: string, taskId: string): Promise<void> {
+    const phase = phases.value.find((p) => p.id === phaseId)
     if (!phase) return
-    const task = phase.tasks.find((item) => item.id === taskId)
+    const task = phase.tasks.find((t) => t.id === taskId)
     if (!task) return
-    task.priority = task.priority === 'high' ? 'normal' : 'high'
+
+    const newPriority: 'high' | 'normal' = task.priority === 'high' ? 'normal' : 'high'
+    task.priority = newPriority
+    try {
+      await CHECKLIST_API.updateItem(phaseId, taskId, { priority: newPriority })
+    } catch {
+      task.priority = newPriority === 'high' ? 'normal' : 'high'
+      useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+    }
   }
 
-  function moveTask(fromPhaseId: string, toPhaseId: string, fromIndex: number, toIndex: number) {
-    const fromPhase = phases.value.find((item) => item.id === fromPhaseId)
-    const toPhase = phases.value.find((item) => item.id === toPhaseId)
+  async function moveTask(
+    fromPhaseId: string,
+    toPhaseId: string,
+    fromIndex: number,
+    toIndex: number,
+  ): Promise<void> {
+    const fromPhase = phases.value.find((p) => p.id === fromPhaseId)
+    const toPhase = phases.value.find((p) => p.id === toPhaseId)
     if (!fromPhase || !toPhase) return
+
     const [task] = fromPhase.tasks.splice(fromIndex, 1)
     if (!task) return
     toPhase.tasks.splice(toIndex, 0, task)
+
+    try {
+      await CHECKLIST_API.moveItem({ itemId: task.id, targetPhaseId: toPhaseId, targetIndex: toIndex })
+    } catch {
+      toPhase.tasks.splice(toIndex, 1)
+      fromPhase.tasks.splice(fromIndex, 0, task)
+      useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
+    }
   }
 
-  function resetAll() {
-    phases.value = buildDefaultPhases()
+  async function resetAll(): Promise<void> {
+    const appCommon = useAppCommonStore()
+    appCommon.showSpinner()
+    try {
+      const dto = await CHECKLIST_API.resetChecklist()
+      phases.value = dto.phases.map(mapPhase)
+    } catch {
+      appCommon.showError(new Error('errors.checklist.failedToReset'))
+    } finally {
+      appCommon.hideSpinner()
+    }
   }
 
   return {
@@ -266,6 +298,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     donePct,
     highTotal,
     highDone,
+    fetchChecklist,
     toggleTask,
     renamePhase,
     updatePhaseTimeline,

@@ -201,6 +201,15 @@
       "failedToCreateItem": "Не удалось создать позицию",
       "failedToUpdateItem": "Не удалось обновить позицию",
       "failedToDeleteItem": "Не удалось удалить позицию"
+    },
+    "checklist": {
+      "failedToLoad": "Не удалось загрузить чеклист",
+      "failedToUpdate": "Не удалось сохранить изменения",
+      "failedToCreatePhase": "Не удалось создать раздел",
+      "failedToDeletePhase": "Не удалось удалить раздел",
+      "failedToCreateTask": "Не удалось создать задачу",
+      "failedToDeleteTask": "Не удалось удалить задачу",
+      "failedToReset": "Не удалось сбросить чеклист"
     }
   }
 }

@@ -201,6 +201,15 @@
       "failedToCreateItem": "Failed to create item",
       "failedToUpdateItem": "Failed to update item",
       "failedToDeleteItem": "Failed to delete item"
+    },
+    "checklist": {
+      "failedToLoad": "Failed to load checklist",
+      "failedToUpdate": "Failed to save changes",
+      "failedToCreatePhase": "Failed to create section",
+      "failedToDeletePhase": "Failed to delete section",
+      "failedToCreateTask": "Failed to create task",
+      "failedToDeleteTask": "Failed to delete task",
+      "failedToReset": "Failed to reset checklist"
     }
   }
 }

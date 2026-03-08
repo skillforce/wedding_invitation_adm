@@ -30,6 +30,7 @@
           v-model="newName"
           class="add-phase-input"
           placeholder="New section name…"
+          maxlength="50"
           @keydown.enter.prevent="submit"
         />
 

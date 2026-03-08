@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useChecklistStore } from '@/stores/checklist'
 import ChecklistHero from '@/components/checklist/checklistHero/ChecklistHero.vue'
@@ -77,6 +77,10 @@ watch(
   },
   { deep: true },
 )
+
+onMounted(() => {
+  store.fetchChecklist()
+})
 </script>
 
 <template>
@@ -123,7 +127,7 @@ watch(
 .timeline-area {
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 20px 80px;
+  padding: 0 20px 50px;
 }
 
 .empty-state {

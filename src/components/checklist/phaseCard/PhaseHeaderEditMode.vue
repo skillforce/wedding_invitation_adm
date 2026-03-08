@@ -3,6 +3,7 @@
     class="phase-timeline-input"
     :value="timelineDraft"
     placeholder="Timeline (e.g. 12–9 months before)…"
+    maxlength="50"
     @input="$emit('update:timelineDraft', ($event.target as HTMLInputElement).value)"
     @change="store.updatePhaseTimeline(phaseId, timelineDraft)"
     @click.stop
@@ -11,6 +12,7 @@
     class="phase-name-input"
     :value="nameDraft"
     placeholder="Section name…"
+    maxlength="50"
     @input="$emit('update:nameDraft', ($event.target as HTMLInputElement).value)"
     @change="store.renamePhase(phaseId, nameDraft)"
     @click.stop

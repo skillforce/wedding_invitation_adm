@@ -4,6 +4,7 @@
       v-model="newTaskTitle"
       class="add-task-input"
       placeholder="New task…"
+      maxlength="50"
       @keydown.enter.prevent="submit"
     />
     <button class="add-task-btn" :disabled="!newTaskTitle.trim()" @click="submit">

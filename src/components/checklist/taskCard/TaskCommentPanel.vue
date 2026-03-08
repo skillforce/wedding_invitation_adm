@@ -11,6 +11,7 @@
         class="comment-textarea"
         placeholder="Leave a comment…"
         rows="2"
+        maxlength="200"
         @blur="saveComment"
         @keydown.enter.prevent="saveComment"
         @click.stop

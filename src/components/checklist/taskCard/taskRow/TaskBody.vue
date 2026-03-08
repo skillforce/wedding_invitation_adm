@@ -5,6 +5,7 @@
       class="task-title-input"
       :value="task.title"
       placeholder="Task title…"
+      maxlength="50"
       @input="$emit('update-title', ($event.target as HTMLInputElement).value)"
       @click.stop
     />
@@ -15,6 +16,7 @@
       class="task-note-input"
       :value="task.note"
       placeholder="Add a note…"
+      maxlength="50"
       @input="$emit('update-note', ($event.target as HTMLInputElement).value)"
       @click.stop
     />
