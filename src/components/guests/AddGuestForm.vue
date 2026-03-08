@@ -55,4 +55,10 @@ const isAddGuestButtonDisabled = computed(() => newGuestName.value.trim().length
 .add-input {
   flex: 1;
 }
+
+@media (max-width: 480px) {
+  .add-input::placeholder {
+   font-size: 0.75rem;
+  }
+}
 </style>
