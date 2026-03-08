@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { SEATING_ARRANGEMENT_API } from '@/api/seating-arrangement'
+import { useDebouncedAction } from '@/composables/useDebouncedAction'
 import { useAppCommonStore } from '@/stores/app_common'
 import i18n from '@/i18n'
 
@@ -9,6 +10,9 @@ export interface SeatingGuest {
   name: string
 }
 
+export type { SeatingShape } from '@/api/seating-arrangement'
+import type { SeatingShape } from '@/api/seating-arrangement'
+
 export interface SeatingTable {
   id: string
   name: string
@@ -16,11 +20,9 @@ export interface SeatingTable {
   y: number
   radius: number
   guests: SeatingGuest[]
-  shape?: 'circle' | 'rect'
-  rotation?: number
+  shape: SeatingShape
+  rotation: number
 }
-
-const DEFAULT_RADIUS = 70
 
 export const useSeatingStore = defineStore('seating', () => {
   const tables = ref<SeatingTable[]>([])
@@ -33,7 +35,7 @@ export const useSeatingStore = defineStore('seating', () => {
         name: t.name,
         x: t.position.x,
         y: t.position.y,
-        radius: DEFAULT_RADIUS,
+        radius: t.radius,
         shape: t.shape,
         rotation: t.rotation,
         guests: t.seats.map((s) => ({ id: s.id, name: s.name })),
@@ -43,13 +45,19 @@ export const useSeatingStore = defineStore('seating', () => {
     }
   }
 
-  async function addTable() {
+  function defaultNameForShape(shape: SeatingShape, idx: number): string {
+    if (shape === 'rect') return i18n.global.t('seating.defaultNewlywedTableName', { index: idx })
+    if (shape === 'pillar') return i18n.global.t('seating.defaultPillarName', { index: idx })
+    return i18n.global.t('seating.defaultTableName', { index: idx })
+  }
+
+  async function addObject(shape: SeatingShape = 'circle') {
     try {
       const idx = tables.value.length + 1
       const created = await SEATING_ARRANGEMENT_API.createTable({
-        name: i18n.global.t('seating.defaultTableName', { index: idx }),
+        name: defaultNameForShape(shape, idx),
         position: { x: 160 + Math.random() * 480, y: 160 + Math.random() * 320 },
-        shape: 'circle',
+        shape,
         rotation: 0,
       })
       tables.value.push({
@@ -57,7 +65,7 @@ export const useSeatingStore = defineStore('seating', () => {
         name: created.name,
         x: created.position.x,
         y: created.position.y,
-        radius: DEFAULT_RADIUS,
+        radius: created.radius,
         shape: created.shape,
         rotation: created.rotation,
         guests: [],
@@ -73,12 +81,7 @@ export const useSeatingStore = defineStore('seating', () => {
     table.x = x
     table.y = y
     try {
-      await SEATING_ARRANGEMENT_API.updateTable(id, {
-        name: table.name,
-        position: { x, y },
-        shape: table.shape ?? 'circle',
-        rotation: table.rotation ?? 0,
-      })
+      await SEATING_ARRANGEMENT_API.updateTable(id, { position: { x, y } })
     } catch (error) {
       useAppCommonStore().showError(error)
     }
@@ -89,12 +92,7 @@ export const useSeatingStore = defineStore('seating', () => {
     if (!table) return
     table.name = name
     try {
-      await SEATING_ARRANGEMENT_API.updateTable(id, {
-        name,
-        position: { x: table.x, y: table.y },
-        shape: table.shape ?? 'circle',
-        rotation: table.rotation ?? 0,
-      })
+      await SEATING_ARRANGEMENT_API.updateTable(id, { name })
     } catch (error) {
       useAppCommonStore().showError(error)
     }
@@ -122,28 +120,32 @@ export const useSeatingStore = defineStore('seating', () => {
     }
   }
 
-  const rotationTimers = new Map<string, ReturnType<typeof setTimeout>>()
+  const debouncedRotation = useDebouncedAction<string, [number]>(
+    (id, rotation) => {
+      SEATING_ARRANGEMENT_API.updateTable(id, { rotation })
+        .catch((error) => useAppCommonStore().showError(error))
+    },
+  )
 
   function setTableRotation(id: string, rotation: number) {
     const table = tables.value.find((t) => t.id === id)
     if (!table) return
     table.rotation = rotation
+    debouncedRotation.call(id, rotation)
+  }
 
-    const existing = rotationTimers.get(id)
-    if (existing) clearTimeout(existing)
+  const debouncedRadius = useDebouncedAction<string, [number]>(
+    (id, radius) => {
+      SEATING_ARRANGEMENT_API.updateTable(id, { radius })
+        .catch((error) => useAppCommonStore().showError(error))
+    },
+  )
 
-    rotationTimers.set(
-      id,
-      setTimeout(() => {
-        rotationTimers.delete(id)
-        SEATING_ARRANGEMENT_API.updateTable(id, {
-          name: table.name,
-          position: { x: table.x, y: table.y },
-          shape: table.shape ?? 'circle',
-          rotation,
-        }).catch((error) => useAppCommonStore().showError(error))
-      }, 1000),
-    )
+  function updateTableRadius(id: string, radius: number) {
+    const table = tables.value.find((t) => t.id === id)
+    if (!table) return
+    table.radius = radius
+    debouncedRadius.call(id, radius)
   }
 
   async function deleteTable(id: string) {
@@ -158,8 +160,9 @@ export const useSeatingStore = defineStore('seating', () => {
   return {
     tables,
     fetchTables,
-    addTable,
+    addObject,
     updateTablePosition,
+    updateTableRadius,
     renameTable,
     addGuest,
     removeGuest,

@@ -1,5 +1,12 @@
 import { apiFetch, parseApiError } from '@/api/consts'
 
+export type SeatingShape = 'circle' | 'rect' | 'pillar'
+
+export interface SeatingPosition {
+  x: number
+  y: number
+}
+
 export interface SeatingSeatDto {
   id: string
   name: string
@@ -8,24 +15,27 @@ export interface SeatingSeatDto {
 export interface SeatingTableDto {
   id: string
   name: string
-  position: { x: number; y: number }
-  shape: 'circle' | 'rect'
+  position: SeatingPosition
+  shape: SeatingShape
   rotation: number
+  radius: number
   seats: SeatingSeatDto[]
 }
 
 export interface CreateSeatingTableDto {
   name: string
-  position: { x: number; y: number }
-  shape?: 'circle' | 'rect'
+  position: SeatingPosition
+  shape?: SeatingShape
   rotation?: number
+  radius?: number
 }
 
 export interface UpdateSeatingTableDto {
-  name: string
-  position: { x: number; y: number }
-  shape: 'circle' | 'rect'
-  rotation: number
+  name?: string
+  position?: SeatingPosition
+  shape?: SeatingShape
+  rotation?: number
+  radius?: number
 }
 
 const BASE = '/seating-arrangements'

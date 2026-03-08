@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import Slider from 'primevue/slider'
 import { useSeatingStore, type SeatingTable } from '@/stores/seating'
 import TableGuestList from './TableGuestList.vue'
+
+const MIN_RADIUS = 40
+const MAX_RADIUS = 120
 
 const props = defineProps<{ table: SeatingTable }>()
 const emit = defineEmits<{ close: [] }>()
@@ -11,13 +15,19 @@ const seatingStore = useSeatingStore()
 const { t } = useI18n()
 
 const editingName = ref(props.table.name)
+const sizeValue = ref(props.table.radius)
 
 watch(
   () => props.table.id,
   () => {
     editingName.value = props.table.name
+    sizeValue.value = props.table.radius
   },
 )
+
+function onSizeChange(val: number) {
+  seatingStore.updateTableRadius(props.table.id, val)
+}
 
 function saveName() {
   if (editingName.value.trim()) {
@@ -46,7 +56,22 @@ async function deleteTable() {
       <button class="close-btn" :aria-label="t('a11y.closePanel')" @click="emit('close')">✕</button>
     </div>
 
-    <TableGuestList :table="table" />
+    <div class="size-section">
+      <div class="size-label">
+        <span class="size-label-text">{{ t('seating.size') }}</span>
+        <span class="size-value">{{ sizeValue }}</span>
+      </div>
+      <Slider
+        v-model="sizeValue"
+        :min="MIN_RADIUS"
+        :max="MAX_RADIUS"
+        :step="5"
+        class="size-slider"
+        @change="onSizeChange"
+      />
+    </div>
+
+    <TableGuestList v-if="table.shape !== 'pillar'" :table="table" />
 
     <div class="panel-footer">
       <button class="delete-table-btn" @click="deleteTable">{{ t('seating.deleteTable') }}</button>
@@ -79,6 +104,7 @@ async function deleteTable() {
     left: 0;
     right: 0;
     width: 100%;
+    max-width: 100vw;
     height: auto;
     max-height: 62dvh;
     border-left: none;
@@ -86,6 +112,7 @@ async function deleteTable() {
     border-radius: 16px 16px 0 0;
     padding: 10px 16px 24px;
     gap: 14px;
+    overflow-x: hidden;
   }
 }
 
@@ -150,6 +177,42 @@ async function deleteTable() {
 .close-btn:hover {
   background: var(--board-close-hover-bg);
   color: var(--board-close-hover-text);
+}
+
+.size-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.size-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.size-label-text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--board-section-text);
+}
+
+.size-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--board-input-text);
+  background: var(--board-input-bg);
+  border: 1px solid var(--board-input-border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.size-slider {
+  width: 100%;
 }
 
 .panel-footer {

@@ -116,6 +116,10 @@ async function copyLink() {
   .status-badge {
     padding: 0.15rem 0.35rem;
   }
+
+.guest-name{
+  max-width: 140px;
+}
 }
 
 @media (max-width: 390px) {
@@ -125,6 +129,9 @@ async function copyLink() {
   .link-btn {
     width: 20px;
     height: 20px;
+  }
+  .guest-name{
+    max-width: 100px;
   }
 }
 </style>

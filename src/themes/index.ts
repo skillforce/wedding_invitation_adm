@@ -28,6 +28,9 @@ export interface ThemeDefinition {
     tableShadowColor: string
     connectorStroke: string
     canvasBorder: string
+    pillarFill: string
+    pillarStroke: string
+    pillarShadowColor: string
   }
 }
 
@@ -119,6 +122,9 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       tableShadowColor: 'rgba(0, 0, 0, 0.18)',
       connectorStroke: '#b8943f',
       canvasBorder: 'rgba(184, 148, 63, 0.45)',
+      pillarFill: '#1a1a1a',
+      pillarStroke: '#3a3a3a',
+      pillarShadowColor: 'rgba(0, 0, 0, 0.7)',
     },
   },
   [AppTheme.Light]: {
@@ -208,6 +214,9 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       tableShadowColor: 'rgba(17, 29, 44, 0.2)',
       connectorStroke: '#7a93b3',
       canvasBorder: 'rgba(79, 111, 149, 0.45)',
+      pillarFill: '#222222',
+      pillarStroke: '#444444',
+      pillarShadowColor: 'rgba(0, 0, 0, 0.5)',
     },
   },
 }

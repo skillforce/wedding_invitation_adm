@@ -1,34 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import {
-  Circle as VCircle,
-  Group as VGroup,
-  Line as VLine,
-  Rect as VRect,
-  Text as VText,
-} from 'vue-konva'
+import { Group as VGroup } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 import type { SeatingTable } from '@/stores/seating'
 import { useThemeStore } from '@/stores/theme'
-import {
-  getKonvaThemePalette,
-  tableGroupConfig,
-  tableDragBoundFunc,
-  selectionRingConfig,
-  selectionRingRectConfig,
-  tableCircleConfig,
-  tableRectConfig,
-  newlywedsDotConfig,
-  tableNameConfig,
-  tableNameRectConfig,
-  connectorConfig,
-  seatCircleConfig,
-  guestNameConfig,
-  rotationHandleConfig,
-  rotationHandleLineConfig,
-  ROTATION_SNAP,
-} from './tableKonvaConfigs'
+import { getKonvaThemePalette, tableGroupConfig, tableDragBoundFunc, ROTATION_SNAP } from './tableKonvaConfigs'
+import CircleTableNode from './nodes/CircleTableNode.vue'
+import RectTableNode from './nodes/RectTableNode.vue'
+import PillarNode from './nodes/PillarNode.vue'
 
 const props = defineProps<{
   table: SeatingTable
@@ -40,16 +20,14 @@ const emit = defineEmits<{
   dragend: [tableId: string, x: number, y: number]
   rotate: [tableId: string, degrees: number]
 }>()
+
 const themeStore = useThemeStore()
 const konvaTheme = computed(() => getKonvaThemePalette(themeStore.theme))
 
-// ── State ─────────────────────────────────────────────────────────────────────
 const isRotating = ref(false)
 const stageRef = ref<Stage | null>(null)
 const handleStartPos = ref<{ x: number; y: number } | null>(null)
 
-// Disable group dragging while the rotation handle is active, so the two
-// gestures can never interfere with each other.
 const groupConfig = computed(() => ({
   ...tableGroupConfig(props.table),
   draggable: !isRotating.value,
@@ -79,7 +57,14 @@ function onDragEnd(e: KonvaEventObject<MouseEvent>) {
   emit('dragend', props.table.id, e.target.x(), e.target.y())
 }
 
-// ── Rotation handle ───────────────────────────────────────────────────────────
+// ── Rotation handle (forwarded from RectTableNode) ────────────────────────────
+let rafId: number | null = null
+let pendingRotation: number | null = null
+
+function snapRotation(deg: number) {
+  return Math.round(deg / ROTATION_SNAP) * ROTATION_SNAP
+}
+
 function onHandleMouseEnter(e: KonvaEventObject<MouseEvent>) {
   e.cancelBubble = true
   e.target.getStage()!.container().style.cursor = 'crosshair'
@@ -88,15 +73,6 @@ function onHandleMouseEnter(e: KonvaEventObject<MouseEvent>) {
 function onHandleMouseLeave(e: KonvaEventObject<MouseEvent>) {
   e.cancelBubble = true
   e.target.getStage()!.container().style.cursor = 'default'
-}
-
-// rAF throttle: store the latest computed rotation and flush once per frame.
-// This caps store updates + Vue re-renders to 60 fps regardless of pointer speed.
-let rafId: number | null = null
-let pendingRotation: number | null = null
-
-function snapRotation(deg: number) {
-  return Math.round(deg / ROTATION_SNAP) * ROTATION_SNAP
 }
 
 function onHandleDragStart(e: KonvaEventObject<DragEvent>) {
@@ -112,7 +88,6 @@ function onHandleDragEnd(e: KonvaEventObject<DragEvent>) {
   }
   handleStartPos.value = null
   isRotating.value = false
-  // Flush any pending rAF so the final angle is always committed
   if (rafId !== null) {
     cancelAnimationFrame(rafId)
     rafId = null
@@ -131,9 +106,7 @@ function onHandleDragMove(e: KonvaEventObject<DragEvent>) {
   }
   const group = handle.getParent()!
   const pointerPos = handle.getStage()?.getPointerPosition()
-  if (!pointerPos) {
-    return
-  }
+  if (!pointerPos) return
   const absGroup = group.getAbsolutePosition()
 
   const angleDeg = Math.atan2(pointerPos.y - absGroup.y, pointerPos.x - absGroup.x) * (180 / Math.PI)
@@ -151,7 +124,6 @@ function onHandleDragMove(e: KonvaEventObject<DragEvent>) {
 }
 
 function onHandleClick(e: KonvaEventObject<MouseEvent>) {
-  // Prevent click from bubbling to the group (which would trigger select)
   e.cancelBubble = true
 }
 </script>
@@ -166,42 +138,29 @@ function onHandleClick(e: KonvaEventObject<MouseEvent>) {
     @dragstart="onDragStart"
     @dragend="onDragEnd"
   >
-    <!-- ── Rect (newlyweds) table ── -->
-    <template v-if="table.shape === 'rect'">
-      <VRect :config="selectionRingRectConfig(table, isSelected, konvaTheme)" />
-      <VRect :config="tableRectConfig(table, konvaTheme)" />
-      <VCircle :config="newlywedsDotConfig(0, konvaTheme)" />
-      <VCircle :config="newlywedsDotConfig(1, konvaTheme)" />
-      <VText :config="tableNameRectConfig(table, konvaTheme)" />
-
-      <!-- Rotation handle — only when selected -->
-      <template v-if="isSelected">
-        <VLine :config="rotationHandleLineConfig(table, konvaTheme)" />
-        <VCircle
-          :config="rotationHandleConfig(table, konvaTheme)"
-          @mouseenter="onHandleMouseEnter"
-          @mouseleave="onHandleMouseLeave"
-          @dragstart="onHandleDragStart"
-          @dragmove="onHandleDragMove"
-          @dragend="onHandleDragEnd"
-          @click="onHandleClick"
-          @tap="onHandleClick"
-        />
-      </template>
-    </template>
-
-    <!-- ── Circle table (default) ── -->
-    <template v-else>
-      <VCircle :config="selectionRingConfig(table, isSelected, konvaTheme)" />
-      <VCircle :config="tableCircleConfig(table, konvaTheme)" />
-      <VText :config="tableNameConfig(table, konvaTheme)" />
-    </template>
-
-    <!-- ── Seats (shared for both shapes) ── -->
-    <template v-for="(guest, idx) in table.guests" :key="guest.id">
-      <VLine :config="connectorConfig(table, idx, konvaTheme)" />
-      <VCircle :config="seatCircleConfig(table, idx, konvaTheme)" />
-      <VText :config="guestNameConfig(table, guest, idx, konvaTheme)" />
-    </template>
+    <PillarNode
+      v-if="table.shape === 'pillar'"
+      :table="table"
+      :is-selected="isSelected"
+      :palette="konvaTheme"
+    />
+    <RectTableNode
+      v-else-if="table.shape === 'rect'"
+      :table="table"
+      :is-selected="isSelected"
+      :palette="konvaTheme"
+      @handle-mouse-enter="onHandleMouseEnter"
+      @handle-mouse-leave="onHandleMouseLeave"
+      @handle-drag-start="onHandleDragStart"
+      @handle-drag-move="onHandleDragMove"
+      @handle-drag-end="onHandleDragEnd"
+      @handle-click="onHandleClick"
+    />
+    <CircleTableNode
+      v-else
+      :table="table"
+      :is-selected="isSelected"
+      :palette="konvaTheme"
+    />
   </VGroup>
 </template>

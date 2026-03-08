@@ -295,6 +295,90 @@ export function connectorConfig(
   }
 }
 
+// ── Pillar configs (ribbed square) ────────────────────────────────────────────
+const PILLAR_SIZE_RATIO = 0.65
+
+export function pillarSelectionRingConfig(
+  table: SeatingTable,
+  isSelected: boolean,
+  palette: KonvaThemePalette,
+) {
+  const s = table.radius * PILLAR_SIZE_RATIO + 10
+  return {
+    x: -s,
+    y: -s,
+    width: s * 2,
+    height: s * 2,
+    stroke: palette.selectionStroke,
+    strokeWidth: 2,
+    dash: [6, 4],
+    fill: 'transparent',
+    listening: false,
+    opacity: isSelected ? 1 : 0,
+  }
+}
+
+export function pillarSquareConfig(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
+  const s = table.radius * PILLAR_SIZE_RATIO
+  return {
+    x: -s,
+    y: -s,
+    width: s * 2,
+    height: s * 2,
+    fill: palette.pillarFill,
+    stroke: palette.pillarStroke,
+    strokeWidth: 2.5,
+    shadowBlur: 14,
+    shadowColor: palette.pillarShadowColor,
+    shadowOffsetY: 5,
+    shadowOpacity: 1,
+  }
+}
+
+export function pillarRibConfigs(
+  table: SeatingTable,
+  palette: KonvaThemePalette,
+) {
+  const s = table.radius * PILLAR_SIZE_RATIO
+  const ribCount = Math.max(2, Math.round(s / 12))
+  const gap = (s * 2) / (ribCount + 1)
+  const ribs: { points: number[]; stroke: string; strokeWidth: number; opacity: number; listening: boolean }[] = []
+
+  for (let i = 1; i <= ribCount; i++) {
+    const x = -s + gap * i
+    ribs.push({
+      points: [x, -s, x, s],
+      stroke: palette.pillarStroke,
+      strokeWidth: 1,
+      opacity: 0.35,
+      listening: false,
+    })
+  }
+  return ribs
+}
+
+export function pillarNameConfig(
+  table: SeatingTable,
+) {
+  const s = table.radius * PILLAR_SIZE_RATIO
+  return {
+    text: table.name,
+    fontSize: 11,
+    fontFamily: 'Georgia, serif',
+    fill: '#ffffff',
+    fontStyle: 'bold',
+    align: 'center',
+    width: s * 2,
+    offsetX: s,
+    y: s + 6,
+    listening: false,
+    opacity: 0.85,
+  }
+}
+
 // ── Rotation handle (rect tables only) ───────────────────────────────────────
 export function rotationHandleLineConfig(
   table: SeatingTable,

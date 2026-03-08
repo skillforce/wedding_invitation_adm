@@ -43,8 +43,8 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 
 <template>
   <div ref="containerRef" class="board-container">
-    <BoardToolbar :is-fitted="isFitted" :stage-ref="stageRef" @add-table="seatingStore.addTable()" @fit-canvas="fitToStage()" />
-    <BoardMobileMenu :is-fitted="isFitted" :stage-ref="stageRef" @add-table="seatingStore.addTable()" @fit-canvas="fitToStage()" />
+    <BoardToolbar :is-fitted="isFitted" :stage-ref="stageRef" @add-object="(shape) => seatingStore.addObject(shape)" @fit-canvas="fitToStage()" />
+    <BoardMobileMenu :is-fitted="isFitted" :stage-ref="stageRef" @add-object="(shape) => seatingStore.addObject(shape)" @fit-canvas="fitToStage()" />
 
     <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
       <VLayer>
