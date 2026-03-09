@@ -20,6 +20,9 @@ defineProps<{ phase: Phase }>()
   color: var(--color-text-muted);
   display: block;
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .phase-name {
