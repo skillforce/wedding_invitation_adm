@@ -43,7 +43,6 @@ const store = useChecklistStore()
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--color-text-muted);
   background: transparent;
   border: none;
