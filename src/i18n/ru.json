@@ -63,6 +63,8 @@
     "exportData": "Выгрузить данные",
     "savePdf": "Сохранить PDF",
     "tableNamePlaceholder": "Название стола...",
+    "selectGuestPlaceholder": "Выбрать гостя...",
+    "allGuestsSeated": "Все гости уже распределены",
     "sectionGuests": "Гости",
     "noGuestsYet": "Гостей пока нет",
     "guestNamePlaceholder": "Имя гостя...",

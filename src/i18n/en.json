@@ -63,6 +63,8 @@
     "exportData": "Export data",
     "savePdf": "Save PDF",
     "tableNamePlaceholder": "Table name...",
+    "selectGuestPlaceholder": "Select guest...",
+    "allGuestsSeated": "All guests are on their places",
     "sectionGuests": "Guests",
     "noGuestsYet": "No guests yet",
     "guestNamePlaceholder": "Guest name...",

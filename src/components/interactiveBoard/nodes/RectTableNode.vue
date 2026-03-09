@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Circle as VCircle, Line as VLine, Rect as VRect, Text as VText } from 'vue-konva'
-import type { KonvaEventObject } from 'konva/lib/Node'
 import type { SeatingTable } from '@/stores/seating'
 import type { KonvaThemePalette } from '../tableKonvaConfigs'
 import {
@@ -12,10 +11,12 @@ import {
   rotationHandleLineConfig,
 } from '../tableKonvaConfigs'
 import SeatNodes from './SeatNodes.vue'
+import type { KonvaEventObject } from "konva/lib/Node";
 
 defineProps<{
   table: SeatingTable
   isSelected: boolean
+  isDropTarget: boolean
   palette: KonvaThemePalette
 }>()
 
@@ -26,11 +27,22 @@ const emit = defineEmits<{
   handleDragMove: [e: KonvaEventObject<DragEvent>]
   handleDragEnd: [e: KonvaEventObject<DragEvent>]
   handleClick: [e: KonvaEventObject<MouseEvent>]
+  guestDrag: [guestId: string, pointer: { x: number; y: number }]
+  guestDragEnd: []
+  guestDrop: [guestId: string, pointer: { x: number; y: number }]
 }>()
+
+function onGuestDrag(id: string, pos: { x: number; y: number }) {
+  emit('guestDrag', id, pos)
+}
+
+function onGuestDrop(id: string, pos: { x: number; y: number }) {
+  emit('guestDrop', id, pos)
+}
 </script>
 
 <template>
-  <VRect :config="selectionRingRectConfig(table, isSelected, palette)" />
+  <VRect :config="selectionRingRectConfig(table, isSelected || isDropTarget, palette)" />
   <VRect :config="tableRectConfig(table, palette)" />
   <VCircle :config="newlywedsDotConfig(0, palette)" />
   <VCircle :config="newlywedsDotConfig(1, palette)" />
@@ -50,5 +62,11 @@ const emit = defineEmits<{
     />
   </template>
 
-  <SeatNodes :table="table" :palette="palette" />
+  <SeatNodes
+    :table="table"
+    :palette="palette"
+    @guest-drag="onGuestDrag"
+    @guest-drag-end="emit('guestDragEnd')"
+    @guest-drop="onGuestDrop"
+  />
 </template>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { SeatingTable } from '@/stores/seating'
 import { useSeatingStore } from '@/stores/seating'
+import { useGuestsStore } from '@/stores/guests'
 import AddSeatForm from './AddSeatForm.vue'
 
 const props = defineProps<{
@@ -10,6 +12,13 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const seatingStore = useSeatingStore()
+const guestsStore = useGuestsStore()
+
+onMounted(async () => {
+  if (!guestsStore.guests.length) {
+    await guestsStore.fetchGuests()
+  }
+})
 
 function addGuest(name: string) {
   seatingStore.addGuest(props.table.id, name)

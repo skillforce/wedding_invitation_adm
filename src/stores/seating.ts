@@ -120,6 +120,55 @@ export const useSeatingStore = defineStore('seating', () => {
     }
   }
 
+  async function moveGuestBetweenTables(sourceTableId: string, targetTableId: string, guestId: string) {
+    if (sourceTableId === targetTableId) return
+
+    const sourceTable = tables.value.find((t) => t.id === sourceTableId)
+    const targetTable = tables.value.find((t) => t.id === targetTableId)
+    if (!sourceTable || !targetTable) return
+    if (sourceTable.shape === 'pillar' || targetTable.shape === 'pillar') return
+
+    const sourceIndex = sourceTable.guests.findIndex((g) => g.id === guestId)
+    if (sourceIndex === -1) return
+
+    const guest = sourceTable.guests[sourceIndex]
+    if (!guest) return
+
+    sourceTable.guests.splice(sourceIndex, 1)
+    const targetIndex = targetTable.guests.push(guest) - 1
+    let createdSeatId: string | null = null
+
+    try {
+      const createdSeat = await SEATING_ARRANGEMENT_API.addSeat(targetTableId, guest.name)
+      createdSeatId = createdSeat.id
+      await SEATING_ARRANGEMENT_API.removeSeat(sourceTableId, guest.id)
+
+      const movedIndex = targetTable.guests.findIndex((g) => g.id === guest.id)
+      if (movedIndex !== -1) {
+        targetTable.guests[movedIndex] = {
+          id: createdSeat.id,
+          name: createdSeat.name,
+        }
+      }
+    } catch (error) {
+      if (createdSeatId) {
+        try {
+          await SEATING_ARRANGEMENT_API.removeSeat(targetTableId, createdSeatId)
+        } catch (cleanupError) {
+          useAppCommonStore().showError(cleanupError)
+        }
+      }
+
+      if (targetTable.guests[targetIndex]?.id === guest.id) {
+        targetTable.guests.splice(targetIndex, 1)
+      } else {
+        targetTable.guests = targetTable.guests.filter((g) => g.id !== guest.id)
+      }
+      sourceTable.guests.splice(sourceIndex, 0, guest)
+      useAppCommonStore().showError(error)
+    }
+  }
+
   const debouncedRotation = useDebouncedAction<string, [number]>(
     (id, rotation) => {
       SEATING_ARRANGEMENT_API.updateTable(id, { rotation })
@@ -166,6 +215,7 @@ export const useSeatingStore = defineStore('seating', () => {
     renameTable,
     addGuest,
     removeGuest,
+    moveGuestBetweenTables,
     setTableRotation,
     deleteTable,
   }

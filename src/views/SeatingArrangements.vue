@@ -3,10 +3,12 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { Layer as VLayer, Rect as VRect, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
+
 import { useSeatingStore } from '@/stores/seating'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
 import { CANVAS_WORKSPACE_CONFIG } from '@/components/interactiveBoard/tableKonvaConfigs'
+import { useGuestDrag } from '@/composables/useGuestDrag'
 import BoardToolbar from '@/components/interactiveBoard/BoardToolbar.vue'
 import BoardMobileMenu from '@/components/interactiveBoard/BoardMobileMenu.vue'
 import TableNode from '@/components/interactiveBoard/TableNode.vue'
@@ -19,7 +21,7 @@ const stageRef = ref<{ getNode(): Stage } | null>(null)
 
 const { stageConfig, isMobile } = useStageSize(containerRef)
 const { onWheel, fitToStage, zoomToMin, isFitted } = useZoom(stageRef)
-
+const { dropTargetTableId, onGuestDrag, onGuestDragEnd, onGuestDrop } = useGuestDrag(stageRef)
 
 onMounted(async () => {
   await seatingStore.fetchTables()
@@ -54,9 +56,13 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
           :key="table.id"
           :table="table"
           :is-selected="table.id === selectedTableId"
+          :is-drop-target="table.id === dropTargetTableId"
           @select="(id) => (selectedTableId = id)"
           @dragend="(id, x, y) => seatingStore.updateTablePosition(id, x, y)"
           @rotate="(id, deg) => seatingStore.setTableRotation(id, deg)"
+          @guest-drag="onGuestDrag"
+          @guest-drag-end="onGuestDragEnd"
+          @guest-drop="onGuestDrop"
         />
       </VLayer>
     </VStage>

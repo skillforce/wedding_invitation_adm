@@ -5,7 +5,7 @@ import type { Stage } from "konva/lib/Stage";
 const themeStore = useThemeStore()
 // ── Visual constants ──────────────────────────────────────────────────────────
 export const SEAT_RADIUS = 15
-export const SEAT_OFFSET = 20
+export const SEAT_OFFSET = 40
 
 // Rect table proportions (relative to radius)
 export const RECT_W = 2.4   // width  = radius * RECT_W
@@ -254,15 +254,15 @@ export function guestNameConfig(
   palette: KonvaThemePalette,
 ) {
   const { x, y } = guestPosition(table, index)
-  const label = guest.name.length > 9 ? guest.name.slice(0, 8) + '…' : guest.name
+  const label = guest.name.length > 15 ? guest.name.slice(0, 15) + '…' : guest.name
   return {
     text: label,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     fill: palette.guestNameFill,
     align: 'center',
-    width: 52,
-    offsetX: 26,
+    width: 85,
+    offsetX: 40,
     offsetY: -SEAT_RADIUS - 3,
     x,
     y,
@@ -366,14 +366,14 @@ export function pillarNameConfig(
   const s = table.radius * PILLAR_SIZE_RATIO
   return {
     text: table.name,
-    fontSize: 11,
+    fontSize: 16,
     fontFamily: 'Georgia, serif',
     fill: '#ffffff',
     fontStyle: 'bold',
     align: 'center',
     width: s * 2,
     offsetX: s,
-    y: s + 6,
+    y:0,
     listening: false,
     opacity: 0.85,
   }
