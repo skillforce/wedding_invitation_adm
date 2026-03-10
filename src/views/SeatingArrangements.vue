@@ -5,6 +5,7 @@ import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 
 import { useSeatingStore } from '@/stores/seating'
+import { useGuestsStore } from '@/stores/guests'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
 import { CANVAS_WORKSPACE_CONFIG } from '@/components/interactiveBoard/tableKonvaConfigs'
@@ -15,6 +16,7 @@ import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
 
 const seatingStore = useSeatingStore()
+const guestsStore = useGuestsStore()
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const stageRef = ref<{ getNode(): Stage } | null>(null)
@@ -24,7 +26,10 @@ const { onWheel, fitToStage, zoomToMin, isFitted } = useZoom(stageRef)
 const { dropTargetTableId, onGuestDrag, onGuestDragEnd, onGuestDrop } = useGuestDrag(stageRef)
 
 onMounted(async () => {
-  await seatingStore.fetchTables()
+  await Promise.all([
+    seatingStore.fetchTables(),
+    guestsStore.guests.length ? Promise.resolve() : guestsStore.fetchGuests(),
+  ])
   await nextTick()
   zoomToMin()
 })

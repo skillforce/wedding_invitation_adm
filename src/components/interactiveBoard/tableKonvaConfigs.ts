@@ -373,7 +373,7 @@ export function pillarNameConfig(
     align: 'center',
     width: s * 2,
     offsetX: s,
-    y:0,
+    y:-10,
     listening: false,
     opacity: 0.85,
   }

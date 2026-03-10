@@ -7,43 +7,45 @@ import { useGuestsStore } from '@/stores/guests'
 import { useSeatingStore } from '@/stores/seating'
 
 const emit = defineEmits<{
-  add: [name: string]
+  add: [guestId: string]
 }>()
 
 const { t } = useI18n()
 const guestsStore = useGuestsStore()
 const seatingStore = useSeatingStore()
 
-const selectedGuestName = ref<string | null>(null)
+const selectedGuestId = ref<string | null>(null)
 
-const seatedNames = computed(() => {
-  const names = new Set<string>()
+const seatedGuestIds = computed(() => {
+  const ids = new Set<string>()
   for (const table of seatingStore.tables) {
     for (const guest of table.guests) {
-      names.add(guest.name)
+      ids.add(guest.guestId)
     }
   }
-  return names
+  return ids
 })
 
 const availableGuests = computed(() =>
   guestsStore.guests
-    .map((g) => g.name)
-    .filter((name) => !seatedNames.value.has(name)),
+    .map((g) => ({ label: g.name, value: String(g.id) }))
+    .filter((guest) => !seatedGuestIds.value.has(guest.value)),
 )
 
 function addGuest() {
-  if (!selectedGuestName.value) return
-  emit('add', selectedGuestName.value)
-  selectedGuestName.value = null
+  if (!selectedGuestId.value) return
+  emit('add', selectedGuestId.value)
+  selectedGuestId.value = null
 }
 </script>
 
 <template>
   <div class="add-seat-form">
     <Select
-      v-model="selectedGuestName"
+      v-model="selectedGuestId"
       :options="availableGuests"
+      option-label="label"
+      option-value="value"
       :placeholder="t('seating.selectGuestPlaceholder')"
       :empty-message="t('seating.allGuestsSeated')"
       class="guest-select"
@@ -52,7 +54,7 @@ function addGuest() {
     <Button
       icon="pi pi-user-plus"
       size="small"
-      :disabled="!selectedGuestName"
+      :disabled="!selectedGuestId"
       :aria-label="t('a11y.addGuest')"
       @click="addGuest"
     />

@@ -7,6 +7,7 @@ import i18n from '@/i18n'
 
 export interface SeatingGuest {
   id: string
+  guestId: string
   name: string
 }
 
@@ -38,7 +39,7 @@ export const useSeatingStore = defineStore('seating', () => {
         radius: t.radius,
         shape: t.shape,
         rotation: t.rotation,
-        guests: t.seats.map((s) => ({ id: s.id, name: s.name })),
+        guests: t.seats.map((s) => ({ id: s.id, guestId: s.guest_id, name: s.name })),
       }))
     } catch (error) {
       useAppCommonStore().showError(error)
@@ -98,29 +99,29 @@ export const useSeatingStore = defineStore('seating', () => {
     }
   }
 
-  async function addGuest(tableId: string, guestName: string) {
+  async function addGuest(tableId: string, guestId: string) {
     const table = tables.value.find((t) => t.id === tableId)
     if (!table) return
     try {
-      const seat = await SEATING_ARRANGEMENT_API.addSeat(tableId, guestName)
-      table.guests.push({ id: seat.id, name: seat.name })
+      const seat = await SEATING_ARRANGEMENT_API.addSeat(tableId, guestId)
+      table.guests.push({ id: seat.id, guestId: seat.guest_id, name: seat.name })
     } catch (error) {
       useAppCommonStore().showError(error)
     }
   }
 
-  async function removeGuest(tableId: string, guestId: string) {
+  async function removeGuest(tableId: string, seatId: string) {
     const table = tables.value.find((t) => t.id === tableId)
     if (!table) return
     try {
-      await SEATING_ARRANGEMENT_API.removeSeat(tableId, guestId)
-      table.guests = table.guests.filter((g) => g.id !== guestId)
+      await SEATING_ARRANGEMENT_API.removeSeat(tableId, seatId)
+      table.guests = table.guests.filter((g) => g.id !== seatId)
     } catch (error) {
       useAppCommonStore().showError(error)
     }
   }
 
-  async function moveGuestBetweenTables(sourceTableId: string, targetTableId: string, guestId: string) {
+  async function moveGuestBetweenTables(sourceTableId: string, targetTableId: string, seatId: string) {
     if (sourceTableId === targetTableId) return
 
     const sourceTable = tables.value.find((t) => t.id === sourceTableId)
@@ -128,7 +129,7 @@ export const useSeatingStore = defineStore('seating', () => {
     if (!sourceTable || !targetTable) return
     if (sourceTable.shape === 'pillar' || targetTable.shape === 'pillar') return
 
-    const sourceIndex = sourceTable.guests.findIndex((g) => g.id === guestId)
+    const sourceIndex = sourceTable.guests.findIndex((g) => g.id === seatId)
     if (sourceIndex === -1) return
 
     const guest = sourceTable.guests[sourceIndex]
@@ -136,29 +137,19 @@ export const useSeatingStore = defineStore('seating', () => {
 
     sourceTable.guests.splice(sourceIndex, 1)
     const targetIndex = targetTable.guests.push(guest) - 1
-    let createdSeatId: string | null = null
 
     try {
-      const createdSeat = await SEATING_ARRANGEMENT_API.addSeat(targetTableId, guest.name)
-      createdSeatId = createdSeat.id
-      await SEATING_ARRANGEMENT_API.removeSeat(sourceTableId, guest.id)
+      const createdSeat = await SEATING_ARRANGEMENT_API.addSeat(targetTableId, guest.guestId)
 
       const movedIndex = targetTable.guests.findIndex((g) => g.id === guest.id)
       if (movedIndex !== -1) {
         targetTable.guests[movedIndex] = {
           id: createdSeat.id,
+          guestId: createdSeat.guest_id,
           name: createdSeat.name,
         }
       }
     } catch (error) {
-      if (createdSeatId) {
-        try {
-          await SEATING_ARRANGEMENT_API.removeSeat(targetTableId, createdSeatId)
-        } catch (cleanupError) {
-          useAppCommonStore().showError(cleanupError)
-        }
-      }
-
       if (targetTable.guests[targetIndex]?.id === guest.id) {
         targetTable.guests.splice(targetIndex, 1)
       } else {

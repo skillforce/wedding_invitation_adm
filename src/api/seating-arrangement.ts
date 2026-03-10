@@ -9,6 +9,7 @@ export interface SeatingPosition {
 
 export interface SeatingSeatDto {
   id: string
+  guest_id: string
   name: string
 }
 
@@ -70,10 +71,10 @@ export const SEATING_ARRANGEMENT_API = {
     if (!res.ok) throw await parseApiError(res)
   },
 
-  async addSeat(tableId: string, name: string): Promise<SeatingSeatDto> {
+  async addSeat(tableId: string, guestId: string): Promise<SeatingSeatDto> {
     const res = await apiFetch(`${BASE}/tables/${tableId}/seats`, {
       method: 'POST',
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ guest_id: guestId }),
     })
     if (!res.ok) throw await parseApiError(res)
     return res.json()

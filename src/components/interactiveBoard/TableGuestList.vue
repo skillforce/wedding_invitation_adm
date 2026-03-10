@@ -20,8 +20,8 @@ onMounted(async () => {
   }
 })
 
-function addGuest(name: string) {
-  seatingStore.addGuest(props.table.id, name)
+function addGuest(guestId: string) {
+  seatingStore.addGuest(props.table.id, guestId)
 }
 
 function removeGuest(guestId: string) {

@@ -90,10 +90,29 @@ const { t } = useI18n()
 }
 
 .shape-pillar {
+  position: relative;
   width: 18px;
-  height: 26px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 35% 30%, #b0b0c8 0%, #5a5a72 55%, #2e2e40 100%);
-  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.45);
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(56, 69, 88, 0.45);
+  background: linear-gradient(145deg, #dde3eb 0%, #a8b3c2 45%, #78859a 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    inset 0 -2px 3px rgba(30, 38, 52, 0.25),
+    0 2px 4px rgba(30, 38, 52, 0.25);
+}
+
+.shape-pillar::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.32) 0 1px,
+      rgba(255, 255, 255, 0) 1px 4px
+    );
+  opacity: 0.9;
 }
 </style>
