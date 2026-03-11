@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
-import { Layer as VLayer, Rect as VRect, Stage as VStage } from 'vue-konva'
+import { Layer as VLayer, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
 
@@ -8,12 +8,12 @@ import { useSeatingStore } from '@/stores/seating'
 import { useGuestsStore } from '@/stores/guests'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
-import { CANVAS_WORKSPACE_CONFIG } from '@/components/interactiveBoard/tableKonvaConfigs'
 import { useGuestDrag } from '@/composables/useGuestDrag'
 import BoardToolbar from '@/components/interactiveBoard/BoardToolbar.vue'
 import BoardMobileMenu from '@/components/interactiveBoard/BoardMobileMenu.vue'
 import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
+import WorkspaceNode from '@/components/interactiveBoard/WorkspaceNode.vue'
 
 const seatingStore = useSeatingStore()
 const guestsStore = useGuestsStore()
@@ -55,7 +55,7 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 
     <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
       <VLayer>
-        <VRect :config="CANVAS_WORKSPACE_CONFIG" />
+        <WorkspaceNode :is-mobile="isMobile" />
         <TableNode
           v-for="table in seatingStore.tables"
           :key="table.id"

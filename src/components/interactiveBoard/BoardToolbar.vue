@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Popover from 'primevue/popover'
@@ -7,6 +7,7 @@ import type { Stage } from 'konva/lib/Stage'
 import type { SeatingShape } from '@/stores/seating'
 import { useExportData } from './composables/useExportData'
 import ExportPdf from './ExportPdf.vue'
+import { useWorkspace } from '@/composables/useWorkspace'
 
 defineProps<{ isFitted: boolean; stageRef: { getNode(): Stage } | null }>()
 const emit = defineEmits<{ addObject: [shape: SeatingShape]; fitCanvas: [] }>()
@@ -14,6 +15,9 @@ const { t } = useI18n()
 const { exportData } = useExportData()
 
 const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
+const { workspaceShape, toggleShape } = useWorkspace()
+const shapeIcon = computed(() => workspaceShape.value === 'rect' ? 'pi pi-circle' : 'pi pi-stop')
+const shapeLabel = computed(() => t(workspaceShape.value === 'rect' ? 'seating.toCircleLayout' : 'seating.toRectLayout'))
 
 function togglePopover(event: MouseEvent) {
   popoverRef.value?.toggle(event)
@@ -46,6 +50,7 @@ function pickObject(shape: SeatingShape) {
       </div>
     </Popover>
     <Button :label="t('seating.workspace')" icon="pi pi-expand" size="small" :disabled="isFitted" @click="emit('fitCanvas')" />
+    <Button :label="shapeLabel" :icon="shapeIcon" size="small" severity="secondary" @click="toggleShape" />
     <Button :label="t('seating.exportData')" icon="pi pi-download" size="small" severity="secondary" @click="exportData" />
     <ExportPdf :stage-ref="stageRef" />
   </div>

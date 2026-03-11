@@ -4,6 +4,7 @@ import type { Stage } from 'konva/lib/Stage'
 import BottomDrawer from '@/components/shared/BottomDrawer.vue'
 import { useExportData } from '../composables/useExportData'
 import ExportPdf from '../ExportPdf.vue'
+import { useWorkspace } from '@/composables/useWorkspace'
 
 defineProps<{
   open: boolean
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { exportData: exportDataBase } = useExportData()
+const { workspaceShape, toggleShape } = useWorkspace()
 
 function fitCanvas() {
   emit('fitCanvas')
@@ -45,6 +47,10 @@ function exportData() {
       <button class="action-btn" @click="exportData">
         <i class="pi pi-download" />
         <span>{{ t('seating.exportData') }}</span>
+      </button>
+      <button class="action-btn" @click="toggleShape(); emit('close')">
+        <i :class="workspaceShape === 'rect' ? 'pi pi-circle' : 'pi pi-stop'" />
+        <span>{{ t(workspaceShape === 'rect' ? 'seating.toCircleLayout' : 'seating.toRectLayout') }}</span>
       </button>
       <ExportPdf :stage-ref="stageRef" v-slot="{ onClick }">
         <button class="action-btn" @click="() => { onClick(); emit('close') }">

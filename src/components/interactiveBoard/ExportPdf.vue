@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import type { Stage } from 'konva/lib/Stage'
 import { usePreferencesStore } from '@/stores/preferences'
 import { getThemeDefinition } from '@/themes'
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '@/components/interactiveBoard/tableKonvaConfigs'
+import { useWorkspace } from '@/composables/useWorkspace'
 
 const props = defineProps<{
   stageRef: { getNode(): Stage } | null
@@ -14,6 +14,7 @@ const props = defineProps<{
 const { t } = useI18n()
 const themeStore = usePreferencesStore()
 const boardTheme = computed(() => getThemeDefinition(themeStore.theme).board)
+const { workspaceWidth, workspaceHeight } = useWorkspace()
 
 async function doExport() {
   const { jsPDF } = await import('jspdf')
@@ -21,8 +22,8 @@ async function doExport() {
   if (!stage) return
 
   const pixelRatio = 2
-  const sw = CANVAS_WIDTH
-  const sh = CANVAS_HEIGHT
+  const sw = workspaceWidth.value
+  const sh = workspaceHeight.value
 
   // Temporarily reset stage to 1:1 so toDataURL captures the full workspace
   const savedScale = stage.scaleX()

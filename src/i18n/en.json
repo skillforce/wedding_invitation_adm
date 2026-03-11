@@ -123,7 +123,9 @@
     "exportGuestCount": "Guests: {count}",
     "pdfFileName": "seating-arrangement.pdf",
     "textFileName": "seating-arrangement.txt",
-    "defaultTableName": "Table {index}"
+    "defaultTableName": "Table {index}",
+    "toCircleLayout": "Hall: oval",
+    "toRectLayout": "Hall: rectangle"
   },
   "a11y": {
     "sidebarToggle": "Toggle sidebar",

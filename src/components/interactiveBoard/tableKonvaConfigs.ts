@@ -1,8 +1,7 @@
 import type { SeatingTable, SeatingGuest } from '@/stores/seating'
 import { getThemeDefinition, type ThemeName } from '@/themes'
-import { usePreferencesStore } from '@/stores/preferences'
-import type { Stage } from "konva/lib/Stage";
-const themeStore = usePreferencesStore()
+import type { Stage } from 'konva/lib/Stage'
+import { useWorkspace } from '@/composables/useWorkspace'
 // ── Visual constants ──────────────────────────────────────────────────────────
 export const SEAT_RADIUS = 15
 export const SEAT_OFFSET = 40
@@ -24,14 +23,6 @@ export const CANVAS_WIDTH = 1600
 export const CANVAS_HEIGHT = 900
 
 
-export const CANVAS_WORKSPACE_CONFIG = {
-  x: 0, y: 0,
-  width: CANVAS_WIDTH, height: CANVAS_HEIGHT,
-  stroke: getKonvaThemePalette(themeStore.theme).canvasBorder,
-  strokeWidth: 4,
-  fill: 'transparent',
-  listening: false,
-}
 
 export type KonvaThemePalette = ReturnType<typeof getKonvaThemePalette>
 
@@ -71,19 +62,18 @@ export function tableGroupConfig(table: SeatingTable) {
 
 export function tableDragBoundFunc(
   pos: { x: number; y: number },
-  stage:Stage,
+  stage: Stage,
 ) {
+  const { workspaceWidth, workspaceHeight } = useWorkspace()
   const scale = stage.scaleX()
   const stagePos = stage.position()
 
-  // Convert stage-space position to canvas-space
   const canvasX = (pos.x - stagePos.x) / scale
   const canvasY = (pos.y - stagePos.y) / scale
 
-  const clampedX = Math.max(0, Math.min(CANVAS_WIDTH, canvasX))
-  const clampedY = Math.max(0, Math.min(CANVAS_HEIGHT, canvasY))
+  const clampedX = Math.max(0, Math.min(workspaceWidth.value, canvasX))
+  const clampedY = Math.max(0, Math.min(workspaceHeight.value, canvasY))
 
-  // Convert back to stage-space
   return {
     x: clampedX * scale + stagePos.x,
     y: clampedY * scale + stagePos.y,

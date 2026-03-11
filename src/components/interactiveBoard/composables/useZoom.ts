@@ -6,9 +6,8 @@ import {
   SCALE_BY,
   MIN_SCALE,
   MAX_SCALE,
-  CANVAS_WIDTH,
-  CANVAS_HEIGHT,
 } from '@/components/interactiveBoard/tableKonvaConfigs'
+import { useWorkspace } from '@/composables/useWorkspace'
 
 const MOBILE_BREAKPOINT = 640
 const MIN_SCALE_MOBILE = 0.2
@@ -20,14 +19,15 @@ function getMinScale() {
 
 export function useZoom(stageRef: Ref<{ getNode(): Stage } | null>) {
   const isFitted = ref(true)
+  const { workspaceWidth, workspaceHeight } = useWorkspace()
 
   // ── Clamp helpers ─────────────────────────────────────────────────────────
   function clampPosition(stage: Stage) {
     const scale = stage.scaleX()
     const vw = stage.width()
     const vh = stage.height()
-    const scaledW = CANVAS_WIDTH * scale
-    const scaledH = CANVAS_HEIGHT * scale
+    const scaledW = workspaceWidth.value * scale
+    const scaledH = workspaceHeight.value * scale
 
     const x =
       scaledW <= vw
@@ -125,9 +125,11 @@ export function useZoom(stageRef: Ref<{ getNode(): Stage } | null>) {
   function fitToStage(
     x = 0,
     y = 0,
-    contentWidth = CANVAS_WIDTH,
-    contentHeight = CANVAS_HEIGHT,
+    contentWidth?: number,
+    contentHeight?: number,
   ) {
+    const cw = contentWidth ?? workspaceWidth.value
+    const ch = contentHeight ?? workspaceHeight.value
     const stage = stageRef.value?.getNode()
     if (!stage) return
 
@@ -135,16 +137,16 @@ export function useZoom(stageRef: Ref<{ getNode(): Stage } | null>) {
     const sh = stage.height()
     const isMobileView = sw < 640
 
-    const scaleX = sw / contentWidth
-    const scaleY = sh / contentHeight
+    const scaleX = sw / cw
+    const scaleY = sh / ch
     const fitScale = Math.min(scaleX, scaleY)
     const scale = Math.min(
       Math.max(isMobileView ? fitScale : Math.min(1, fitScale), getMinScale()),
       MAX_SCALE,
     )
 
-    const offsetX = (sw - contentWidth * scale) / 2 - x * scale
-    const offsetY = (sh - contentHeight * scale) / 2 - y * scale
+    const offsetX = (sw - cw * scale) / 2 - x * scale
+    const offsetY = (sh - ch * scale) / 2 - y * scale
 
     stage.scale({ x: scale, y: scale })
     stage.position({ x: offsetX, y: offsetY })
@@ -199,8 +201,8 @@ export function useZoom(stageRef: Ref<{ getNode(): Stage } | null>) {
     const sh = stage.height()
     stage.scale({ x: scale, y: scale })
     stage.position({
-      x: (sw - CANVAS_WIDTH * scale) / 2,
-      y: (sh - CANVAS_HEIGHT * scale) / 2,
+      x: (sw - workspaceWidth.value * scale) / 2,
+      y: (sh - workspaceHeight.value * scale) / 2,
     })
     isFitted.value = true
     clampPosition(stage)
