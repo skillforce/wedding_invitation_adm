@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { Group as VGroup } from 'vue-konva'
 import type { SeatingTable } from '@/stores/seating'
-import { useThemeStore } from '@/stores/theme'
+import { usePreferencesStore } from '@/stores/preferences'
 import { getKonvaThemePalette } from './tableKonvaConfigs'
 import { useTableRotation } from './composables/useTableRotation'
 import { useTableDrag } from './composables/useTableDrag'
@@ -25,7 +25,7 @@ const emit = defineEmits<{
   guestDrop: [sourceTableId: string, guestId: string, pointer: { x: number; y: number }]
 }>()
 
-const themeStore = useThemeStore()
+const themeStore = usePreferencesStore()
 const konvaTheme = computed(() => getKonvaThemePalette(themeStore.theme))
 
 const { isRotating, onHandleMouseEnter, onHandleMouseLeave, onHandleDragStart, onHandleDragMove, onHandleDragEnd, onHandleClick } =

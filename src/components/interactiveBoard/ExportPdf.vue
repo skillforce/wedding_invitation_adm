@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import type { Stage } from 'konva/lib/Stage'
-import { useThemeStore } from '@/stores/theme'
+import { usePreferencesStore } from '@/stores/preferences'
 import { getThemeDefinition } from '@/themes'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '@/components/interactiveBoard/tableKonvaConfigs'
 
@@ -12,7 +12,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const themeStore = useThemeStore()
+const themeStore = usePreferencesStore()
 const boardTheme = computed(() => getThemeDefinition(themeStore.theme).board)
 
 async function doExport() {

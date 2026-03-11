@@ -1,8 +1,8 @@
 import type { SeatingTable, SeatingGuest } from '@/stores/seating'
 import { getThemeDefinition, type ThemeName } from '@/themes'
-import { useThemeStore } from "@/stores/theme.ts";
+import { usePreferencesStore } from '@/stores/preferences'
 import type { Stage } from "konva/lib/Stage";
-const themeStore = useThemeStore()
+const themeStore = usePreferencesStore()
 // ── Visual constants ──────────────────────────────────────────────────────────
 export const SEAT_RADIUS = 15
 export const SEAT_OFFSET = 40

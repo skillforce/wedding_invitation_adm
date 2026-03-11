@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/theme.ts'
+import { usePreferencesStore } from '@/stores/preferences'
 
-const themeStore = useThemeStore()
+const themeStore = usePreferencesStore()
 const { isDarkTheme } = storeToRefs(themeStore)
 const { t } = useI18n()
 

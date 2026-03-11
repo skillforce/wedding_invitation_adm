@@ -16,8 +16,7 @@ import router from './router'
 import './router/guards'
 import './style.css'
 import 'primeicons/primeicons.css'
-import { useThemeStore } from '@/stores/theme'
-import { useLocaleStore } from '@/stores/locale'
+import { usePreferencesStore } from '@/stores/preferences'
 import i18n from '@/i18n'
 
 const app = createApp(App)
@@ -37,9 +36,8 @@ app.use(PrimeVue, {
   },
 })
 
-const themeStore = useThemeStore(pinia)
-themeStore.initTheme()
-const localeStore = useLocaleStore(pinia)
-localeStore.initLocale()
+const preferencesStore = usePreferencesStore(pinia)
+preferencesStore.initTheme()
+preferencesStore.initLocale()
 
 app.mount('#app')

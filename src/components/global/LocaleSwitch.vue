@@ -2,10 +2,10 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useLocaleStore } from '@/stores/locale.ts'
+import { usePreferencesStore } from '@/stores/preferences'
 import type { AppLocale } from '@/i18n'
 
-const localeStore = useLocaleStore()
+const localeStore = usePreferencesStore()
 const { locale } = storeToRefs(localeStore)
 const { t } = useI18n()
 
