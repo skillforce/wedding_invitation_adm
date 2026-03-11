@@ -3,15 +3,18 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import type { GuestDetailViewDto } from '@/api/guests.ts'
+import GuestResponseMark from '@/components/guests/GuestResponsePanel/GuestResponseMark.vue'
 import { useAuthStore } from '@/stores/auth.ts'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
 
 const props = defineProps<{
   guest: GuestDetailViewDto
+  isSelected: boolean
 }>()
 
 const emit = defineEmits<{
-  remove: [id: number]
+  remove: [id: string]
+  select: [id: string]
 }>()
 
 const { t } = useI18n()
@@ -29,13 +32,22 @@ async function copyLink() {
 </script>
 
 <template>
-  <div class="guest-row">
+  <div
+    :class="['guest-row', isSelected && 'guest-row--selected']"
+    role="button"
+    tabindex="0"
+    @click="emit('select', guest.id)"
+    @keydown.enter.prevent="emit('select', guest.id)"
+    @keydown.space.prevent="emit('select', guest.id)"
+  >
     <UserAvatar :size="28" :alt="t('a11y.guestAvatar')" class="guest-avatar" />
     <span class="guest-name">{{ guest.name }}</span>
-    <span :class="['status-badge', guest.is_already_answered ? 'status--answered' : 'status--pending']">
-      <span class="status-text">{{ guest.is_already_answered ? t('guests.answered') : t('guests.notAnswered') }}</span>
-      <i v-if="!guest.is_already_answered" class="pi pi-clock status-icon" />
-    </span>
+    <GuestResponseMark
+      :responded="guest.is_already_answered"
+      variant="badge"
+      label-scope="guest"
+      pending-icon="clock"
+    />
     <Button
       class="link-btn"
       v-if="invitationUrl"
@@ -45,7 +57,7 @@ async function copyLink() {
       text
       rounded
       :aria-label="t('a11y.copyInvitationLink')"
-      @click="copyLink"
+      @click.stop="copyLink"
     />
     <Button
       class="link-btn"
@@ -55,7 +67,7 @@ async function copyLink() {
       text
       rounded
       :aria-label="t('a11y.removeGuest')"
-      @click="emit('remove', guest.id)"
+      @click.stop="emit('remove', guest.id)"
     />
   </div>
 </template>
@@ -69,6 +81,21 @@ async function copyLink() {
   border-radius: 8px;
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.guest-row:hover,
+.guest-row:focus-visible {
+  border-color: color-mix(in srgb, var(--p-primary-400) 55%, var(--color-border-strong));
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--p-primary-300) 12%, transparent);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.guest-row--selected {
+  border-color: var(--p-primary-400);
+  background: color-mix(in srgb, var(--p-primary-100) 20%, var(--color-surface));
 }
 
 .guest-name {
@@ -81,56 +108,39 @@ async function copyLink() {
   white-space: nowrap;
 }
 
-.status-badge {
-  font-size: 0.75rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.status--answered {
-  background: color-mix(in srgb, var(--p-green-500) 15%, transparent);
-  color: var(--p-green-500);
-}
-
-.status--pending {
-  background: color-mix(in srgb, var(--p-surface-400) 20%, transparent);
-  color: var(--color-text-muted);
-}
-
-.status-icon {
-  display: none;
-  font-size: 0.75rem;
-}
-
 @media (max-width: 480px) {
-  .status--pending .status-text {
-    display: none;
-  }
-
-  .status--pending .status-icon {
-    display: inline;
-  }
-
-  .status-badge {
+  .guest-row :deep(.response-mark--badge) {
     padding: 0.15rem 0.35rem;
   }
 
-.guest-name{
-  max-width: 140px;
-}
+  .guest-row :deep(.response-mark--muted.response-mark--badge .response-mark__label) {
+    display: none;
+  }
+
+  .guest-row :deep(.response-mark--muted.response-mark--badge) {
+    gap: 0;
+  }
+
+  .guest-row :deep(.response-mark--muted.response-mark--badge .pi) {
+    font-size: 0.75rem;
+  }
+
+  .guest-name {
+    max-width: 140px;
+  }
 }
 
 @media (max-width: 390px) {
-  .guest-avatar{
+  .guest-avatar {
     display: none;
   }
+
   .link-btn {
     width: 20px;
     height: 20px;
   }
-  .guest-name{
+
+  .guest-name {
     max-width: 100px;
   }
 }

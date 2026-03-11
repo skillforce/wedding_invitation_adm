@@ -1,24 +1,45 @@
 import { HttpMethod, apiFetch, parseApiError } from '@/api/consts'
 
 export interface GuestResponseViewDto {
-  id: number
+  id: string
   preferred_drinks: string[]
-  other_preferences?: string
+  other_preferences: string | null
   plus_one: boolean
-  plus_one_name?: string
+  plus_one_name: string | null
 }
 
 export interface GuestDetailViewDto {
-  id: number
+  id: string
   name: string
   is_already_answered: boolean
-  response?: GuestResponseViewDto
+  guestForm: GuestFormDto | null
+  response: GuestResponseViewDto | null
 }
 
-export interface CreateGuestInputDto {
+export type GuestRelationshipToCouple = 'bride_side' | 'groom_side' | 'mutual'
+export type GuestAgeGroup = 'child' | 'young' | 'adult' | 'old'
+export type GuestPersonalityType = 'introvert' | 'extrovert' | 'unknown'
+
+export interface GuestFormDto {
+  relationship_to_couple: GuestRelationshipToCouple
+  age_group: GuestAgeGroup
+  has_kids_attending: boolean
+  personality_type: GuestPersonalityType
+  vip_parents: boolean
+  vip_grandparents: boolean
+  vip_relatives: boolean
+}
+
+export interface NewGuestPayload {
   guest_name: string
+  guestForm?: GuestFormDto
+}
+
+export interface CreateGuestInputDto extends NewGuestPayload {
   user_id: number
 }
+
+export type UpdateGuestFormPayload = Partial<GuestFormDto>
 
 export const GUESTS_API = {
   async getAllGuests(): Promise<GuestDetailViewDto[]> {
@@ -36,7 +57,16 @@ export const GUESTS_API = {
     return res.json()
   },
 
-  async deleteGuest(id: number): Promise<void> {
+  async updateGuestForm(id: string, dto: UpdateGuestFormPayload): Promise<GuestDetailViewDto> {
+    const res = await apiFetch(`/guests/${id}/form`, {
+      method: HttpMethod.PATCH,
+      body: JSON.stringify(dto),
+    })
+    if (!res.ok) throw await parseApiError(res)
+    return res.json()
+  },
+
+  async deleteGuest(id: string): Promise<void> {
     const res = await apiFetch(`/guests/${id}`, { method: HttpMethod.DELETE })
     if (!res.ok) throw await parseApiError(res)
   },

@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
-import { GUESTS_API, type GuestDetailViewDto } from '@/api/guests'
+import {
+  GUESTS_API,
+  type GuestDetailViewDto,
+  type GuestFormDto,
+  type NewGuestPayload,
+} from '@/api/guests'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useAuthStore } from '@/stores/auth'
 
@@ -7,7 +12,7 @@ interface GuestsState {
   guests: GuestDetailViewDto[]
   isLoading: boolean
   isAdding: boolean
-  activeTab: 'manage' | 'responses'
+  isUpdating: boolean
 }
 
 export const useGuestsStore = defineStore('guests', {
@@ -15,7 +20,7 @@ export const useGuestsStore = defineStore('guests', {
     guests: [],
     isLoading: false,
     isAdding: false,
-    activeTab: 'manage',
+    isUpdating: false,
   }),
 
   actions: {
@@ -34,13 +39,13 @@ export const useGuestsStore = defineStore('guests', {
       }
     },
 
-    async addGuest(name: string) {
+    async addGuest(payload: NewGuestPayload) {
       const authStore = useAuthStore()
       if (!authStore.user) return
 
       const appCommon = useAppCommonStore()
 
-      const trimmedName = name.trim()
+      const trimmedName = payload.guest_name.trim()
       const isDuplicate = this.guests.some(
         (g) => g.name.trim().toLowerCase() === trimmedName.toLowerCase(),
       )
@@ -56,6 +61,7 @@ export const useGuestsStore = defineStore('guests', {
         const newGuest = await GUESTS_API.createGuest({
           guest_name: trimmedName,
           user_id: authStore.user.id,
+          guestForm: payload.guestForm,
         })
         this.guests.push(newGuest)
       } catch (error) {
@@ -66,7 +72,23 @@ export const useGuestsStore = defineStore('guests', {
       }
     },
 
-    async removeGuest(id: number) {
+    async updateGuestForm(id: string, payload: GuestFormDto) {
+      const appCommon = useAppCommonStore()
+      this.isUpdating = true
+      appCommon.showSpinner()
+
+      try {
+        const updatedGuest = await GUESTS_API.updateGuestForm(id, payload)
+        this.guests = this.guests.map((guest) => (guest.id === id ? updatedGuest : guest))
+      } catch (error) {
+        appCommon.showError(error)
+      } finally {
+        this.isUpdating = false
+        appCommon.hideSpinner()
+      }
+    },
+
+    async removeGuest(id: string) {
       const appCommon = useAppCommonStore()
       appCommon.showSpinner()
 
@@ -81,8 +103,4 @@ export const useGuestsStore = defineStore('guests', {
     },
   },
 
-  persist: {
-    key: 'guests-ui',
-    pick: ['activeTab'],
-  },
 })

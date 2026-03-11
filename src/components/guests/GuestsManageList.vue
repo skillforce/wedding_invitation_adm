@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Select from 'primevue/select'
-import type { GuestDetailViewDto } from '@/api/guests.ts'
+import type { GuestDetailViewDto, GuestFormDto, NewGuestPayload } from '@/api/guests.ts'
 import GuestManageListItem from '@/components/guests/GuestManageListItem.vue'
-import AddGuestForm from '@/components/guests/AddGuestForm.vue'
+import AddGuestForm from '@/components/guests/AddGuestForm/index.vue'
 
 const props = defineProps<{
   guests: GuestDetailViewDto[]
   isAdding: boolean
+  isUpdating: boolean
+  selectedGuestId: string | null
+  selectedGuest: GuestDetailViewDto | null
 }>()
 
 const emit = defineEmits<{
-  add: [name: string]
-  remove: [id: number]
+  add: [payload: NewGuestPayload]
+  update: [id: string, payload: GuestFormDto]
+  remove: [id: string]
+  select: [id: string | null]
 }>()
 
 const { t } = useI18n()
@@ -33,11 +38,32 @@ const filteredGuests = computed(() => {
   return props.guests
 })
 
+watch(
+  filteredGuests,
+  (nextGuests) => {
+    if (!nextGuests.length) {
+      emit('select', null)
+      return
+    }
+
+    const selectedStillVisible = nextGuests.some((guest) => guest.id === props.selectedGuestId)
+    if (!selectedStillVisible) {
+      emit('select', nextGuests[0]?.id ?? null)
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <section class="manage-section">
-    <AddGuestForm :is-adding="isAdding" @add="emit('add', $event)" />
+    <AddGuestForm
+      :is-adding="isAdding"
+      :is-updating="isUpdating"
+      :editing-guest="selectedGuest"
+      @add="emit('add', $event)"
+      @update="emit('update', $event.id, $event.payload)"
+    />
 
     <Select
       v-model="activeFilter"
@@ -51,7 +77,9 @@ const filteredGuests = computed(() => {
       <li v-for="guest in filteredGuests" :key="guest.id">
         <GuestManageListItem
           :guest="guest"
+          :is-selected="guest.id === selectedGuestId"
           @remove="emit('remove', $event)"
+          @select="emit('select', $event)"
         />
       </li>
     </ul>

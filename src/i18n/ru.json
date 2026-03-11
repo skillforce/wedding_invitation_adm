@@ -32,11 +32,11 @@
     "empty": "В списке нет гостей.",
     "listView": "Список",
     "gridView": "Сетка",
-    "respondedTitle": "Ответившие гости:",
     "preferredDrinks": "Предпочитаемые напитки:",
     "otherPreferences": "Другие предпочтения / желания:",
     "none": "Нет",
     "yes": "Да",
+    "no": "Нет",
     "plusOne": "Плюс один:",
     "answered": "Ответил",
     "notAnswered": "Не ответил",
@@ -45,9 +45,56 @@
     "invitationUrlPlaceholder": "URL сайта приглашения",
     "addGuestPlaceholder": "Имя гостя (3–20 символов)",
     "addGuestButton": "Добавить",
-    "tabs": {
-      "responses": "Ответы",
-      "manage": "Гости"
+    "profile": {
+      "modalTitle": "Профиль гостя",
+      "editTitle": "Редактирование профиля гостя",
+      "kicker": "Обязательный шаг перед сохранением",
+      "editKicker": "Редактирование сохраненного профиля",
+      "description": "Заполните профиль гостя перед созданием записи, чтобы рассадка и планирование сразу получили нужный контекст.",
+      "editDescription": "Обновите сохраненные поля профиля гостя. Изменения сохраняются сразу после подтверждения.",
+      "selectPlaceholder": "Выберите вариант",
+      "relationshipLabel": "Отношение к паре",
+      "ageLabel": "Возраст или возрастная группа",
+      "kidsLabel": "Будут ли с ним дети?",
+      "personalityLabel": "Интроверт или экстраверт",
+      "vipLabel": "VIP-статус",
+      "selectedGuest": "Выбранный гость",
+      "editButton": "Редактировать профиль",
+      "saveButton": "Сохранить гостя",
+      "updateButton": "Обновить профиль",
+      "relationshipOptions": {
+        "brideSide": "Со стороны невесты",
+        "groomSide": "Со стороны жениха",
+        "mutual": "Общий"
+      },
+      "ageOptions": {
+        "child": "Ребенок",
+        "young": "Молодой",
+        "adult": "Взрослый",
+        "old": "Пожилой"
+      },
+      "personalityOptions": {
+        "introvert": "Интроверт",
+        "extrovert": "Экстраверт",
+        "unknown": "Неизвестно"
+      },
+      "vipOptions": {
+        "none": "Без VIP-метки",
+        "parents": "Родители",
+        "grandparents": "Бабушки и дедушки",
+        "relatives": "Родственники"
+      }
+    },
+    "responsePanel": {
+      "kicker": "Выбранный ответ",
+      "emptyTitle": "Выберите гостя",
+      "emptyDescription": "Нажмите на гостя в списке, чтобы посмотреть детали RSVP.",
+      "profileTitle": "Профиль гостя",
+      "responseTitle": "Ответ гостя",
+      "responded": "Ответил",
+      "notResponded": "Не ответил",
+      "profileMissing": "Для этого гостя пока нет сохраненных данных профиля.",
+      "responseMissing": "Этот гость пока не отправил ответ."
     }
   },
   "seating": {
@@ -191,7 +238,9 @@
     "guests": {
       "failedToLoad": "Не удалось загрузить гостей",
       "failedToCreate": "Не удалось добавить гостя",
+      "failedToUpdate": "Не удалось обновить профиль гостя",
       "duplicateGuest": "Гость с таким именем уже существует",
+      "completeGuestProfile": "Заполните все поля профиля гостя перед сохранением.",
       "invalidUrl": "Введите корректный URL, начинающийся с http:// или https://"
     },
     "seating": {

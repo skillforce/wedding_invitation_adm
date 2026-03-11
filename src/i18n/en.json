@@ -32,11 +32,11 @@
     "empty": "No guests in the list.",
     "listView": "List view",
     "gridView": "Grid view",
-    "respondedTitle": "Guests who responded:",
     "preferredDrinks": "Preferred drinks:",
     "otherPreferences": "Other preferences / wishes:",
     "none": "None",
     "yes": "Yes",
+    "no": "No",
     "plusOne": "Plus one:",
     "answered": "Answered",
     "notAnswered": "Not answered",
@@ -45,9 +45,56 @@
     "invitationUrlPlaceholder": "Invitation site URL",
     "addGuestPlaceholder": "Guest name (3–20 chars)",
     "addGuestButton": "Add guest",
-    "tabs": {
-      "responses": "Responses",
-      "manage": "Guests"
+    "profile": {
+      "modalTitle": "Guest profile",
+      "editTitle": "Edit guest profile",
+      "kicker": "Required before saving",
+      "editKicker": "Editing saved profile",
+      "description": "Classify the guest before creating the record so seating and planning logic have the full context.",
+      "editDescription": "Update the saved guest profile fields. Changes are persisted immediately after saving.",
+      "selectPlaceholder": "Choose an option",
+      "relationshipLabel": "Relationship to the couple",
+      "ageLabel": "Age or age range",
+      "kidsLabel": "Do they have kids attending?",
+      "personalityLabel": "Introvert vs. extrovert",
+      "vipLabel": "VIP status",
+      "selectedGuest": "Selected guest",
+      "editButton": "Edit profile",
+      "saveButton": "Save guest",
+      "updateButton": "Update profile",
+      "relationshipOptions": {
+        "brideSide": "Bride's side",
+        "groomSide": "Groom's side",
+        "mutual": "Mutual"
+      },
+      "ageOptions": {
+        "child": "Child",
+        "young": "Young",
+        "adult": "Adult",
+        "old": "Old"
+      },
+      "personalityOptions": {
+        "introvert": "Introvert",
+        "extrovert": "Extrovert",
+        "unknown": "Unknown"
+      },
+      "vipOptions": {
+        "none": "No VIP tag",
+        "parents": "Parents",
+        "grandparents": "Grandparents",
+        "relatives": "Relatives"
+      }
+    },
+    "responsePanel": {
+      "kicker": "Selected response",
+      "emptyTitle": "Pick a guest",
+      "emptyDescription": "Select a guest from the list to inspect their RSVP details.",
+      "profileTitle": "Guest profile",
+      "responseTitle": "Guest response",
+      "responded": "Responded",
+      "notResponded": "Not responded",
+      "profileMissing": "This guest does not have saved profile data yet.",
+      "responseMissing": "This guest has not submitted a response yet."
     }
   },
   "seating": {
@@ -191,7 +238,9 @@
     "guests": {
       "failedToLoad": "Failed to load guests",
       "failedToCreate": "Failed to add guest",
+      "failedToUpdate": "Failed to update guest profile",
       "duplicateGuest": "A guest with this name already exists",
+      "completeGuestProfile": "Complete every guest profile field before saving.",
       "invalidUrl": "Please enter a valid URL starting with http:// or https://"
     },
     "seating": {
