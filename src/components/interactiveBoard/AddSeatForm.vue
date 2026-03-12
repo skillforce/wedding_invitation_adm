@@ -10,6 +10,10 @@ const emit = defineEmits<{
   add: [guestId: string]
 }>()
 
+const props = defineProps<{
+  disabled?: boolean
+}>()
+
 const { t } = useI18n()
 const guestsStore = useGuestsStore()
 const seatingStore = useSeatingStore()
@@ -54,7 +58,7 @@ function addGuest() {
     <Button
       icon="pi pi-user-plus"
       size="small"
-      :disabled="!selectedGuestId"
+      :disabled="props.disabled || !selectedGuestId"
       :aria-label="t('a11y.addGuest')"
       @click="addGuest"
     />

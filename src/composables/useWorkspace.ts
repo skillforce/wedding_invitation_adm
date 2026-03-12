@@ -1,45 +1,40 @@
-import { ref, watch } from 'vue'
-
-const MIN_WIDTH = 1600
-const MIN_HEIGHT = 900
-const MAX_RESIZE_SCALE = 1.7
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value))
-}
-
-const workspaceShape = ref<'rect' | 'circle'>(
-  (localStorage.getItem('ws-shape') as 'rect' | 'circle') ?? 'rect',
-)
-const workspaceWidth = ref<number>(
-  clamp(Number(localStorage.getItem('ws-width')) || MIN_WIDTH, MIN_WIDTH, MIN_WIDTH * MAX_RESIZE_SCALE),
-)
-const workspaceHeight = ref<number>(
-  clamp(Number(localStorage.getItem('ws-height')) || MIN_HEIGHT, MIN_HEIGHT, MIN_HEIGHT * MAX_RESIZE_SCALE),
-)
-
-watch(workspaceShape, (v) => localStorage.setItem('ws-shape', v))
-watch(workspaceWidth, (v) => localStorage.setItem('ws-width', String(v)))
-watch(workspaceHeight, (v) => localStorage.setItem('ws-height', String(v)))
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSeatingStore } from '@/stores/seating'
 
 export function useWorkspace() {
-  function toggleShape() {
-    workspaceShape.value = workspaceShape.value === 'rect' ? 'circle' : 'rect'
-  }
+  const seatingStore = useSeatingStore()
+  const {
+    workspaceShape,
+    workspaceWidth,
+    workspaceHeight,
+    maxTablesAmount,
+    maxSeatsPerTableAmount,
+    workspaceBounds,
+    workspaceLimits,
+  } = storeToRefs(seatingStore)
 
-  function resizeWorkspace(w: number, h: number) {
-    workspaceWidth.value = clamp(w, MIN_WIDTH, MIN_WIDTH * MAX_RESIZE_SCALE)
-    workspaceHeight.value = clamp(h, MIN_HEIGHT, MIN_HEIGHT * MAX_RESIZE_SCALE)
-  }
+  const MIN_WIDTH = computed(() => workspaceBounds.value.minWidth)
+  const MAX_WIDTH = computed(() => workspaceBounds.value.maxWidth)
+  const MIN_HEIGHT = computed(() => workspaceBounds.value.minHeight)
+  const MAX_HEIGHT = computed(() => workspaceBounds.value.maxHeight)
 
   return {
     workspaceShape,
     workspaceWidth,
     workspaceHeight,
+    maxTablesAmount,
+    maxSeatsPerTableAmount,
     MIN_WIDTH,
+    MAX_WIDTH,
     MIN_HEIGHT,
-    MAX_RESIZE_SCALE,
-    toggleShape,
-    resizeWorkspace,
+    MAX_HEIGHT,
+    MIN_TABLES_AMOUNT: computed(() => workspaceLimits.value.minTablesAmount),
+    MAX_TABLES_AMOUNT: computed(() => workspaceLimits.value.maxTablesAmount),
+    MIN_SEATS_PER_TABLE_AMOUNT: computed(() => workspaceLimits.value.minSeatsPerTableAmount),
+    MAX_SEATS_PER_TABLE_AMOUNT: computed(() => workspaceLimits.value.maxSeatsPerTableAmount),
+    toggleShape: seatingStore.toggleWorkspaceShape,
+    resizeWorkspace: seatingStore.resizeWorkspace,
+    updateWorkspace: seatingStore.updateWorkspace,
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { SeatingTable } from '@/stores/seating'
 import { useSeatingStore } from '@/stores/seating'
@@ -13,6 +13,7 @@ const props = defineProps<{
 const { t } = useI18n()
 const seatingStore = useSeatingStore()
 const guestsStore = useGuestsStore()
+const isTableFull = computed(() => props.table.guests.length >= seatingStore.maxSeatsPerTableAmount)
 
 onMounted(async () => {
   if (!guestsStore.guests.length) {
@@ -33,7 +34,7 @@ function removeGuest(guestId: string) {
   <div class="table-guest-list">
     <p class="section-label">
       {{ t('seating.sectionGuests') }}
-      <span class="guest-count">{{ table.guests.length }}</span>
+      <span class="guest-count">{{ table.guests.length }}/{{ seatingStore.maxSeatsPerTableAmount }}</span>
     </p>
 
     <ul class="guest-list">
@@ -44,7 +45,7 @@ function removeGuest(guestId: string) {
       </li>
     </ul>
 
-    <AddSeatForm @add="addGuest" />
+    <AddSeatForm :disabled="isTableFull" @add="addGuest" />
   </div>
 </template>
 

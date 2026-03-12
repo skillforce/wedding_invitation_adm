@@ -141,7 +141,9 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const index = phases.value.findIndex((p) => p.id === phaseId)
     if (index === -1) return
 
-    const [removed] = phases.value.splice(index, 1)
+    const removed = phases.value[index]
+    if (!removed) return
+    phases.value.splice(index, 1)
     try {
       await CHECKLIST_API.deletePhase(phaseId)
     } catch {
@@ -184,7 +186,9 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const index = phase.tasks.findIndex((t) => t.id === taskId)
     if (index === -1) return
 
-    const [removed] = phase.tasks.splice(index, 1)
+    const removed = phase.tasks[index]
+    if (!removed) return
+    phase.tasks.splice(index, 1)
     try {
       await CHECKLIST_API.deleteItem(phaseId, taskId)
     } catch {

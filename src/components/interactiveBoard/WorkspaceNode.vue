@@ -11,10 +11,18 @@ const props = defineProps<{ isMobile: boolean }>()
 const themeStore = usePreferencesStore()
 const palette = computed(() => getKonvaThemePalette(themeStore.theme))
 
-const { workspaceShape, workspaceWidth, workspaceHeight, MIN_WIDTH, MIN_HEIGHT, MAX_RESIZE_SCALE, resizeWorkspace } =
-  useWorkspace()
+const {
+  workspaceShape,
+  workspaceWidth,
+  workspaceHeight,
+  MIN_WIDTH,
+  MAX_WIDTH,
+  MIN_HEIGHT,
+  MAX_HEIGHT,
+  resizeWorkspace,
+} = useWorkspace()
 
-const HANDLE_RADIUS = 7
+const HANDLE_RADIUS = 14
 
 const rectConfig = computed(() => ({
   x: 0,
@@ -22,7 +30,7 @@ const rectConfig = computed(() => ({
   width: workspaceWidth.value,
   height: workspaceHeight.value,
   stroke: palette.value.canvasBorder,
-  strokeWidth: 4,
+  strokeWidth: 8,
   fill: 'transparent',
   listening: false,
 }))
@@ -33,7 +41,7 @@ const ellipseConfig = computed(() => ({
   radiusX: workspaceWidth.value / 2,
   radiusY: workspaceHeight.value / 2,
   stroke: palette.value.canvasBorder,
-  strokeWidth: 4,
+  strokeWidth: 8,
   fill: 'transparent',
   listening: false,
 }))
@@ -46,8 +54,8 @@ function makeBoundFunc(fixX: number | null, fixY: number | null) {
     const sp = stage.position()
     const cx = (pos.x - sp.x) / scale
     const cy = (pos.y - sp.y) / scale
-    const clampedX = fixX !== null ? fixX : Math.max(MIN_WIDTH, Math.min(MIN_WIDTH * MAX_RESIZE_SCALE, cx))
-    const clampedY = fixY !== null ? fixY : Math.max(MIN_HEIGHT, Math.min(MIN_HEIGHT * MAX_RESIZE_SCALE, cy))
+    const clampedX = fixX !== null ? fixX : Math.max(MIN_WIDTH.value, Math.min(MAX_WIDTH.value, cx))
+    const clampedY = fixY !== null ? fixY : Math.max(MIN_HEIGHT.value, Math.min(MAX_HEIGHT.value, cy))
     return { x: clampedX * scale + sp.x, y: clampedY * scale + sp.y }
   }
 }
@@ -58,8 +66,8 @@ const handleBase = computed(() => ({
   radius: HANDLE_RADIUS,
   fill: palette.value.canvasBorder,
   stroke: palette.value.selectionStroke,
-  strokeWidth: 1.5,
-  opacity: 0.7,
+  strokeWidth: 2,
+  opacity: 0.9,
 }))
 
 const tlConfig = computed(() => ({ ...handleBase.value, x: 0, y: 0, listening: false }))
@@ -74,11 +82,19 @@ const brConfig = computed(() => ({
 }))
 
 function onBrDragMove(e: KonvaEventObject<DragEvent>) {
-  resizeWorkspace(e.target.x(), e.target.y())
+  resizeWorkspace(Math.round(e.target.x()), Math.round(e.target.y()))
 }
 
 function setCursor(e: KonvaEventObject<MouseEvent>, cursor: string) {
   e.target.getStage()!.container().style.cursor = cursor
+}
+
+function onHandleMouseEnter(e: KonvaEventObject<MouseEvent>) {
+  setCursor(e, 'nwse-resize')
+}
+
+function onHandleMouseLeave(e: KonvaEventObject<MouseEvent>) {
+  setCursor(e, 'default')
 }
 </script>
 
@@ -86,12 +102,14 @@ function setCursor(e: KonvaEventObject<MouseEvent>, cursor: string) {
   <VRect v-if="workspaceShape === 'rect'" :config="rectConfig" />
   <VEllipse v-else :config="ellipseConfig" />
 
-  <VCircle :config="tlConfig" />
+  <template v-if="!isMobile">
+    <VCircle :config="tlConfig" />
 
-  <VCircle
-    :config="brConfig"
-    @dragmove="onBrDragMove"
-    @mouseenter="(e) => setCursor(e, 'nwse-resize')"
-    @mouseleave="(e) => setCursor(e, 'default')"
-  />
+    <VCircle
+      :config="brConfig"
+      @dragmove="onBrDragMove"
+      @mouseenter="onHandleMouseEnter"
+      @mouseleave="onHandleMouseLeave"
+    />
+  </template>
 </template>

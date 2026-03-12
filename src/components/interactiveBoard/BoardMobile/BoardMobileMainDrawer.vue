@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Stage } from 'konva/lib/Stage'
 import BottomDrawer from '@/components/shared/BottomDrawer.vue'
 import { useExportData } from '../composables/useExportData'
 import ExportPdf from '../ExportPdf.vue'
-import { useWorkspace } from '@/composables/useWorkspace'
 
 defineProps<{
   open: boolean
@@ -15,17 +15,42 @@ defineProps<{
 const emit = defineEmits<{
   close: []
   openObjectDrawer: []
-  fitCanvas: []
+  openSettingsDrawer: []
 }>()
 
 const { t } = useI18n()
 const { exportData: exportDataBase } = useExportData()
-const { workspaceShape, toggleShape } = useWorkspace()
 
-function fitCanvas() {
-  emit('fitCanvas')
-  emit('close')
+type DrawerAction = {
+  key: string
+  icon: string
+  labelKey: string
+  onClick: () => void
 }
+
+const drawerActions = computed<DrawerAction[]>(() => [
+  {
+    key: 'add-object',
+    icon: 'pi pi-plus',
+    labelKey: 'seating.addObject',
+    onClick: () => emit('openObjectDrawer'),
+  },
+  {
+    key: 'workspace-settings',
+    icon: 'pi pi-sliders-h',
+    labelKey: 'seating.workspaceSettings',
+    onClick: () => {
+      emit('openSettingsDrawer')
+      emit('close')
+    },
+  },
+  {
+    key: 'export-data',
+    icon: 'pi pi-download',
+    labelKey: 'seating.exportData',
+    onClick: exportData,
+  },
+])
 
 function exportData() {
   exportDataBase()
@@ -36,21 +61,14 @@ function exportData() {
 <template>
   <BottomDrawer :open="open" @close="emit('close')">
     <nav class="drawer-nav">
-      <button class="action-btn" @click="emit('openObjectDrawer')">
-        <i class="pi pi-plus" />
-        <span>{{ t('seating.addObject') }}</span>
-      </button>
-      <button class="action-btn" :disabled="isFitted" @click="fitCanvas">
-        <i class="pi pi-expand" />
-        <span>{{ t('seating.workspace') }}</span>
-      </button>
-      <button class="action-btn" @click="exportData">
-        <i class="pi pi-download" />
-        <span>{{ t('seating.exportData') }}</span>
-      </button>
-      <button class="action-btn" @click="toggleShape(); emit('close')">
-        <i :class="workspaceShape === 'rect' ? 'pi pi-circle' : 'pi pi-stop'" />
-        <span>{{ t(workspaceShape === 'rect' ? 'seating.toCircleLayout' : 'seating.toRectLayout') }}</span>
+      <button
+        v-for="action in drawerActions"
+        :key="action.key"
+        class="action-btn"
+        @click="action.onClick"
+      >
+        <i :class="action.icon" />
+        <span>{{ t(action.labelKey) }}</span>
       </button>
       <ExportPdf :stage-ref="stageRef" v-slot="{ onClick }">
         <button class="action-btn" @click="() => { onClick(); emit('close') }">

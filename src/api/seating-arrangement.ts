@@ -1,6 +1,7 @@
 import { apiFetch, parseApiError } from '@/api/consts'
 
-export type SeatingShape = 'circle' | 'rect' | 'pillar'
+export type WorkspaceShape = 'circle' | 'rect'
+export type SeatingShape = WorkspaceShape | 'pillar'
 
 export interface SeatingPosition {
   x: number
@@ -23,6 +24,23 @@ export interface SeatingTableDto {
   seats: SeatingSeatDto[]
 }
 
+export interface SeatingArrangementDto {
+  shape: WorkspaceShape
+  width: number
+  height: number
+  max_tables_amount: number
+  max_seats_per_table_amount: number
+  items: SeatingTableDto[]
+}
+
+export interface UpdateSeatingArrangementDto {
+  shape?: WorkspaceShape
+  width?: number
+  height?: number
+  max_tables_amount?: number
+  max_seats_per_table_amount?: number
+}
+
 export interface CreateSeatingTableDto {
   name: string
   position: SeatingPosition
@@ -41,47 +59,55 @@ export interface UpdateSeatingTableDto {
 
 const BASE = '/seating-arrangements'
 
+async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await apiFetch(`${BASE}${path}`, init)
+  if (!res.ok) throw await parseApiError(res)
+  return res.json()
+}
+
+async function requestVoid(path: string, init?: RequestInit): Promise<void> {
+  const res = await apiFetch(`${BASE}${path}`, init)
+  if (!res.ok) throw await parseApiError(res)
+}
+
 export const SEATING_ARRANGEMENT_API = {
-  async getTables(): Promise<SeatingTableDto[]> {
-    const res = await apiFetch(`${BASE}/tables`)
-    if (!res.ok) throw await parseApiError(res)
-    return res.json()
+  async getArrangement(): Promise<SeatingArrangementDto> {
+    return requestJson('/tables')
+  },
+
+  async updateArrangement(dto: UpdateSeatingArrangementDto): Promise<SeatingArrangementDto> {
+    return requestJson('/arrangement', {
+      method: 'PATCH',
+      body: JSON.stringify(dto),
+    })
   },
 
   async createTable(dto: CreateSeatingTableDto): Promise<SeatingTableDto> {
-    const res = await apiFetch(`${BASE}/tables`, {
+    return requestJson('/tables', {
       method: 'POST',
       body: JSON.stringify(dto),
     })
-    if (!res.ok) throw await parseApiError(res)
-    return res.json()
   },
 
   async updateTable(id: string, dto: UpdateSeatingTableDto): Promise<SeatingTableDto> {
-    const res = await apiFetch(`${BASE}/tables/${id}`, {
+    return requestJson(`/tables/${id}`, {
       method: 'PUT',
       body: JSON.stringify(dto),
     })
-    if (!res.ok) throw await parseApiError(res)
-    return res.json()
   },
 
   async deleteTable(id: string): Promise<void> {
-    const res = await apiFetch(`${BASE}/tables/${id}`, { method: 'DELETE' })
-    if (!res.ok) throw await parseApiError(res)
+    return requestVoid(`/tables/${id}`, { method: 'DELETE' })
   },
 
   async addSeat(tableId: string, guestId: string): Promise<SeatingSeatDto> {
-    const res = await apiFetch(`${BASE}/tables/${tableId}/seats`, {
+    return requestJson(`/tables/${tableId}/seats`, {
       method: 'POST',
       body: JSON.stringify({ guest_id: guestId }),
     })
-    if (!res.ok) throw await parseApiError(res)
-    return res.json()
   },
 
   async removeSeat(tableId: string, seatId: string): Promise<void> {
-    const res = await apiFetch(`${BASE}/tables/${tableId}/seats/${seatId}`, { method: 'DELETE' })
-    if (!res.ok) throw await parseApiError(res)
+    return requestVoid(`/tables/${tableId}/seats/${seatId}`, { method: 'DELETE' })
   },
 }

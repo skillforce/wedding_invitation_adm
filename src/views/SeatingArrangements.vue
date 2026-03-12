@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { Layer as VLayer, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
+import Button from 'primevue/button'
 
 import { useSeatingStore } from '@/stores/seating'
 import { useGuestsStore } from '@/stores/guests'
@@ -14,12 +15,15 @@ import BoardMobileMenu from '@/components/interactiveBoard/BoardMobileMenu.vue'
 import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
 import WorkspaceNode from '@/components/interactiveBoard/WorkspaceNode.vue'
+import WorkspaceSettings from '@/components/interactiveBoard/workspaceSettings/index.vue'
+import { useI18n } from 'vue-i18n'
 
 const seatingStore = useSeatingStore()
 const guestsStore = useGuestsStore()
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const stageRef = ref<{ getNode(): Stage } | null>(null)
+const { t } = useI18n()
 
 const { stageConfig, isMobile } = useStageSize(containerRef)
 const { onWheel, fitToStage, zoomToMin, isFitted } = useZoom(stageRef)
@@ -35,6 +39,7 @@ onMounted(async () => {
 })
 
 const selectedTableId = ref<string | null>(null)
+const workspaceSettingsOpen = ref(false)
 const selectedTable = computed(
   () => seatingStore.tables.find((t) => t.id === selectedTableId.value) ?? null,
 )
@@ -46,12 +51,43 @@ function onStageClick(e: KonvaEventObject<Event>) {
 }
 
 const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
+const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
 </script>
 
 <template>
   <div ref="containerRef" class="board-container">
-    <BoardToolbar :is-fitted="isFitted" :stage-ref="stageRef" @add-object="(shape) => seatingStore.addObject(shape)" @fit-canvas="fitToStage()" />
-    <BoardMobileMenu :is-fitted="isFitted" :stage-ref="stageRef" @add-object="(shape) => seatingStore.addObject(shape)" @fit-canvas="fitToStage()" />
+    <BoardToolbar
+      :is-fitted="isFitted"
+      :stage-ref="stageRef"
+      @add-object="(shape) => seatingStore.addObject(shape)"
+      @open-workspace-settings="workspaceSettingsOpen = true"
+    />
+    <BoardMobileMenu
+      :is-fitted="isFitted"
+      :stage-ref="stageRef"
+      @add-object="(shape) => seatingStore.addObject(shape)"
+      @open-workspace-settings="workspaceSettingsOpen = true"
+    />
+
+    <WorkspaceSettings
+      :open="workspaceSettingsOpen"
+      :is-mobile="isMobile"
+      @close="workspaceSettingsOpen = false"
+    />
+
+    <div class="workspace-view-btn">
+      <Button
+        :label="isMobile ? undefined : viewWorkspaceLabel"
+        :aria-label="viewWorkspaceLabel"
+        icon="pi pi-expand"
+        size="small"
+        severity="secondary"
+        :text="isMobile"
+        :rounded="isMobile"
+        :disabled="isFitted"
+        @click="fitToStage()"
+      />
+    </div>
 
     <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
       <VLayer>
@@ -95,6 +131,37 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
   box-shadow: var(--shadow-card);
 }
 
+.workspace-view-btn {
+  position: absolute;
+  top: 25px;
+  right: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--board-toolbar-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--board-toolbar-border);
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.workspace-view-btn :deep(.p-button) {
+  background: #fff;
+  border-color: var(--board-toolbar-border);
+  color: var(--board-toolbar-text, #2f4863);
+}
+
+.workspace-view-btn :deep(.p-button:not(:disabled):hover) {
+  background: var(--color-hover);
+  border-color: var(--board-toolbar-border);
+  color: var(--board-toolbar-text);
+}
+
+.workspace-view-btn :deep(.p-button:disabled) {
+  opacity: 0.55;
+}
+
 .board-hint {
   position: absolute;
   bottom: 12px;
@@ -118,6 +185,13 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 
   .board-container {
     min-height: 0;
+  }
+
+  .workspace-view-btn {
+    top: 20px;
+    right: 16px;
+    padding: 6px;
+    border-radius: 999px;
   }
 
   .board-hint {

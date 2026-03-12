@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { Circle as VCircle, Line as VLine, Rect as VRect, Text as VText } from 'vue-konva'
+import { Circle as VCircle, Rect as VRect, Text as VText } from 'vue-konva'
+import type { KonvaEventObject } from 'konva/lib/Node'
 import type { SeatingTable } from '@/stores/seating'
-import type { KonvaThemePalette } from '../tableKonvaConfigs'
+import type { KonvaThemePalette } from '../../tableKonvaConfigs'
 import {
   selectionRingRectConfig,
   tableRectConfig,
   newlywedsDotConfig,
   tableNameRectConfig,
-  rotationHandleConfig,
-  rotationHandleLineConfig,
-} from '../tableKonvaConfigs'
-import SeatNodes from './SeatNodes.vue'
-import type { KonvaEventObject } from "konva/lib/Node";
+} from '../../tableKonvaConfigs'
+import SeatNodes from '../SeatNodes.vue'
+import RectRotationHandle from './RectRotationHandle.vue'
 
 defineProps<{
   table: SeatingTable
@@ -39,6 +38,30 @@ function onGuestDrag(id: string, pos: { x: number; y: number }) {
 function onGuestDrop(id: string, pos: { x: number; y: number }) {
   emit('guestDrop', id, pos)
 }
+
+function onHandleMouseEnter(e: KonvaEventObject<MouseEvent>) {
+  emit('handleMouseEnter', e)
+}
+
+function onHandleMouseLeave(e: KonvaEventObject<MouseEvent>) {
+  emit('handleMouseLeave', e)
+}
+
+function onHandleDragStart(e: KonvaEventObject<DragEvent>) {
+  emit('handleDragStart', e)
+}
+
+function onHandleDragMove(e: KonvaEventObject<DragEvent>) {
+  emit('handleDragMove', e)
+}
+
+function onHandleDragEnd(e: KonvaEventObject<DragEvent>) {
+  emit('handleDragEnd', e)
+}
+
+function onHandleClick(e: KonvaEventObject<MouseEvent>) {
+  emit('handleClick', e)
+}
 </script>
 
 <template>
@@ -48,19 +71,17 @@ function onGuestDrop(id: string, pos: { x: number; y: number }) {
   <VCircle :config="newlywedsDotConfig(1, palette)" />
   <VText :config="tableNameRectConfig(table, palette)" />
 
-  <template v-if="isSelected">
-    <VLine :config="rotationHandleLineConfig(table, palette)" />
-    <VCircle
-      :config="rotationHandleConfig(table, palette)"
-      @mouseenter="(e) => emit('handleMouseEnter', e)"
-      @mouseleave="(e) => emit('handleMouseLeave', e)"
-      @dragstart="(e) => emit('handleDragStart', e)"
-      @dragmove="(e) => emit('handleDragMove', e)"
-      @dragend="(e) => emit('handleDragEnd', e)"
-      @click="(e) => emit('handleClick', e)"
-      @tap="(e) => emit('handleClick', e)"
-    />
-  </template>
+  <RectRotationHandle
+    v-if="isSelected"
+    :table="table"
+    :palette="palette"
+    @mouse-enter="onHandleMouseEnter"
+    @mouse-leave="onHandleMouseLeave"
+    @drag-start="onHandleDragStart"
+    @drag-move="onHandleDragMove"
+    @drag-end="onHandleDragEnd"
+    @click="onHandleClick"
+  />
 
   <SeatNodes
     :table="table"

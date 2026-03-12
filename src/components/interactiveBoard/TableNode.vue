@@ -7,7 +7,7 @@ import { getKonvaThemePalette } from './tableKonvaConfigs'
 import { useTableRotation } from './composables/useTableRotation'
 import { useTableDrag } from './composables/useTableDrag'
 import CircleTableNode from './nodes/CircleTableNode.vue'
-import RectTableNode from './nodes/RectTableNode.vue'
+import RectTableNode from './nodes/rect/RectTableNode.vue'
 import PillarNode from './nodes/PillarNode.vue'
 
 const props = defineProps<{

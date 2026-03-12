@@ -16,7 +16,7 @@ export function useTableDrag(
     ...tableGroupConfig(table()),
     draggable: !isRotating.value,
     dragBoundFunc: (pos: { x: number; y: number }) => {
-      const stage = stageRef.value
+      const stage = stageRef.value as Stage | null
       if (!stage) return pos
       return tableDragBoundFunc(pos, stage)
     },

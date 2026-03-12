@@ -18,12 +18,6 @@ export const SCALE_BY = 1.07
 export const MIN_SCALE = 0.4
 export const MAX_SCALE = 1
 
-// Virtual canvas — all tables live within this space
-export const CANVAS_WIDTH = 1600
-export const CANVAS_HEIGHT = 900
-
-
-
 export type KonvaThemePalette = ReturnType<typeof getKonvaThemePalette>
 
 export function getKonvaThemePalette(themeName: ThemeName) {
@@ -393,7 +387,7 @@ export function rotationHandleConfig(
   return {
     x: 0,
     y: -(h / 2 + 28),
-    radius: 9,
+    radius: 13,
     fill: palette.rotationHandleFill,
     stroke: palette.rotationHandleStroke,
     strokeWidth: 1.5,

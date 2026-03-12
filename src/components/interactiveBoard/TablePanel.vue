@@ -25,7 +25,8 @@ watch(
   },
 )
 
-function onSizeChange(val: number) {
+function onSizeChange(val: number | number[]) {
+  if (typeof val !== 'number') return
   seatingStore.updateTableRadius(props.table.id, val)
 }
 
