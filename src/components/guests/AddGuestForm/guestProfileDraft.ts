@@ -1,13 +1,15 @@
 import type { GuestFormDto } from '@/api/guests'
-import type { GuestProfileDraft, GuestVipFlag, ValidationField } from './types'
+import { ValidationField, VipSelectionState } from './types'
+import type { GuestProfileDraft, GuestVipFlag } from './types'
 
 export function createEmptyGuestProfileDraft(): GuestProfileDraft {
   return {
     relationship_to_couple: null,
     age_group: null,
     has_kids_attending: null,
+    kids_count: 1,
     personality_type: null,
-    vip_selection_state: 'unset',
+    vip_selection_state: VipSelectionState.Unset,
     vip_parents: false,
     vip_grandparents: false,
     vip_relatives: false,
@@ -23,31 +25,32 @@ export function syncDraftFromForm(draft: GuestProfileDraft, guestForm: GuestForm
   draft.relationship_to_couple = guestForm.relationship_to_couple
   draft.age_group = guestForm.age_group
   draft.has_kids_attending = guestForm.has_kids_attending
+  draft.kids_count = guestForm.kids_count ?? 1
   draft.personality_type = guestForm.personality_type
   draft.vip_parents = guestForm.vip_parents
   draft.vip_grandparents = guestForm.vip_grandparents
   draft.vip_relatives = guestForm.vip_relatives
 
   const hasAnyVipFlag = guestForm.vip_parents || guestForm.vip_grandparents || guestForm.vip_relatives
-  draft.vip_selection_state = hasAnyVipFlag ? 'selected' : 'none'
+  draft.vip_selection_state = hasAnyVipFlag ? VipSelectionState.Selected : VipSelectionState.None
 }
 
 export function toggleVipFlag(draft: GuestProfileDraft, flag: GuestVipFlag) {
-  if (draft.vip_selection_state === 'none') {
-    draft.vip_selection_state = 'selected'
+  if (draft.vip_selection_state === VipSelectionState.None) {
+    draft.vip_selection_state = VipSelectionState.Selected
   }
 
   draft[flag] = !draft[flag]
 
   const hasAnyVipFlag = draft.vip_parents || draft.vip_grandparents || draft.vip_relatives
-  draft.vip_selection_state = hasAnyVipFlag ? 'selected' : 'unset'
+  draft.vip_selection_state = hasAnyVipFlag ? VipSelectionState.Selected : VipSelectionState.Unset
 }
 
 export function selectNoVipStatus(draft: GuestProfileDraft) {
   draft.vip_parents = false
   draft.vip_grandparents = false
   draft.vip_relatives = false
-  draft.vip_selection_state = 'none'
+  draft.vip_selection_state = VipSelectionState.None
 }
 
 export function isFieldInvalid(
@@ -58,16 +61,16 @@ export function isFieldInvalid(
   if (!hasAttemptedSubmit) return false
 
   switch (field) {
-    case 'relationship_to_couple':
+    case ValidationField.RelationshipToCouple:
       return draft.relationship_to_couple === null
-    case 'age_group':
+    case ValidationField.AgeGroup:
       return draft.age_group === null
-    case 'has_kids_attending':
+    case ValidationField.HasKidsAttending:
       return draft.has_kids_attending === null
-    case 'personality_type':
+    case ValidationField.PersonalityType:
       return draft.personality_type === null
-    case 'vip_status':
-      return draft.vip_selection_state === 'unset'
+    case ValidationField.VipStatus:
+      return draft.vip_selection_state === VipSelectionState.Unset
   }
 }
 
@@ -76,6 +79,7 @@ export function buildGuestForm(draft: GuestProfileDraft): GuestFormDto {
     relationship_to_couple: draft.relationship_to_couple!,
     age_group: draft.age_group!,
     has_kids_attending: draft.has_kids_attending!,
+    kids_count: draft.has_kids_attending ? draft.kids_count : 0,
     personality_type: draft.personality_type!,
     vip_parents: draft.vip_parents,
     vip_grandparents: draft.vip_grandparents,

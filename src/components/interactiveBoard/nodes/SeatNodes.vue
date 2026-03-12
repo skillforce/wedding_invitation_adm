@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Circle as VCircle, Line as VLine, Text as VText } from 'vue-konva'
 import type { SeatingTable } from '@/stores/seating'
 import type { KonvaThemePalette } from '../tableKonvaConfigs'
@@ -22,6 +23,10 @@ const { draggingGuestId, onSeatDragStart, onSeatDragMove, onSeatDragEnd } = useS
   (id, pointer) => emit('guestDrop', id, pointer),
   () => emit('guestDragEnd'),
 )
+
+const hoveredGuestId = ref<string | null>(null)
+
+const isHovered = (guestId: string) => hoveredGuestId.value === guestId
 </script>
 
 <template>
@@ -31,14 +36,16 @@ const { draggingGuestId, onSeatDragStart, onSeatDragMove, onSeatDragEnd } = useS
       :config="connectorConfig(table, idx, palette)"
     />
     <VCircle
-      :config="{ ...seatCircleConfig(table, idx, palette), draggable: true, listening: true, hitStrokeWidth: 14 }"
+      :config="{ ...seatCircleConfig(table, idx, palette, isHovered(guest.id)), draggable: true, listening: true, hitStrokeWidth: 14 }"
       @dragstart="onSeatDragStart($event, guest.id, idx)"
       @dragmove="onSeatDragMove($event, guest.id)"
       @dragend="onSeatDragEnd($event, guest.id, idx)"
+      @mouseenter="hoveredGuestId = guest.id"
+      @mouseleave="hoveredGuestId = null"
     />
     <VText
       v-if="draggingGuestId !== guest.id"
-      :config="guestNameConfig(table, guest, idx, palette)"
+      :config="guestNameConfig(table, guest, idx, palette,isHovered(guest.id))"
     />
   </template>
 </template>

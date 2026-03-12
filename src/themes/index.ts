@@ -17,6 +17,7 @@ export interface ThemeDefinition {
     tableFill: string
     seatFill: string
     seatStroke: string
+    seatHoverFill: string
     selectionStroke: string
     tableNameFill: string
     newlywedsDotFill: string
@@ -110,6 +111,7 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       tableStroke: '#b8943f',
       tableFill: '#faf5ee',
       seatFill: '#f5e6e6',
+      seatHoverFill: '#666a0b',
       seatStroke: '#c49a9a',
       selectionStroke: '#e8d5a3',
       tableNameFill: '#573716',
@@ -202,6 +204,7 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       tableStroke: '#7a93b3',
       tableFill: '#9c9c9c',
       seatFill: '#e6edf8',
+      seatHoverFill: '#818a83',
       seatStroke: '#90a7c6',
       selectionStroke: '#4f6f95',
       tableNameFill: '#000000',

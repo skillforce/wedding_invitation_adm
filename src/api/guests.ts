@@ -24,6 +24,7 @@ export interface GuestFormDto {
   relationship_to_couple: GuestRelationshipToCouple
   age_group: GuestAgeGroup
   has_kids_attending: boolean
+  kids_count: number
   personality_type: GuestPersonalityType
   vip_parents: boolean
   vip_grandparents: boolean

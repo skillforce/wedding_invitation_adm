@@ -315,7 +315,7 @@ export const useSeatingStore = defineStore('seating', () => {
 
     try {
       const createdSeat = await SEATING_ARRANGEMENT_API.addSeat(targetTableId, guest.guestId)
-      await SEATING_ARRANGEMENT_API.removeSeat(sourceTableId, seatId)
+      SEATING_ARRANGEMENT_API.removeSeat(sourceTableId, seatId)
 
       if (targetTable.guests[targetIndex]?.id === guest.id) {
         targetTable.guests[targetIndex] = {

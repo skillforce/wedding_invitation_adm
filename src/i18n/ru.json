@@ -56,6 +56,7 @@
       "relationshipLabel": "Отношение к паре",
       "ageLabel": "Возраст или возрастная группа",
       "kidsLabel": "Будут ли с ним дети?",
+      "kidsCountLabel": "Сколько детей?",
       "personalityLabel": "Интроверт или экстраверт",
       "vipLabel": "VIP-статус",
       "selectedGuest": "Выбранный гость",

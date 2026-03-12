@@ -3,7 +3,7 @@ import { getThemeDefinition, type ThemeName } from '@/themes'
 import type { Stage } from 'konva/lib/Stage'
 import { useWorkspace } from '@/composables/useWorkspace'
 // ── Visual constants ──────────────────────────────────────────────────────────
-export const SEAT_RADIUS = 15
+export const SEAT_RADIUS = 20
 export const SEAT_OFFSET = 40
 
 // Rect table proportions (relative to radius)
@@ -119,6 +119,8 @@ export function tableNameConfig(
     fontStyle: 'bold',
     align: 'center',
     width: table.radius * 2,
+    wrap: 'none',
+    ellipsis: true,
     offsetX: table.radius,
     offsetY: 8,
     listening: false,
@@ -200,10 +202,19 @@ export function tableNameRectConfig(
     fontStyle: 'bold',
     align: 'center',
     width: w,
+    wrap: 'none',
+    ellipsis: true,
     offsetX: w / 2,
     y: 10,
     listening: false,
   }
+}
+
+export function truncateGuestName(name: string, chars = 3): string {
+  const parts = name.split(/\s+/)
+  if (parts.length <= 1) return name
+  const [first, ...rest] = parts
+  return [first, ...rest.map((p) => (p.length > chars ? p.slice(0, chars) + '.' : p))].join(' ')
 }
 
 // ── Guest / seat configs (shared) ─────────────────────────────────────────────
@@ -214,17 +225,18 @@ export function guestPosition(table: SeatingTable, index: number) {
   return { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist }
 }
 
-export function seatCircleConfig(
+export function   seatCircleConfig(
   table: SeatingTable,
   index: number,
   palette: KonvaThemePalette,
+  isHovered = false,
 ) {
   const { x, y } = guestPosition(table, index)
   return {
     x,
     y,
     radius: SEAT_RADIUS,
-    fill: palette.seatFill,
+    fill: isHovered ? palette.seatHoverFill : palette.seatFill,
     stroke: palette.seatStroke,
     strokeWidth: 1.5,
     listening: false,
@@ -236,9 +248,10 @@ export function guestNameConfig(
   guest: SeatingGuest,
   index: number,
   palette: KonvaThemePalette,
+  isHovered = false,
 ) {
   const { x, y } = guestPosition(table, index)
-  const label = guest.name.length > 15 ? guest.name.slice(0, 15) + '…' : guest.name
+  const label = isHovered ? guest.name : truncateGuestName(guest.name, 4)
   return {
     text: label,
     fontSize: 16,
@@ -246,6 +259,8 @@ export function guestNameConfig(
     fill: palette.guestNameFill,
     align: 'center',
     width: 85,
+    wrap: 'none',
+    ellipsis: true,
     offsetX: 40,
     offsetY: -SEAT_RADIUS - 3,
     x,
@@ -356,6 +371,8 @@ export function pillarNameConfig(
     fontStyle: 'bold',
     align: 'center',
     width: s * 2,
+    wrap: 'none',
+    ellipsis: true,
     offsetX: s,
     y:-10,
     listening: false,

@@ -15,23 +15,46 @@ export type ChoiceOption = {
   active: boolean
 }
 
-export type GuestVipFlag = 'vip_parents' | 'vip_grandparents' | 'vip_relatives'
+export enum ModalMode {
+  Create = 'create',
+  Edit = 'edit',
+}
 
-export type ValidationField =
-  | 'relationship_to_couple'
-  | 'age_group'
-  | 'has_kids_attending'
-  | 'personality_type'
-  | 'vip_status'
+export enum KidsOptionKey {
+  Yes = 'yes',
+  No = 'no',
+}
 
-export type ModalMode = 'create' | 'edit'
+export enum VipOptionKey {
+  None = 'none',
+  Parents = 'vip_parents',
+  Grandparents = 'vip_grandparents',
+  Relatives = 'vip_relatives',
+}
+
+export enum VipSelectionState {
+  Unset = 'unset',
+  None = 'none',
+  Selected = 'selected',
+}
+
+export enum ValidationField {
+  RelationshipToCouple = 'relationship_to_couple',
+  AgeGroup = 'age_group',
+  HasKidsAttending = 'has_kids_attending',
+  PersonalityType = 'personality_type',
+  VipStatus = 'vip_status',
+}
+
+export type GuestVipFlag = VipOptionKey.Parents | VipOptionKey.Grandparents | VipOptionKey.Relatives
 
 export type GuestProfileDraft = {
   relationship_to_couple: GuestRelationshipToCouple | null
   age_group: GuestAgeGroup | null
   has_kids_attending: boolean | null
+  kids_count: number
   personality_type: GuestPersonalityType | null
-  vip_selection_state: 'unset' | 'none' | 'selected'
+  vip_selection_state: VipSelectionState
   vip_parents: boolean
   vip_grandparents: boolean
   vip_relatives: boolean

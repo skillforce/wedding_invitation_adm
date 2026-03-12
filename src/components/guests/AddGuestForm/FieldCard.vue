@@ -21,6 +21,7 @@ defineProps<{
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--color-border-strong) 60%, transparent);
   background: color-mix(in srgb, var(--color-surface) 94%, white);
+  overflow: hidden;
 }
 
 .field-card--wide {

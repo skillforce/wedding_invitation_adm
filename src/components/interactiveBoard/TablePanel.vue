@@ -50,6 +50,7 @@ async function deleteTable() {
       <input
         v-model="editingName"
         class="name-input"
+        maxlength="30"
         :placeholder="t('seating.tableNamePlaceholder')"
         @blur="saveName"
         @keydown.enter="($event.target as HTMLInputElement).blur()"

@@ -2,9 +2,9 @@ import { computed } from 'vue'
 import type {
   GuestAgeGroup,
   GuestPersonalityType,
-  GuestFormDto,
   GuestRelationshipToCouple,
 } from '@/api/guests'
+import { KidsOptionKey, VipOptionKey, VipSelectionState } from './types'
 import type { ChoiceOption, GuestProfileDraft, SelectOption } from './types'
 
 export function useGuestProfileOptions(t: (key: string) => string) {
@@ -40,12 +40,12 @@ export function useGuestChoiceOptions(
 ) {
   const kidsOptions = computed<ChoiceOption[]>(() => [
     {
-      key: 'yes',
+      key: KidsOptionKey.Yes,
       label: t('guests.yes'),
       active: guestProfileDraft.has_kids_attending === true,
     },
     {
-      key: 'no',
+      key: KidsOptionKey.No,
       label: t('guests.no'),
       active: guestProfileDraft.has_kids_attending === false,
     },
@@ -53,22 +53,22 @@ export function useGuestChoiceOptions(
 
   const vipOptions = computed<ChoiceOption[]>(() => [
     {
-      key: 'none',
+      key: VipOptionKey.None,
       label: t('guests.profile.vipOptions.none'),
-      active: guestProfileDraft.vip_selection_state === 'none',
+      active: guestProfileDraft.vip_selection_state === VipSelectionState.None,
     },
     {
-      key: 'vip_parents',
+      key: VipOptionKey.Parents,
       label: t('guests.profile.vipOptions.parents'),
       active: guestProfileDraft.vip_parents,
     },
     {
-      key: 'vip_grandparents',
+      key: VipOptionKey.Grandparents,
       label: t('guests.profile.vipOptions.grandparents'),
       active: guestProfileDraft.vip_grandparents,
     },
     {
-      key: 'vip_relatives',
+      key: VipOptionKey.Relatives,
       label: t('guests.profile.vipOptions.relatives'),
       active: guestProfileDraft.vip_relatives,
     },
