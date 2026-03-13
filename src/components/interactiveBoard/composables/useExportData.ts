@@ -11,7 +11,10 @@ export function useExportData() {
     lines.push(`💒 ${t('seating.exportTitle')}`)
     lines.push(divider)
     lines.push('')
-    const totalGuests = seatingStore.tables.reduce((sum, t) => sum + t.guests.length, 0)
+    const totalGuests = seatingStore.tables.reduce(
+      (sum, table) => sum + seatingStore.getTableOccupiedSeats(table),
+      0,
+    )
     const totalTables = seatingStore.tables.length
     lines.push(`📊 ${t('seating.exportSummary', { tables: totalTables, guests: totalGuests })}`)
     lines.push(divider)
@@ -22,9 +25,9 @@ export function useExportData() {
       if (table.guests.length === 0) {
         lines.push(`   - ${t('seating.exportNoGuests')}`)
       } else {
-        lines.push(`   👥 ${t('seating.exportGuestCount', { count: table.guests.length })}`)
+        lines.push(`   👥 ${t('seating.exportGuestCount', { count: seatingStore.getTableOccupiedSeats(table) })}`)
         table.guests.forEach((guest, idx) => {
-          lines.push(`   ${idx + 1}. ${guest.name}`)
+          lines.push(`   ${idx + 1}. ${seatingStore.getSeatDisplayName(guest)}`)
         })
       }
       lines.push(divider)

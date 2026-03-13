@@ -52,7 +52,7 @@ export type GuestProfileDraft = {
   relationship_to_couple: GuestRelationshipToCouple | null
   age_group: GuestAgeGroup | null
   has_kids_attending: boolean | null
-  kids_count: number
+  amount_of_kids: number | null
   personality_type: GuestPersonalityType | null
   vip_selection_state: VipSelectionState
   vip_parents: boolean

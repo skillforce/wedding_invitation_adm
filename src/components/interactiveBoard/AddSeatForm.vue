@@ -4,13 +4,14 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
 import { useGuestsStore } from '@/stores/guests'
-import { useSeatingStore } from '@/stores/seating'
+import { useSeatingStore, type SeatingTable } from '@/stores/seating'
 
 const emit = defineEmits<{
   add: [guestId: string]
 }>()
 
 const props = defineProps<{
+  table: SeatingTable
   disabled?: boolean
 }>()
 
@@ -30,14 +31,40 @@ const seatedGuestIds = computed(() => {
   return ids
 })
 
-const availableGuests = computed(() =>
-  guestsStore.guests
-    .map((g) => ({ label: g.name, value: String(g.id) }))
-    .filter((guest) => !seatedGuestIds.value.has(guest.value)),
+const occupiedSeats = computed(() => seatingStore.getTableOccupiedSeats(props.table))
+
+const unseatedGuests = computed(() =>
+  guestsStore.guests.filter((guest) => !seatedGuestIds.value.has(String(guest.id))),
 )
 
+const availableGuests = computed(() =>
+  unseatedGuests.value
+    .filter((guest) => (
+      occupiedSeats.value + seatingStore.getGuestSeatDemandByGuestId(String(guest.id))
+      <= seatingStore.maxSeatsPerTableAmount
+    ))
+    .map((guest) => ({
+      label: seatingStore.getSeatDisplayName({
+        id: guest.id,
+        guestId: guest.id,
+        name: guest.name,
+      }),
+      value: String(guest.id),
+    })),
+)
+
+const canAddSelectedGuest = computed(() => {
+  if (!selectedGuestId.value) return false
+  return occupiedSeats.value + seatingStore.getGuestSeatDemandByGuestId(selectedGuestId.value)
+    <= seatingStore.maxSeatsPerTableAmount
+})
+
+const emptyMessage = computed(() => (
+  unseatedGuests.value.length ? t('seating.noGuestsFitSeats') : t('seating.allGuestsSeated')
+))
+
 function addGuest() {
-  if (!selectedGuestId.value) return
+  if (!selectedGuestId.value || !canAddSelectedGuest.value) return
   emit('add', selectedGuestId.value)
   selectedGuestId.value = null
 }
@@ -51,14 +78,14 @@ function addGuest() {
       option-label="label"
       option-value="value"
       :placeholder="t('seating.selectGuestPlaceholder')"
-      :empty-message="t('seating.allGuestsSeated')"
+      :empty-message="emptyMessage"
       class="guest-select"
       filter
     />
     <Button
       icon="pi pi-user-plus"
       size="small"
-      :disabled="props.disabled || !selectedGuestId"
+      :disabled="props.disabled || !selectedGuestId || !canAddSelectedGuest"
       :aria-label="t('a11y.addGuest')"
       @click="addGuest"
     />

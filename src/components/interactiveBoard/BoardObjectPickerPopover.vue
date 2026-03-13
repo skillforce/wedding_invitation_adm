@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Popover from 'primevue/popover'
-import type { SeatingShape } from '@/stores/seating'
+import { SeatingShape } from '@/stores/seating'
 
 type ObjectOption = {
   shape: SeatingShape
@@ -18,9 +18,9 @@ const { t } = useI18n()
 const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
 
 const objectOptions = computed<ObjectOption[]>(() => [
-  { shape: 'circle', labelKey: 'seating.shapeTable', iconClass: 'shape-circle' },
-  { shape: 'rect', labelKey: 'seating.shapeNewlywedTable', iconClass: 'shape-rect' },
-  { shape: 'pillar', labelKey: 'seating.shapePillar', iconClass: 'shape-pillar' },
+  { shape: SeatingShape.Circle, labelKey: 'seating.shapeTable', iconClass: 'shape-circle' },
+  { shape: SeatingShape.Rect, labelKey: 'seating.shapeNewlywedTable', iconClass: 'shape-rect' },
+  { shape: SeatingShape.Pillar, labelKey: 'seating.shapePillar', iconClass: 'shape-pillar' },
 ])
 
 function toggle(event: MouseEvent) {

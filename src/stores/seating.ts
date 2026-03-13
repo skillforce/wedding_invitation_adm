@@ -2,10 +2,11 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import {
   SEATING_ARRANGEMENT_API,
+  SeatingShape,
   type SeatingArrangementDto,
-  type SeatingShape,
   type WorkspaceShape,
 } from '@/api/seating-arrangement'
+import { useGuestsStore } from '@/stores/guests'
 import { useDebouncedAction } from '@/composables/useDebouncedAction'
 import { useAppCommonStore } from '@/stores/app_common'
 import i18n from '@/i18n'
@@ -16,7 +17,8 @@ export interface SeatingGuest {
   name: string
 }
 
-export type { SeatingShape, WorkspaceShape } from '@/api/seating-arrangement'
+export { SeatingShape }
+export type { WorkspaceShape } from '@/api/seating-arrangement'
 
 export interface SeatingTable {
   id: string
@@ -68,8 +70,13 @@ function mapArrangement(data: SeatingArrangementDto) {
   }))
 }
 
+function clampExtraSeats(value: number | null | undefined) {
+  return Math.max(0, value ?? 0)
+}
+
 export const useSeatingStore = defineStore('seating', () => {
   const appCommonStore = useAppCommonStore()
+  const guestsStore = useGuestsStore()
 
   const tables = ref<SeatingTable[]>([])
   const workspaceShape = ref<WorkspaceShape>('rect')
@@ -91,6 +98,39 @@ export const useSeatingStore = defineStore('seating', () => {
     minSeatsPerTableAmount: MIN_SEATS_PER_TABLE_AMOUNT,
     maxSeatsPerTableAmount: MAX_SEATS_PER_TABLE_AMOUNT,
   }))
+
+  function getGuestAdditionalSeatsByGuestId(guestId: string) {
+    const guest = guestsStore.guests.find((item) => item.id === guestId)
+    if (!guest) return 0
+
+    const kidsSeats = guest.guestForm?.has_kids_attending
+      ? clampExtraSeats(guest.guestForm.amount_of_kids)
+      : 0
+    const plusOneSeats = guest.response?.plus_one ? 1 : 0
+
+    return kidsSeats + plusOneSeats
+  }
+
+  function getGuestSeatDemandByGuestId(guestId: string) {
+    return 1 + getGuestAdditionalSeatsByGuestId(guestId)
+  }
+
+  function getSeatAdditionalSeats(seat: SeatingGuest) {
+    return getGuestAdditionalSeatsByGuestId(seat.guestId)
+  }
+
+  function getSeatOccupiedSeats(seat: SeatingGuest) {
+    return 1 + getSeatAdditionalSeats(seat)
+  }
+
+  function getSeatDisplayName(seat: SeatingGuest) {
+    const additionalSeats = getSeatAdditionalSeats(seat)
+    return additionalSeats > 0 ? `${seat.name} +${additionalSeats}` : seat.name
+  }
+
+  function getTableOccupiedSeats(table: SeatingTable) {
+    return table.guests.reduce((sum, seat) => sum + getSeatOccupiedSeats(seat), 0)
+  }
 
   function applyArrangement(data: SeatingArrangementDto) {
     workspaceShape.value = data.shape
@@ -151,8 +191,8 @@ export const useSeatingStore = defineStore('seating', () => {
   }
 
   function defaultNameForShape(shape: SeatingShape, idx: number): string {
-    if (shape === 'rect') return i18n.global.t('seating.defaultNewlywedTableName', { index: idx })
-    if (shape === 'pillar') return i18n.global.t('seating.defaultPillarName', { index: idx })
+    if (shape === SeatingShape.Rect) return i18n.global.t('seating.defaultNewlywedTableName', { index: idx })
+    if (shape === SeatingShape.Pillar) return i18n.global.t('seating.defaultPillarName', { index: idx })
     return i18n.global.t('seating.defaultTableName', { index: idx })
   }
 
@@ -204,7 +244,7 @@ export const useSeatingStore = defineStore('seating', () => {
     })
   }
 
-  async function addObject(shape: SeatingShape = 'circle') {
+  async function addObject(shape: SeatingShape = SeatingShape.Circle) {
     if (tables.value.length >= maxTablesAmount.value) {
       appCommonStore.showError(new Error('errors.seating.maxTablesReached'))
       return
@@ -268,7 +308,7 @@ export const useSeatingStore = defineStore('seating', () => {
   async function addGuest(tableId: string, guestId: string) {
     const table = tables.value.find((item) => item.id === tableId)
     if (!table) return
-    if (table.guests.length >= maxSeatsPerTableAmount.value) {
+    if (getTableOccupiedSeats(table) + getGuestSeatDemandByGuestId(guestId) > maxSeatsPerTableAmount.value) {
       appCommonStore.showError(new Error('errors.seating.maxSeatsPerTableReached'))
       return
     }
@@ -298,17 +338,17 @@ export const useSeatingStore = defineStore('seating', () => {
     const sourceTable = tables.value.find((item) => item.id === sourceTableId)
     const targetTable = tables.value.find((item) => item.id === targetTableId)
     if (!sourceTable || !targetTable) return
-    if (sourceTable.shape === 'pillar' || targetTable.shape === 'pillar') return
-    if (targetTable.guests.length >= maxSeatsPerTableAmount.value) {
-      appCommonStore.showError(new Error('errors.seating.maxSeatsPerTableReached'))
-      return
-    }
+    if (sourceTable.shape === SeatingShape.Pillar || targetTable.shape === SeatingShape.Pillar) return
 
     const sourceIndex = sourceTable.guests.findIndex((guest) => guest.id === seatId)
     if (sourceIndex === -1) return
 
     const guest = sourceTable.guests[sourceIndex]
     if (!guest) return
+    if (getTableOccupiedSeats(targetTable) + getSeatOccupiedSeats(guest) > maxSeatsPerTableAmount.value) {
+      appCommonStore.showError(new Error('errors.seating.maxSeatsPerTableReached'))
+      return
+    }
 
     sourceTable.guests.splice(sourceIndex, 1)
     const targetIndex = targetTable.guests.push(guest) - 1
@@ -397,5 +437,11 @@ export const useSeatingStore = defineStore('seating', () => {
     moveGuestBetweenTables,
     setTableRotation,
     deleteTable,
+    getGuestAdditionalSeatsByGuestId,
+    getGuestSeatDemandByGuestId,
+    getSeatAdditionalSeats,
+    getSeatOccupiedSeats,
+    getSeatDisplayName,
+    getTableOccupiedSeats,
   }
 })

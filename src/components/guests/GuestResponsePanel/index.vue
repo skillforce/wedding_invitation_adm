@@ -53,7 +53,9 @@ const guestProfileFields = computed(() => {
     },
     {
       label: t('guests.profile.kidsLabel'),
-      value: form.has_kids_attending ? t('guests.yes') : t('guests.no'),
+      value: form.has_kids_attending
+        ? `${t('guests.yes')} (${form.amount_of_kids ?? 1})`
+        : t('guests.no'),
     },
     {
       label: t('guests.profile.personalityLabel'),

@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Slider from 'primevue/slider'
+import { SeatingShape } from '@/api/seating-arrangement'
 import { useSeatingStore, type SeatingTable } from '@/stores/seating'
 import TableGuestList from './TableGuestList.vue'
 
@@ -73,7 +74,7 @@ async function deleteTable() {
       />
     </div>
 
-    <TableGuestList v-if="table.shape !== 'pillar'" :table="table" />
+    <TableGuestList v-if="table.shape !== SeatingShape.Pillar" :table="table" />
 
     <div class="panel-footer">
       <button class="delete-table-btn" @click="deleteTable">{{ t('seating.deleteTable') }}</button>

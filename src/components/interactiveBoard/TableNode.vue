@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Group as VGroup } from 'vue-konva'
+import { SeatingShape } from '@/api/seating-arrangement'
 import type { SeatingTable } from '@/stores/seating'
 import { usePreferencesStore } from '@/stores/preferences'
+import { useSeatingStore } from '@/stores/seating'
 import { getKonvaThemePalette } from './tableKonvaConfigs'
 import { useTableRotation } from './composables/useTableRotation'
 import { useTableDrag } from './composables/useTableDrag'
@@ -26,7 +28,12 @@ const emit = defineEmits<{
 }>()
 
 const themeStore = usePreferencesStore()
+const seatingStore = useSeatingStore()
 const konvaTheme = computed(() => getKonvaThemePalette(themeStore.theme))
+const isOvercrowded = computed(
+  () => props.table.shape !== SeatingShape.Pillar
+    && seatingStore.getTableOccupiedSeats(props.table) > seatingStore.maxSeatsPerTableAmount,
+)
 
 const { isRotating, onHandleMouseEnter, onHandleMouseLeave, onHandleDragStart, onHandleDragMove, onHandleDragEnd, onHandleClick } =
   useTableRotation(
@@ -65,16 +72,17 @@ function onGuestDragEnd() {
     @dragend="onDragEnd"
   >
     <PillarNode
-      v-if="table.shape === 'pillar'"
+      v-if="table.shape === SeatingShape.Pillar"
       :table="table"
       :is-selected="isSelected"
       :palette="konvaTheme"
     />
     <RectTableNode
-      v-else-if="table.shape === 'rect'"
+      v-else-if="table.shape === SeatingShape.Rect"
       :table="table"
       :is-selected="isSelected"
       :is-drop-target="isDropTarget"
+      :is-overcrowded="isOvercrowded"
       :palette="konvaTheme"
       @handle-mouse-enter="onHandleMouseEnter"
       @handle-mouse-leave="onHandleMouseLeave"
@@ -91,6 +99,7 @@ function onGuestDragEnd() {
       :table="table"
       :is-selected="isSelected"
       :is-drop-target="isDropTarget"
+      :is-overcrowded="isOvercrowded"
       :palette="konvaTheme"
       @guest-drag="onGuestDrag"
       @guest-drag-end="onGuestDragEnd"

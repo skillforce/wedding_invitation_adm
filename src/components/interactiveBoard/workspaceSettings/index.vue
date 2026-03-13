@@ -40,7 +40,9 @@ const draftMaxSeatsPerTableAmount = ref<number | null>(null)
 const isSaving = ref(false)
 
 const currentTablesCount = computed(() => seatingStore.tables.length)
-const currentMaxReservedSeats = computed(() => Math.max(0, ...seatingStore.tables.map((table) => table.guests.length)))
+const currentMaxReservedSeats = computed(() => (
+  Math.max(0, ...seatingStore.tables.map((table) => seatingStore.getTableOccupiedSeats(table)))
+))
 
 function syncDraft() {
   draftShape.value = workspaceShape.value

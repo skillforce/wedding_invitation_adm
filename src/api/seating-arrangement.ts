@@ -1,7 +1,11 @@
 import { apiFetch, parseApiError } from '@/api/consts'
 
 export type WorkspaceShape = 'circle' | 'rect'
-export type SeatingShape = WorkspaceShape | 'pillar'
+export enum SeatingShape {
+  Circle = 'circle',
+  Rect = 'rect',
+  Pillar = 'pillar',
+}
 
 export interface SeatingPosition {
   x: number

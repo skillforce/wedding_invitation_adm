@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import type { SeatingShape } from '@/stores/seating'
+import { SeatingShape } from '@/stores/seating'
 import BottomDrawer from '@/components/shared/BottomDrawer.vue'
 
 defineProps<{ open: boolean }>()
@@ -17,15 +17,15 @@ const { t } = useI18n()
   <BottomDrawer :open="open" @close="emit('close')">
     <nav class="drawer-nav">
       <p class="drawer-section-title">{{ t('seating.addObjectTitle') }}</p>
-      <button class="action-btn" @click="emit('pick', 'circle')">
+      <button class="action-btn" @click="emit('pick', SeatingShape.Circle)">
         <span class="shape-icon shape-circle" />
         <span>{{ t('seating.shapeTable') }}</span>
       </button>
-      <button class="action-btn" @click="emit('pick', 'rect')">
+      <button class="action-btn" @click="emit('pick', SeatingShape.Rect)">
         <span class="shape-icon shape-rect" />
         <span>{{ t('seating.shapeNewlywedTable') }}</span>
       </button>
-      <button class="action-btn" @click="emit('pick', 'pillar')">
+      <button class="action-btn" @click="emit('pick', SeatingShape.Pillar)">
         <span class="shape-icon shape-pillar" />
         <span>{{ t('seating.shapePillar') }}</span>
       </button>

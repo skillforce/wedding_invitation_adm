@@ -7,7 +7,7 @@ export function createEmptyGuestProfileDraft(): GuestProfileDraft {
     relationship_to_couple: null,
     age_group: null,
     has_kids_attending: null,
-    kids_count: 1,
+    amount_of_kids: null,
     personality_type: null,
     vip_selection_state: VipSelectionState.Unset,
     vip_parents: false,
@@ -25,7 +25,7 @@ export function syncDraftFromForm(draft: GuestProfileDraft, guestForm: GuestForm
   draft.relationship_to_couple = guestForm.relationship_to_couple
   draft.age_group = guestForm.age_group
   draft.has_kids_attending = guestForm.has_kids_attending
-  draft.kids_count = guestForm.kids_count ?? 1
+  draft.amount_of_kids = guestForm.has_kids_attending ? (guestForm.amount_of_kids ?? 1) : null
   draft.personality_type = guestForm.personality_type
   draft.vip_parents = guestForm.vip_parents
   draft.vip_grandparents = guestForm.vip_grandparents
@@ -79,7 +79,7 @@ export function buildGuestForm(draft: GuestProfileDraft): GuestFormDto {
     relationship_to_couple: draft.relationship_to_couple!,
     age_group: draft.age_group!,
     has_kids_attending: draft.has_kids_attending!,
-    kids_count: draft.has_kids_attending ? draft.kids_count : 0,
+    amount_of_kids: draft.has_kids_attending ? Math.max(1, draft.amount_of_kids ?? 1) : null,
     personality_type: draft.personality_type!,
     vip_parents: draft.vip_parents,
     vip_grandparents: draft.vip_grandparents,

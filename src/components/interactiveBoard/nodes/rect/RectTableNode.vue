@@ -4,6 +4,9 @@ import type { KonvaEventObject } from 'konva/lib/Node'
 import type { SeatingTable } from '@/stores/seating'
 import type { KonvaThemePalette } from '../../tableKonvaConfigs'
 import {
+  overcrowdedIconConfig,
+  overcrowdedLabelConfig,
+  overcrowdedRectConfig,
   selectionRingRectConfig,
   tableRectConfig,
   newlywedsDotConfig,
@@ -16,6 +19,7 @@ defineProps<{
   table: SeatingTable
   isSelected: boolean
   isDropTarget: boolean
+  isOvercrowded: boolean
   palette: KonvaThemePalette
 }>()
 
@@ -66,10 +70,16 @@ function onHandleClick(e: KonvaEventObject<MouseEvent>) {
 
 <template>
   <VRect :config="selectionRingRectConfig(table, isSelected || isDropTarget, palette)" />
-  <VRect :config="tableRectConfig(table, palette)" />
-  <VCircle :config="newlywedsDotConfig(0, palette)" />
-  <VCircle :config="newlywedsDotConfig(1, palette)" />
-  <VText :config="tableNameRectConfig(table, palette)" />
+  <VRect :config="isOvercrowded ? overcrowdedRectConfig(table) : tableRectConfig(table, palette)" />
+  <template v-if="isOvercrowded">
+    <VText :config="overcrowdedIconConfig(table)" />
+    <VText :config="overcrowdedLabelConfig(table)" />
+  </template>
+  <template v-else>
+    <VCircle :config="newlywedsDotConfig(0, palette)" />
+    <VCircle :config="newlywedsDotConfig(1, palette)" />
+    <VText :config="tableNameRectConfig(table, palette)" />
+  </template>
 
   <RectRotationHandle
     v-if="isSelected"

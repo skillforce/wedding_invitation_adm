@@ -127,6 +127,7 @@
     "tableNamePlaceholder": "Название стола...",
     "selectGuestPlaceholder": "Выбрать гостя...",
     "allGuestsSeated": "Все гости уже распределены",
+    "noGuestsFitSeats": "Никто не помещается в оставшиеся места",
     "sectionGuests": "Гости",
     "noGuestsYet": "Гостей пока нет",
     "guestNamePlaceholder": "Имя гостя...",

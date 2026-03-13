@@ -13,7 +13,8 @@ const props = defineProps<{
 const { t } = useI18n()
 const seatingStore = useSeatingStore()
 const guestsStore = useGuestsStore()
-const isTableFull = computed(() => props.table.guests.length >= seatingStore.maxSeatsPerTableAmount)
+const occupiedSeats = computed(() => seatingStore.getTableOccupiedSeats(props.table))
+const isTableFull = computed(() => occupiedSeats.value >= seatingStore.maxSeatsPerTableAmount)
 
 onMounted(async () => {
   if (!guestsStore.guests.length) {
@@ -34,18 +35,18 @@ function removeGuest(guestId: string) {
   <div class="table-guest-list">
     <p class="section-label">
       {{ t('seating.sectionGuests') }}
-      <span class="guest-count">{{ table.guests.length }}/{{ seatingStore.maxSeatsPerTableAmount }}</span>
+      <span class="guest-count">{{ occupiedSeats }}/{{ seatingStore.maxSeatsPerTableAmount }}</span>
     </p>
 
     <ul class="guest-list">
       <li v-if="table.guests.length === 0" class="guest-empty">{{ t('seating.noGuestsYet') }}</li>
       <li v-for="guest in table.guests" :key="guest.id" class="guest-item">
-        <span class="guest-name">{{ guest.name }}</span>
+        <span class="guest-name">{{ seatingStore.getSeatDisplayName(guest) }}</span>
         <button class="remove-btn" :aria-label="t('a11y.removeGuest')" @click="removeGuest(guest.id)">✕</button>
       </li>
     </ul>
 
-    <AddSeatForm :disabled="isTableFull" @add="addGuest" />
+    <AddSeatForm :table="table" :disabled="isTableFull" @add="addGuest" />
   </div>
 </template>
 

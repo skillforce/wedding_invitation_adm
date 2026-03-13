@@ -127,6 +127,7 @@
     "tableNamePlaceholder": "Table name...",
     "selectGuestPlaceholder": "Select guest...",
     "allGuestsSeated": "All guests are on their places",
+    "noGuestsFitSeats": "No guests fit the remaining seats",
     "sectionGuests": "Guests",
     "noGuestsYet": "No guests yet",
     "guestNamePlaceholder": "Guest name...",

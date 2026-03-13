@@ -75,13 +75,16 @@ function handleHide() {
 
 function selectKidsOption(key: string) {
   guestProfileDraft.has_kids_attending = key === KidsOptionKey.Yes
-  if (key === KidsOptionKey.Yes && guestProfileDraft.kids_count < 1) {
-    guestProfileDraft.kids_count = 1
+  if (key === KidsOptionKey.Yes && (guestProfileDraft.amount_of_kids ?? 0) < 1) {
+    guestProfileDraft.amount_of_kids = 1
+  }
+  if (key === KidsOptionKey.No) {
+    guestProfileDraft.amount_of_kids = null
   }
 }
 
 function onKidsCountUpdate(value: number | null) {
-  guestProfileDraft.kids_count = Math.max(1, value ?? 1)
+  guestProfileDraft.amount_of_kids = Math.max(1, value ?? 1)
 }
 
 function selectVipOption(key: string) {
@@ -182,7 +185,7 @@ watch(
             <div v-if="guestProfileDraft.has_kids_attending" class="kids-count-row">
               <InputNumber
                 input-id="kids-count-input"
-                v-model="guestProfileDraft.kids_count"
+                v-model="guestProfileDraft.amount_of_kids"
                 :min="1"
                 :max="10"
                 show-buttons

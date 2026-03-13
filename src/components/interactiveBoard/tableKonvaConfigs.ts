@@ -1,10 +1,15 @@
-import type { SeatingTable, SeatingGuest } from '@/stores/seating'
+import type { SeatingTable } from '@/stores/seating'
 import { getThemeDefinition, type ThemeName } from '@/themes'
 import type { Stage } from 'konva/lib/Stage'
 import { useWorkspace } from '@/composables/useWorkspace'
 // ── Visual constants ──────────────────────────────────────────────────────────
 export const SEAT_RADIUS = 20
 export const SEAT_OFFSET = 40
+export const SEAT_BADGE_RADIUS = 15
+const SEAT_BADGE_RED = '#ff3b30'
+const SEAT_BADGE_RED_HOVER = '#ff453a'
+const SEAT_BADGE_STROKE = 'rgba(255, 255, 255, 0.95)'
+const SEAT_BADGE_HIGHLIGHT = 'rgba(255, 255, 255, 0.38)'
 
 // Rect table proportions (relative to radius)
 export const RECT_W = 2.4   // width  = radius * RECT_W
@@ -127,6 +132,72 @@ export function tableNameConfig(
   }
 }
 
+export function overcrowdedCircleConfig(table: SeatingTable) {
+  return {
+    radius: table.radius,
+    fill: '#fff4f2',
+    stroke: '#ff3b30',
+    strokeWidth: 3,
+    shadowBlur: 18,
+    shadowColor: 'rgba(255, 59, 48, 0.28)',
+    shadowOffsetY: 5,
+    shadowOpacity: 1,
+  }
+}
+
+export function overcrowdedRectConfig(table: SeatingTable) {
+  const w = table.radius * RECT_W
+  const h = table.radius * RECT_H
+  return {
+    x: -w / 2,
+    y: -h / 2,
+    width: w,
+    height: h,
+    cornerRadius: 8,
+    fill: '#fff4f2',
+    stroke: '#ff3b30',
+    strokeWidth: 3,
+    shadowBlur: 18,
+    shadowColor: 'rgba(255, 59, 48, 0.28)',
+    shadowOffsetY: 5,
+    shadowOpacity: 1,
+  }
+}
+
+export function overcrowdedIconConfig(table: SeatingTable) {
+  return {
+    text: '!!!',
+    fontSize: Math.max(24, Math.round(table.radius * 0.56)),
+    fontStyle: 'bold',
+    fontFamily: 'SF Pro Display, Helvetica Neue, Arial, sans-serif',
+    fill: '#ff3b30',
+    align: 'center',
+    verticalAlign: 'middle',
+    width: table.radius * 1.3,
+    offsetX: table.radius * 0.65,
+    offsetY: table.shape === 'rect' ? table.radius * 0.22 : table.radius * 0.42,
+    y: table.shape === 'rect' ? -table.radius * 0.22 : -table.radius * 0.34,
+    listening: false,
+  }
+}
+
+export function overcrowdedLabelConfig(table: SeatingTable) {
+  return {
+    text: table.name,
+    fontSize: table.shape === 'rect' ? 11 : 13,
+    fontStyle: 'bold',
+    fontFamily: 'Georgia, serif',
+    fill: '#7a1c16',
+    align: 'center',
+    width: table.shape === 'rect' ? table.radius * RECT_W : table.radius * 2,
+    wrap: 'none',
+    ellipsis: true,
+    offsetX: table.shape === 'rect' ? (table.radius * RECT_W) / 2 : table.radius,
+    y: table.shape === 'rect' ? 12 : 8,
+    listening: false,
+  }
+}
+
 // ── Rect (newlyweds) table configs ────────────────────────────────────────────
 export function selectionRingRectConfig(
   table: SeatingTable,
@@ -245,13 +316,13 @@ export function   seatCircleConfig(
 
 export function guestNameConfig(
   table: SeatingTable,
-  guest: SeatingGuest,
+  guestLabel: string,
   index: number,
   palette: KonvaThemePalette,
   isHovered = false,
 ) {
   const { x, y } = guestPosition(table, index)
-  const label = isHovered ? guest.name : truncateGuestName(guest.name, 4)
+  const label = isHovered ? guestLabel : truncateGuestName(guestLabel, 4)
   return {
     text: label,
     fontSize: 16,
@@ -265,6 +336,61 @@ export function guestNameConfig(
     offsetY: -SEAT_RADIUS - 3,
     x,
     y,
+    listening: false,
+  }
+}
+
+export function seatBadgeCircleConfig(
+  table: SeatingTable,
+  index: number,
+  isHovered = false,
+) {
+  const { x, y } = guestPosition(table, index)
+  return {
+    x: x + SEAT_RADIUS - 2,
+    y: y - SEAT_RADIUS + 2,
+    radius: SEAT_BADGE_RADIUS,
+    fill: isHovered ? SEAT_BADGE_RED_HOVER : SEAT_BADGE_RED,
+    stroke: SEAT_BADGE_STROKE,
+    strokeWidth:2,
+    shadowColor: 'rgba(120, 0, 0, 0.35)',
+    shadowBlur: 7,
+    shadowOffsetY: 1.5,
+    shadowOpacity: 1,
+    listening: false,
+  }
+}
+
+export function seatBadgeHighlightConfig(table: SeatingTable, index: number) {
+  const { x, y } = guestPosition(table, index)
+  return {
+    x: x + SEAT_RADIUS - 5,
+    y: y - SEAT_RADIUS - 1,
+    radius: 6,
+    fill: SEAT_BADGE_HIGHLIGHT,
+    listening: false,
+  }
+}
+
+export function seatBadgeTextConfig(
+  table: SeatingTable,
+  index: number,
+  additionalSeats: number,
+) {
+  const { x, y } = guestPosition(table, index)
+  return {
+    x: x + SEAT_RADIUS - 2,
+    y: y - SEAT_RADIUS -1,
+    text: `+${additionalSeats}`,
+    fontSize: additionalSeats > 9 ? 13 : 15,
+    fontStyle: 'bold',
+    fontFamily: 'SF Pro Display, Helvetica Neue, Arial, sans-serif',
+    fill: '#ffffff',
+    align: 'center',
+    verticalAlign: 'middle',
+    width: SEAT_BADGE_RADIUS * 2 + 4,
+    offsetX: SEAT_BADGE_RADIUS + 2,
+    offsetY: 4.5,
     listening: false,
   }
 }

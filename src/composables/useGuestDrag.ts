@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { Stage } from 'konva/lib/Stage'
+import { SeatingShape } from '@/api/seating-arrangement'
 import { useSeatingStore, type SeatingTable } from '@/stores/seating'
 import { RECT_H, RECT_W } from '@/components/interactiveBoard/tableKonvaConfigs'
 
@@ -24,9 +25,9 @@ export function useGuestDrag(stageRef: { value: { getNode(): Stage } | null }) {
   }
 
   function isInsideTableDropArea(table: SeatingTable, point: { x: number; y: number }) {
-    if (table.shape === 'pillar') return false
+    if (table.shape === SeatingShape.Pillar) return false
 
-    if (table.shape === 'circle') {
+    if (table.shape === SeatingShape.Circle) {
       const dx = point.x - table.x
       const dy = point.y - table.y
       const maxDistance = table.radius + DROP_TARGET_PADDING
