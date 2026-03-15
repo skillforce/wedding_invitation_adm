@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Select from 'primevue/select'
 import type { GuestDetailViewDto, GuestFormDto, NewGuestPayload } from '@/api/guests.ts'
 import GuestManageListItem from '@/components/guests/GuestManageListItem.vue'
 import AddGuestForm from '@/components/guests/AddGuestForm/index.vue'
+import GuestFilterRow, { type GuestFilter } from '@/components/guests/GuestFilterRow/GuestFilterRow.vue'
 
 const props = defineProps<{
   guests: GuestDetailViewDto[]
@@ -23,19 +23,26 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-type Filter = 'all' | 'answered' | 'pending'
-const activeFilter = ref<Filter>('all')
-
-const filterOptions = computed(() => [
-  { label: t('guests.filterAll'), value: 'all' },
-  { label: t('guests.answered'), value: 'answered' },
-  { label: t('guests.notAnswered'), value: 'pending' },
-])
+const activeFilter = ref<GuestFilter>('all')
 
 const filteredGuests = computed(() => {
   if (activeFilter.value === 'answered') return props.guests.filter((g) => g.is_already_answered)
   if (activeFilter.value === 'pending') return props.guests.filter((g) => !g.is_already_answered)
   return props.guests
+})
+
+const plusOneCount = computed(() =>
+  activeFilter.value === 'all'
+    ? props.guests.filter((g) => g.response?.plus_one === true).length
+    : undefined,
+)
+
+const countLabel = computed(() => {
+  const total = props.guests.length
+  const filtered = filteredGuests.value.length
+  if (activeFilter.value === 'all') return t('guests.countAll', { count: total })
+  if (activeFilter.value === 'answered') return t('guests.countAnswered', { count: filtered, total })
+  return t('guests.countPending', { count: filtered, total })
 })
 
 watch(
@@ -65,18 +72,17 @@ watch(
       @update="emit('update', $event.id, $event.payload)"
     />
 
-    <Select
+    <GuestFilterRow
       v-model="activeFilter"
-      :options="filterOptions"
-      option-label="label"
-      option-value="value"
-      class="filter-bar"
+      :count-label="countLabel"
+      :plus-one-count="plusOneCount"
     />
 
     <ul v-if="filteredGuests.length" class="guest-list">
-      <li v-for="guest in filteredGuests" :key="guest.id">
+      <li v-for="(guest, index) in filteredGuests" :key="guest.id">
         <GuestManageListItem
           :guest="guest"
+          :number="index + 1"
           :is-selected="guest.id === selectedGuestId"
           @remove="emit('remove', $event)"
           @select="emit('select', $event)"
@@ -91,14 +97,12 @@ watch(
 <style scoped>
 .manage-section {
   margin-top: 1rem;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.filter-bar {
-  align-self: start;
-  max-width: 150px;
-}
+
 
 .guest-list {
   list-style: none;
@@ -106,11 +110,32 @@ watch(
   padding: 0;
   display: grid;
   gap: 0.5rem;
+  align-content: start;
+}
+
+@media (min-width: 901px) {
+  .manage-section {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .guest-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
 }
 
 .empty-text {
   color: var(--color-text-muted);
   text-align: center;
   padding: 1rem 0;
+}
+
+@media (max-width: 900px) {
+  .guest-list {
+    max-height: calc(5 * 42px + 4 * 0.5rem);
+    overflow-y: auto;
+  }
 }
 </style>

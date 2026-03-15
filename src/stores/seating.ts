@@ -406,6 +406,15 @@ export const useSeatingStore = defineStore('seating', () => {
     debouncedRadius.call(id, radius)
   }
 
+  async function autoSeat() {
+    try {
+      const data = await SEATING_ARRANGEMENT_API.autoSeat()
+      applyArrangement(data)
+    } catch (error) {
+      appCommonStore.showError(error)
+    }
+  }
+
   async function deleteTable(id: string) {
     try {
       await SEATING_ARRANGEMENT_API.deleteTable(id)
@@ -425,6 +434,7 @@ export const useSeatingStore = defineStore('seating', () => {
     workspaceBounds,
     workspaceLimits,
     fetchTables,
+    autoSeat,
     updateWorkspace,
     resizeWorkspace,
     toggleWorkspaceShape,

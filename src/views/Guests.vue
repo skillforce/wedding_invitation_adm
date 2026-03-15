@@ -81,6 +81,41 @@ onMounted(async () => {
   align-items: start;
 }
 
+@media (min-width: 901px) {
+  .guests-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guests-page :deep(.p-card) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guests-page :deep(.p-card-body) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guests-page :deep(.p-card-content) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guests-layout {
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 900px) {
   .guests-layout {
     grid-template-columns: 1fr;

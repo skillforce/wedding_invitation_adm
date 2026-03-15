@@ -114,4 +114,8 @@ export const SEATING_ARRANGEMENT_API = {
   async removeSeat(tableId: string, seatId: string): Promise<void> {
     return requestVoid(`/tables/${tableId}/seats/${seatId}`, { method: 'DELETE' })
   },
+
+  async autoSeat(): Promise<SeatingArrangementDto> {
+    return requestJson('/arrangement/auto-seat', { method: 'POST' })
+  },
 }

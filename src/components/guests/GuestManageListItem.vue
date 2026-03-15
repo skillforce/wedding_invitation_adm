@@ -10,6 +10,7 @@ import UserAvatar from '@/components/shared/UserAvatar.vue'
 const props = defineProps<{
   guest: GuestDetailViewDto
   isSelected: boolean
+  number: number
 }>()
 
 const emit = defineEmits<{
@@ -40,6 +41,7 @@ async function copyLink() {
     @keydown.enter.prevent="emit('select', guest.id)"
     @keydown.space.prevent="emit('select', guest.id)"
   >
+    <span class="guest-number">{{ number }}</span>
     <UserAvatar :size="28" :alt="t('a11y.guestAvatar')" class="guest-avatar" />
     <span class="guest-name">{{ guest.name }}</span>
     <GuestResponseMark
@@ -96,6 +98,15 @@ async function copyLink() {
 .guest-row--selected {
   border-color: var(--p-primary-400);
   background: color-mix(in srgb, var(--p-primary-100) 20%, var(--color-surface));
+}
+
+.guest-number {
+  min-width: 1.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .guest-name {

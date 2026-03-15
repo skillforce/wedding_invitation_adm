@@ -16,6 +16,7 @@ const emit = defineEmits<{
   close: []
   openObjectDrawer: []
   openSettingsDrawer: []
+  autoSeat: []
 }>()
 
 const { t } = useI18n()
@@ -25,6 +26,8 @@ type DrawerAction = {
   key: string
   icon: string
   labelKey: string
+  special?: boolean
+  primary?: boolean
   onClick: () => void
 }
 
@@ -33,7 +36,18 @@ const drawerActions = computed<DrawerAction[]>(() => [
     key: 'add-object',
     icon: 'pi pi-plus',
     labelKey: 'seating.addObject',
+    primary: true,
     onClick: () => emit('openObjectDrawer'),
+  },
+  {
+    key: 'auto-seat',
+    icon: 'pi pi-sparkles',
+    labelKey: 'seating.autoSeat',
+    special: true,
+    onClick: () => {
+      emit('autoSeat')
+      emit('close')
+    },
   },
   {
     key: 'workspace-settings',
@@ -64,7 +78,7 @@ function exportData() {
       <button
         v-for="action in drawerActions"
         :key="action.key"
-        class="action-btn"
+        :class="['action-btn', action.special && 'action-btn--special', action.primary && 'action-btn--primary']"
         @click="action.onClick"
       >
         <i :class="action.icon" />
@@ -103,6 +117,41 @@ function exportData() {
 
 .action-btn:hover:not(:disabled) {
   background: var(--color-hover);
+}
+
+.action-btn--primary {
+  background: var(--p-primary-500);
+  color: #fff;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--p-primary-500) 45%, transparent);
+  transition: background 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.action-btn--primary:hover:not(:disabled) {
+  background: var(--p-primary-600);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--p-primary-500) 65%, transparent);
+  filter: brightness(1.06);
+}
+
+.action-btn--special {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.35);
+}
+
+.action-btn--special:hover:not(:disabled) {
+  filter: brightness(1.12);
+  box-shadow: 0 0 18px rgba(124, 58, 237, 0.6);
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+}
+
+.action-btn--special .pi {
+  animation: sparkle-spin 2.4s ease-in-out infinite;
+}
+
+@keyframes sparkle-spin {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  30%       { transform: rotate(-15deg) scale(1.2); }
+  60%       { transform: rotate(12deg) scale(0.9); }
 }
 
 .action-btn:disabled {

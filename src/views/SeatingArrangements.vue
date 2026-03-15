@@ -61,12 +61,14 @@ const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
       :stage-ref="stageRef"
       @add-object="(shape) => seatingStore.addObject(shape)"
       @open-workspace-settings="workspaceSettingsOpen = true"
+      @auto-seat="seatingStore.autoSeat()"
     />
     <BoardMobileMenu
       :is-fitted="isFitted"
       :stage-ref="stageRef"
       @add-object="(shape) => seatingStore.addObject(shape)"
       @open-workspace-settings="workspaceSettingsOpen = true"
+      @auto-seat="seatingStore.autoSeat()"
     />
 
     <WorkspaceSettings

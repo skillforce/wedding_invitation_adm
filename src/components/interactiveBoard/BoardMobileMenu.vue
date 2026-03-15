@@ -8,7 +8,7 @@ import BoardMobileMainDrawer from './BoardMobile/BoardMobileMainDrawer.vue'
 import BoardMobileObjectDrawer from './BoardMobile/BoardMobileObjectDrawer.vue'
 
 defineProps<{ isFitted: boolean; stageRef: { getNode(): Stage } | null }>()
-const emit = defineEmits<{ addObject: [shape: SeatingShape]; openWorkspaceSettings: [] }>()
+const emit = defineEmits<{ addObject: [shape: SeatingShape]; openWorkspaceSettings: []; autoSeat: [] }>()
 
 const { t } = useI18n()
 const mainOpen = ref(false)
@@ -34,6 +34,7 @@ function pickObject(shape: SeatingShape) {
       @close="mainOpen = false"
       @open-object-drawer="openObjectDrawer"
       @open-settings-drawer="emit('openWorkspaceSettings')"
+      @auto-seat="emit('autoSeat')"
     />
 
     <BoardMobileObjectDrawer
