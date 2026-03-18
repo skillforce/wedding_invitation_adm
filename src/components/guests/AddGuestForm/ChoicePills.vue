@@ -32,6 +32,7 @@ defineEmits<{
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .choice-pill {
@@ -47,5 +48,17 @@ defineEmits<{
 .choice-pill--active {
   border-color: var(--p-primary-400);
   background: color-mix(in srgb, var(--p-primary-100) 25%, var(--color-surface));
+}
+
+@media (max-width: 640px) {
+  .choice-pills {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .choice-pill {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>

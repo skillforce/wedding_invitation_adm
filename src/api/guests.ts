@@ -19,6 +19,10 @@ export interface GuestDetailViewDto {
 export type GuestRelationshipToCouple = 'bride_side' | 'groom_side' | 'mutual'
 export type GuestAgeGroup = 'child' | 'young' | 'adult' | 'old'
 export type GuestPersonalityType = 'introvert' | 'extrovert' | 'unknown'
+export interface GuestCoupleStatusDto {
+  response: boolean
+  coupleId?: string
+}
 
 export interface GuestFormDto {
   relationship_to_couple: GuestRelationshipToCouple
@@ -29,6 +33,7 @@ export interface GuestFormDto {
   vip_parents: boolean
   vip_grandparents: boolean
   vip_relatives: boolean
+  ifWithCouple?: GuestCoupleStatusDto
 }
 
 export interface NewGuestPayload {

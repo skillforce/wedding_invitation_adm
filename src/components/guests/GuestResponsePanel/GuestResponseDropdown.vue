@@ -30,6 +30,8 @@ const { t } = useI18n()
   border: 1px solid color-mix(in srgb, var(--color-border-strong) 65%, transparent);
   background: color-mix(in srgb, var(--color-surface) 88%, white);
   overflow: hidden;
+  min-width: 0;
+  width: 100%;
 }
 
 .response-summary {

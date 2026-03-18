@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import ThemeSwitch from '@/components/global/ThemeSwitch.vue'
-import LocaleSwitch from '@/components/global/LocaleSwitch.vue'
+import GlobalControls from '@/components/global/GlobalControls.vue'
 import GlobalErrorAlert from '@/components/global/GlobalErrorAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 import { useRouter } from 'vue-router'
@@ -32,8 +31,7 @@ configureApiAuth(
     <RouterView />
   </div>
   <div class="global-controls">
-    <LocaleSwitch />
-    <ThemeSwitch />
+    <GlobalControls />
   </div>
 </template>
 
@@ -45,7 +43,7 @@ configureApiAuth(
 
 .global-controls {
   position: fixed;
-  top: 0.7rem;
+  top: 1.5rem;
   right: 2rem;
   z-index: 60;
   display: inline-flex;

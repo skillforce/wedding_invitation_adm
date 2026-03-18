@@ -1,39 +1,60 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import Select from 'primevue/select'
+import { computed, ref } from 'vue'
+import GuestFilterActions from '@/components/guests/GuestFilterRow/GuestFilterActions.vue'
 import GuestCountLabel from '@/components/guests/GuestFilterRow/GuestCountLabel.vue'
+import GuestFiltersOverlay from '@/components/guests/GuestFilterRow/GuestFiltersOverlay.vue'
+import type { GuestProfileFilterState } from '@/components/guests/GuestFilterRow/GuestProfileFilter.vue'
 
 export type GuestFilter = 'all' | 'answered' | 'pending'
 
-defineProps<{
+const props = defineProps<{
   modelValue: GuestFilter
+  profileFilter: GuestProfileFilterState
   countLabel: string
   plusOneCount?: number
+  hasInvitationUrl?: boolean
 }>()
 
-const emit = defineEmits<{ 'update:modelValue': [value: GuestFilter] }>()
+const emit = defineEmits<{
+  'update:modelValue': [value: GuestFilter]
+  'update:profileFilter': [value: GuestProfileFilterState]
+  clear: []
+}>()
 
-const { t } = useI18n()
+const filtersOverlayRef = ref<InstanceType<typeof GuestFiltersOverlay> | null>(null)
 
-const filterOptions = computed(() => [
-  { label: t('guests.filterAll'), value: 'all' },
-  { label: t('guests.answered'), value: 'answered' },
-  { label: t('guests.notAnswered'), value: 'pending' },
-])
+const hasActiveProfileFilter = computed(() => (
+  props.profileFilter.field !== null || props.profileFilter.value !== null
+))
+const hasActiveFilters = computed(() => props.modelValue !== 'all' || hasActiveProfileFilter.value)
+
+function toggleFilters(event: MouseEvent) {
+  filtersOverlayRef.value?.toggle(event)
+}
+
+function clearFilters() {
+  emit('clear')
+  filtersOverlayRef.value?.hide()
+}
 </script>
 
 <template>
   <div class="filter-row">
-    <Select
-      :model-value="modelValue"
-      :options="filterOptions"
-      option-label="label"
-      option-value="value"
-      class="filter-bar"
-      @update:model-value="emit('update:modelValue', $event)"
+    <GuestFilterActions
+      :has-active-filters="hasActiveFilters"
+      @toggle="toggleFilters"
+      @clear="clearFilters"
     />
     <GuestCountLabel :label="countLabel" :plus-one-count="plusOneCount" />
+
+    <GuestFiltersOverlay
+      ref="filtersOverlayRef"
+      :response-filter="modelValue"
+      :profile-filter="profileFilter"
+      :has-invitation-url="hasInvitationUrl"
+      @update:response-filter="emit('update:modelValue', $event)"
+      @update:profile-filter="emit('update:profileFilter', $event)"
+    />
   </div>
 </template>
 
@@ -41,11 +62,15 @@ const filterOptions = computed(() => [
 .filter-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
-.filter-bar {
-  align-self: start;
-  max-width: 150px;
+@media (max-width: 640px) {
+  .filter-row {
+    gap: 0.65rem;
+    align-items: flex-start;
+  }
 }
 </style>

@@ -6,12 +6,22 @@ import GuestResponseDropdown from '@/components/guests/GuestResponsePanel/GuestR
 import GuestResponseEmpty from '@/components/guests/GuestResponsePanel/GuestResponseEmpty.vue'
 import GuestResponseHeader from '@/components/guests/GuestResponsePanel/GuestResponseHeader.vue'
 import GuestResponseSection from '@/components/guests/GuestResponsePanel/GuestResponseSection.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useGuestsStore } from '@/stores/guests'
 
 const props = defineProps<{
   guest: GuestDetailViewDto | null
+  isUpdating?: boolean
+}>()
+
+const emit = defineEmits<{
+  edit: []
 }>()
 
 const { t } = useI18n()
+const authStore = useAuthStore()
+const guestsStore = useGuestsStore()
+const hasInvitationUrl = computed(() => Boolean(authStore.user?.invitationUrl))
 
 const relationshipKeyMap = {
   bride_side: 'brideSide',
@@ -42,6 +52,10 @@ const guestProfileFields = computed(() => {
     form.vip_relatives ? t('guests.profile.vipOptions.relatives') : null,
   ].filter((value): value is string => Boolean(value))
 
+  const coupleGuestName = form.ifWithCouple?.coupleId
+    ? guestsStore.guests.find((guest) => guest.id === form.ifWithCouple?.coupleId)?.name
+    : null
+
   return [
     {
       label: t('guests.profile.relationshipLabel'),
@@ -64,6 +78,12 @@ const guestProfileFields = computed(() => {
     {
       label: t('guests.profile.vipLabel'),
       value: vipLabels.length ? vipLabels.join(', ') : t('guests.profile.vipOptions.none'),
+    },
+    {
+      label: t('guests.profile.withCoupleLabel'),
+      value: form.ifWithCouple?.response
+        ? (coupleGuestName || t('guests.yes'))
+        : t('guests.no'),
     },
   ]
 })
@@ -101,8 +121,14 @@ const responseFields = computed(() => {
   <aside class="response-panel">
     <template v-if="guest">
       <GuestResponseHeader :guest="guest" />
-      <GuestResponseSection :fields="guestProfileFields" />
+      <GuestResponseSection
+        :fields="guestProfileFields"
+        :can-edit="Boolean(guest.guestForm)"
+        :is-updating="isUpdating"
+        @edit="emit('edit')"
+      />
       <GuestResponseDropdown
+        v-if="hasInvitationUrl"
         :responded="guest.is_already_answered"
         :fields="responseFields"
       />
@@ -118,12 +144,15 @@ const responseFields = computed(() => {
   background:
     radial-gradient(circle at top right, color-mix(in srgb, var(--p-primary-300) 16%, transparent), transparent 34%),
     linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 92%, white), var(--color-surface));
-  padding: 1.1rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-card);
   display: grid;
   gap: 1rem;
   position: sticky;
-  top: 1rem;
+  top: 1.5rem;
+  align-self: start;
+  min-width: 0;
+  width: 100%;
 }
 
 @media (max-width: 900px) {

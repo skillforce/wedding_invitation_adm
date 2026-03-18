@@ -16,13 +16,21 @@ defineProps<{
 
 <style scoped>
 .guest-count {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-border-strong) 60%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 90%, white);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-title);
   white-space: nowrap;
 }
 
 .guest-count-plus {
   color: var(--p-green-500);
-  font-weight: 600;
+  font-weight: 800;
 }
 </style>

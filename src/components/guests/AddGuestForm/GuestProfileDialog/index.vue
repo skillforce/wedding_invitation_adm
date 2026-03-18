@@ -2,12 +2,15 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
-import InputNumber from 'primevue/inputnumber'
-import Select from 'primevue/select'
-import ChoicePills from './ChoicePills.vue'
-import DialogFooter from './DialogFooter.vue'
-import FieldCard from './FieldCard.vue'
-import ProfileBanner from './ProfileBanner.vue'
+import DialogFooter from '../DialogFooter.vue'
+import ProfileBanner from '../ProfileBanner.vue'
+import AgeFieldCard from './AgeFieldCard.vue'
+import CoupleFieldCard from './CoupleFieldCard.vue'
+import CoupleDetailsFieldCard from './CoupleDetailsFieldCard.vue'
+import KidsFieldCard from './KidsFieldCard.vue'
+import PersonalityFieldCard from './PersonalityFieldCard.vue'
+import RelationshipFieldCard from './RelationshipFieldCard.vue'
+import VipFieldCard from './VipFieldCard.vue'
 import {
   buildGuestForm,
   createEmptyGuestProfileDraft,
@@ -15,17 +18,27 @@ import {
   selectNoVipStatus as applyNoVipStatus,
   syncDraftFromForm,
   toggleVipFlag as applyVipToggle,
-} from './guestProfileDraft'
-import { useGuestChoiceOptions, useGuestProfileOptions } from './profileOptions'
-import type { GuestFormDto } from '@/api/guests'
+} from '../guestProfileDraft'
+import { useGuestChoiceOptions, useGuestProfileOptions } from '../profileOptions'
+import type { GuestDetailViewDto, GuestFormDto } from '@/api/guests'
 import { useAppCommonStore } from '@/stores/app_common'
-import { KidsOptionKey, ModalMode, ValidationField, VipOptionKey, VipSelectionState } from './types'
-import type { GuestProfileDraft, GuestVipFlag } from './types'
+import {
+  CoupleGuestListOptionKey,
+  CoupleOptionKey,
+  KidsOptionKey,
+  ModalMode,
+  ValidationField,
+  VipOptionKey,
+  VipSelectionState,
+} from '../types'
+import type { GuestProfileDraft, GuestVipFlag } from '../types'
 
 const props = defineProps<{
   visible: boolean
   mode: ModalMode
   guestName: string
+  guests: GuestDetailViewDto[]
+  editingGuestId?: string | null
   editGuestForm?: GuestFormDto | null
   isAdding: boolean
   isUpdating: boolean
@@ -42,7 +55,7 @@ const appCommon = useAppCommonStore()
 const hasAttemptedSubmit = ref(false)
 const guestProfileDraft = reactive<GuestProfileDraft>(createEmptyGuestProfileDraft())
 const { relationshipOptions, ageOptions, personalityOptions } = useGuestProfileOptions(t)
-const { kidsOptions, vipOptions } = useGuestChoiceOptions(t, guestProfileDraft)
+const { kidsOptions, coupleOptions, coupleGuestListOptions, vipOptions } = useGuestChoiceOptions(t, guestProfileDraft)
 
 const isGuestProfileValid = computed(() => (
   guestProfileDraft.relationship_to_couple !== null
@@ -50,6 +63,17 @@ const isGuestProfileValid = computed(() => (
   && guestProfileDraft.has_kids_attending !== null
   && guestProfileDraft.personality_type !== null
   && guestProfileDraft.vip_selection_state !== VipSelectionState.Unset
+  && guestProfileDraft.if_with_couple !== null
+  && (
+    guestProfileDraft.if_with_couple === false
+    || (
+      guestProfileDraft.couple_already_in_guest_list !== null
+      && (
+        guestProfileDraft.couple_already_in_guest_list === false
+        || Boolean(guestProfileDraft.couple_id)
+      )
+    )
+  )
 ))
 
 const dialogTitle = computed(() => (
@@ -63,6 +87,13 @@ const dialogKicker = computed(() => (
 const dialogDescription = computed(() => (
   props.mode === ModalMode.Edit ? t('guests.profile.editDescription') : t('guests.profile.description')
 ))
+
+const coupleGuestOptions = computed(() => props.guests
+  .filter((guest) => guest.id !== props.editingGuestId)
+  .map((guest) => ({
+    label: guest.name,
+    value: guest.id,
+  })))
 
 function resetDraft() {
   Object.assign(guestProfileDraft, createEmptyGuestProfileDraft())
@@ -80,6 +111,23 @@ function selectKidsOption(key: string) {
   }
   if (key === KidsOptionKey.No) {
     guestProfileDraft.amount_of_kids = null
+  }
+}
+
+function selectCoupleOption(key: string) {
+  guestProfileDraft.if_with_couple = key === CoupleOptionKey.Yes
+
+  if (!guestProfileDraft.if_with_couple) {
+    guestProfileDraft.couple_already_in_guest_list = null
+    guestProfileDraft.couple_id = null
+  }
+}
+
+function selectCoupleGuestListOption(key: string) {
+  guestProfileDraft.couple_already_in_guest_list = key === CoupleGuestListOptionKey.Yes
+
+  if (!guestProfileDraft.couple_already_in_guest_list) {
+    guestProfileDraft.couple_id = null
   }
 }
 
@@ -146,78 +194,57 @@ watch(
       />
 
       <div class="profile-grid">
-        <FieldCard
-          :label="t('guests.profile.relationshipLabel')"
+        <RelationshipFieldCard
+          v-model="guestProfileDraft.relationship_to_couple"
+          :options="relationshipOptions"
           :invalid="isFieldInvalid(ValidationField.RelationshipToCouple)"
-        >
-          <Select
-            v-model="guestProfileDraft.relationship_to_couple"
-            :options="relationshipOptions"
-            option-label="label"
-            option-value="value"
-            :placeholder="t('guests.profile.selectPlaceholder')"
-            :invalid="isFieldInvalid(ValidationField.RelationshipToCouple)"
-            class="field-select"
-          />
-        </FieldCard>
+        />
 
-        <FieldCard
-          :label="t('guests.profile.ageLabel')"
+        <AgeFieldCard
+          v-model="guestProfileDraft.age_group"
+          :options="ageOptions"
           :invalid="isFieldInvalid(ValidationField.AgeGroup)"
-        >
-          <Select
-            v-model="guestProfileDraft.age_group"
-            :options="ageOptions"
-            option-label="label"
-            option-value="value"
-            :placeholder="t('guests.profile.selectPlaceholder')"
-            :invalid="isFieldInvalid(ValidationField.AgeGroup)"
-            class="field-select"
-          />
-        </FieldCard>
+        />
 
-        <FieldCard
-          :label="t('guests.profile.kidsLabel')"
+        <KidsFieldCard
+          :has-kids-attending="guestProfileDraft.has_kids_attending"
+          :amount-of-kids="guestProfileDraft.amount_of_kids"
+          :options="kidsOptions"
           :invalid="isFieldInvalid(ValidationField.HasKidsAttending)"
-        >
-          <div class="kids-field-row">
-            <ChoicePills :options="kidsOptions" @select="selectKidsOption" />
-            <div v-if="guestProfileDraft.has_kids_attending" class="kids-count-row">
-              <InputNumber
-                input-id="kids-count-input"
-                v-model="guestProfileDraft.amount_of_kids"
-                :min="1"
-                :max="10"
-                show-buttons
-                class="kids-count-input"
-                @update:model-value="onKidsCountUpdate"
-              />
-            </div>
-          </div>
-        </FieldCard>
+          @select="selectKidsOption"
+          @update:amount-of-kids="onKidsCountUpdate"
+        />
 
-        <FieldCard
-          :label="t('guests.profile.personalityLabel')"
+        <PersonalityFieldCard
+          v-model="guestProfileDraft.personality_type"
+          :options="personalityOptions"
           :invalid="isFieldInvalid(ValidationField.PersonalityType)"
-        >
-          <Select
-            v-model="guestProfileDraft.personality_type"
-            :options="personalityOptions"
-            option-label="label"
-            option-value="value"
-            :placeholder="t('guests.profile.selectPlaceholder')"
-            :invalid="isFieldInvalid(ValidationField.PersonalityType)"
-            class="field-select"
-          />
-        </FieldCard>
+        />
 
-        <FieldCard
-          :label="t('guests.profile.vipLabel')"
+        <CoupleFieldCard
+          :couple-options="coupleOptions"
+          :invalid="isFieldInvalid(ValidationField.IfWithCouple)"
+          @select="selectCoupleOption"
+        />
+        <CoupleDetailsFieldCard
+          v-if="guestProfileDraft.if_with_couple"
+          :couple-already-in-guest-list="guestProfileDraft.couple_already_in_guest_list"
+          :couple-id="guestProfileDraft.couple_id"
+          :couple-guest-list-options="coupleGuestListOptions"
+          :guest-options="coupleGuestOptions"
+          :invalid-couple-already-in-list="isFieldInvalid(ValidationField.CoupleAlreadyInList)"
+          :invalid-couple-id="isFieldInvalid(ValidationField.CoupleId)"
+          @select="selectCoupleGuestListOption"
+          @update:couple-id="guestProfileDraft.couple_id = $event"
+        />
+        <VipFieldCard
+          :options="vipOptions"
           :invalid="isFieldInvalid(ValidationField.VipStatus)"
-          wide
-        >
-          <ChoicePills :options="vipOptions" @select="selectVipOption" />
-        </FieldCard>
+          @select="selectVipOption"
+        />
+
+
+
       </div>
     </div>
 
@@ -245,45 +272,9 @@ watch(
   gap: 0.85rem;
 }
 
-.field-select {
-  width: 100%;
-}
-
-.kids-field-row {
-  display: flex;
-  align-items: center;
-  gap: 2.75rem;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.kids-count-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.kids-count-input {
-  width: 80px;
-}
-.kids-count-input:deep(.p-inputnumber-input) {
-  width: 90px;
-  height: 40px;
-}
-
 @media (max-width: 640px) {
   .profile-grid {
     grid-template-columns: 1fr;
-  }
-
-  .kids-field-row {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .kids-count-row {
-    gap: 0.45rem;
   }
 }
 </style>

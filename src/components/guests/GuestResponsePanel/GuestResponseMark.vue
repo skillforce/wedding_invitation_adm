@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps<{
   responded: boolean
@@ -10,6 +11,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const hasInvitationUrl = computed(() => Boolean(useAuthStore().user?.invitationUrl))
 
 const label = computed(() => (
   props.labelScope === 'guest'
@@ -25,6 +27,7 @@ const iconClass = computed(() => {
 
 <template>
   <span
+    v-if="hasInvitationUrl"
     :class="[
       'response-mark',
       `response-mark--${variant ?? 'inline'}`,

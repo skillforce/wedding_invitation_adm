@@ -3,8 +3,6 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { Layer as VLayer, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
-import Button from 'primevue/button'
-
 import { useSeatingStore } from '@/stores/seating'
 import { useGuestsStore } from '@/stores/guests'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
@@ -51,7 +49,6 @@ function onStageClick(e: KonvaEventObject<Event>) {
 }
 
 const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
-const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
 </script>
 
 <template>
@@ -62,6 +59,7 @@ const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
       @add-object="(shape) => seatingStore.addObject(shape)"
       @open-workspace-settings="workspaceSettingsOpen = true"
       @auto-seat="seatingStore.autoSeat()"
+      @fit-to-stage="fitToStage()"
     />
     <BoardMobileMenu
       :is-fitted="isFitted"
@@ -69,6 +67,7 @@ const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
       @add-object="(shape) => seatingStore.addObject(shape)"
       @open-workspace-settings="workspaceSettingsOpen = true"
       @auto-seat="seatingStore.autoSeat()"
+      @fit-to-stage="fitToStage()"
     />
 
     <WorkspaceSettings
@@ -76,20 +75,6 @@ const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
       :is-mobile="isMobile"
       @close="workspaceSettingsOpen = false"
     />
-
-    <div class="workspace-view-btn">
-      <Button
-        :label="isMobile ? undefined : viewWorkspaceLabel"
-        :aria-label="viewWorkspaceLabel"
-        icon="pi pi-expand"
-        size="small"
-        severity="secondary"
-        :text="isMobile"
-        :rounded="isMobile"
-        :disabled="isFitted"
-        @click="fitToStage()"
-      />
-    </div>
 
     <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
       <VLayer>
@@ -133,37 +118,6 @@ const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
   box-shadow: var(--shadow-card);
 }
 
-.workspace-view-btn {
-  position: absolute;
-  top: 25px;
-  right: 16px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--board-toolbar-bg);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--board-toolbar-border);
-  border-radius: 10px;
-  padding: 8px;
-}
-
-.workspace-view-btn :deep(.p-button) {
-  background: #fff;
-  border-color: var(--board-toolbar-border);
-  color: var(--board-toolbar-text, #2f4863);
-}
-
-.workspace-view-btn :deep(.p-button:not(:disabled):hover) {
-  background: var(--color-hover);
-  border-color: var(--board-toolbar-border);
-  color: var(--board-toolbar-text);
-}
-
-.workspace-view-btn :deep(.p-button:disabled) {
-  opacity: 0.55;
-}
-
 .board-hint {
   position: absolute;
   bottom: 12px;
@@ -189,12 +143,6 @@ const viewWorkspaceLabel = computed(() => t('seating.viewWorkspace'))
     min-height: 0;
   }
 
-  .workspace-view-btn {
-    top: 20px;
-    right: 16px;
-    padding: 6px;
-    border-radius: 999px;
-  }
 
   .board-hint {
     bottom: 68px;

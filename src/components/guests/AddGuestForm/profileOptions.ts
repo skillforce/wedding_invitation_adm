@@ -4,7 +4,13 @@ import type {
   GuestPersonalityType,
   GuestRelationshipToCouple,
 } from '@/api/guests'
-import { KidsOptionKey, VipOptionKey, VipSelectionState } from './types'
+import {
+  CoupleGuestListOptionKey,
+  CoupleOptionKey,
+  KidsOptionKey,
+  VipOptionKey,
+  VipSelectionState,
+} from './types'
 import type { ChoiceOption, GuestProfileDraft, SelectOption } from './types'
 
 export function useGuestProfileOptions(t: (key: string) => string) {
@@ -51,6 +57,32 @@ export function useGuestChoiceOptions(
     },
   ])
 
+  const coupleOptions = computed<ChoiceOption[]>(() => [
+    {
+      key: CoupleOptionKey.Yes,
+      label: t('guests.yes'),
+      active: guestProfileDraft.if_with_couple === true,
+    },
+    {
+      key: CoupleOptionKey.No,
+      label: t('guests.no'),
+      active: guestProfileDraft.if_with_couple === false,
+    },
+  ])
+
+  const coupleGuestListOptions = computed<ChoiceOption[]>(() => [
+    {
+      key: CoupleGuestListOptionKey.Yes,
+      label: t('guests.yes'),
+      active: guestProfileDraft.couple_already_in_guest_list === true,
+    },
+    {
+      key: CoupleGuestListOptionKey.No,
+      label: t('guests.no'),
+      active: guestProfileDraft.couple_already_in_guest_list === false,
+    },
+  ])
+
   const vipOptions = computed<ChoiceOption[]>(() => [
     {
       key: VipOptionKey.None,
@@ -76,6 +108,8 @@ export function useGuestChoiceOptions(
 
   return {
     kidsOptions,
+    coupleOptions,
+    coupleGuestListOptions,
     vipOptions,
   }
 }

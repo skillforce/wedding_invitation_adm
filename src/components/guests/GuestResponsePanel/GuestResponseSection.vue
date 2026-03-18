@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import Button from 'primevue/button'
 import GuestResponseFieldList from '@/components/guests/GuestResponsePanel/GuestResponseFieldList.vue'
 
 defineProps<{
   fields: Array<{ label: string; value: string }>
+  canEdit?: boolean
+  isUpdating?: boolean
+}>()
+
+defineEmits<{
+  edit: []
 }>()
 
 const { t } = useI18n()
@@ -11,7 +18,20 @@ const { t } = useI18n()
 
 <template>
   <section class="response-section">
-    <div class="section-title">{{ t('guests.responsePanel.profileTitle') }}</div>
+    <div class="section-head">
+      <div class="section-title">{{ t('guests.responsePanel.profileTitle') }}</div>
+      <Button
+        icon="pi pi-pen-to-square"
+        severity="secondary"
+        text
+        rounded
+        size="small"
+        :aria-label="t('guests.profile.editButton')"
+        :disabled="!canEdit"
+        :loading="isUpdating"
+        @click="$emit('edit')"
+      />
+    </div>
     <GuestResponseFieldList v-if="fields.length" :fields="fields" />
     <p v-else class="response-empty-text">{{ t('guests.responsePanel.profileMissing') }}</p>
   </section>
@@ -25,6 +45,14 @@ const { t } = useI18n()
   padding: 0.9rem 1rem 1rem;
   display: grid;
   gap: 0.8rem;
+  width: 100%;
+}
+
+.section-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
 .section-title {

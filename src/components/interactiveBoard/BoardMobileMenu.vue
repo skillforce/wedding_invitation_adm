@@ -8,7 +8,7 @@ import BoardMobileMainDrawer from './BoardMobile/BoardMobileMainDrawer.vue'
 import BoardMobileObjectDrawer from './BoardMobile/BoardMobileObjectDrawer.vue'
 
 defineProps<{ isFitted: boolean; stageRef: { getNode(): Stage } | null }>()
-const emit = defineEmits<{ addObject: [shape: SeatingShape]; openWorkspaceSettings: []; autoSeat: [] }>()
+const emit = defineEmits<{ addObject: [shape: SeatingShape]; openWorkspaceSettings: []; autoSeat: []; fitToStage: [] }>()
 
 const { t } = useI18n()
 const mainOpen = ref(false)
@@ -46,6 +46,15 @@ function pickObject(shape: SeatingShape) {
     <button class="fab" :aria-label="t('a11y.openMenu')" @click="mainOpen = true">
       <img :src="burgerIconUrl" class="fab-icon" :alt="t('a11y.openMenu')" />
     </button>
+
+    <button
+      class="fab fab--fit"
+      :aria-label="t('seating.viewWorkspace')"
+      :disabled="isFitted"
+      @click="emit('fitToStage')"
+    >
+      <i class="pi pi-expand fab-icon--pi" />
+    </button>
   </div>
 </template>
 
@@ -63,7 +72,7 @@ function pickObject(shape: SeatingShape) {
     position: absolute;
     top: 20px;
     left: 16px;
-    z-index: var(--z-drawer-trigger);
+    z-index: 10;
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -80,6 +89,22 @@ function pickObject(shape: SeatingShape) {
     width: 22px;
     height: 22px;
     filter: var(--color-icon-filter);
+  }
+
+  .fab--fit {
+    top: 20px;
+    left: auto;
+    right: 16px;
+  }
+
+  .fab--fit:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .fab-icon--pi {
+    font-size: 1.1rem;
+    color: var(--board-toolbar-text);
   }
 }
 </style>

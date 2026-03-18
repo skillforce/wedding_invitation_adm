@@ -3,14 +3,18 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import { useGuestsStore } from '@/stores/guests'
+import { useAuthStore } from '@/stores/auth'
 import type { GuestDetailViewDto } from '@/api/guests'
 import GuestsManageList from '@/components/guests/GuestsManageList.vue'
 import GuestResponsePanel from '@/components/guests/GuestResponsePanel/index.vue'
 
 const guestsStore = useGuestsStore()
+const authStore = useAuthStore()
 const guests = computed(() => guestsStore.guests)
 const selectedGuestId = ref<string | null>(null)
+const openEditSignal = ref(0)
 const { t } = useI18n()
+const hasInvitationUrl = computed(() => Boolean(authStore.user?.invitationUrl))
 
 const selectedGuest = computed<GuestDetailViewDto | null>(
   () => guests.value.find((guest) => guest.id === selectedGuestId.value) ?? null,
@@ -35,6 +39,10 @@ watch(
 onMounted(async () => {
   await guestsStore.fetchGuests()
 })
+
+function requestEditSelectedGuest() {
+  openEditSignal.value += 1
+}
 </script>
 
 <template>
@@ -50,12 +58,18 @@ onMounted(async () => {
             :is-updating="guestsStore.isUpdating"
             :selected-guest-id="selectedGuestId"
             :selected-guest="selectedGuest"
+            :open-edit-signal="openEditSignal"
             @add="guestsStore.addGuest"
             @update="guestsStore.updateGuestForm"
             @remove="guestsStore.removeGuest"
             @select="selectedGuestId = $event"
           />
-          <GuestResponsePanel :guest="selectedGuest" />
+          <GuestResponsePanel
+            v-if="hasInvitationUrl"
+            :guest="selectedGuest"
+            :is-updating="guestsStore.isUpdating"
+            @edit="requestEditSelectedGuest"
+          />
         </div>
       </template>
     </Card>

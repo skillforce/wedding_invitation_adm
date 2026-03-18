@@ -2,9 +2,12 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { GuestDetailViewDto, GuestFormDto, NewGuestPayload } from '@/api/guests.ts'
-import GuestManageListItem from '@/components/guests/GuestManageListItem.vue'
+import GuestManageListItem from '@/components/guests/GuestManageListItem/index.vue'
 import AddGuestForm from '@/components/guests/AddGuestForm/index.vue'
 import GuestFilterRow, { type GuestFilter } from '@/components/guests/GuestFilterRow/GuestFilterRow.vue'
+import { useAuthStore } from '@/stores/auth'
+import { matchesProfileFilter } from "@/components/guests/GuestFilterRow/utils.ts";
+import type { GuestProfileFilterState } from "@/components/guests/GuestFilterRow/types.ts";
 
 const props = defineProps<{
   guests: GuestDetailViewDto[]
@@ -12,6 +15,7 @@ const props = defineProps<{
   isUpdating: boolean
   selectedGuestId: string | null
   selectedGuest: GuestDetailViewDto | null
+  openEditSignal?: number
 }>()
 
 const emit = defineEmits<{
@@ -22,17 +26,58 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 
 const activeFilter = ref<GuestFilter>('all')
+const draftGuestName = ref('')
+const profileFilter = ref<GuestProfileFilterState>({
+  field: null,
+  value: null,
+})
+const hasInvitationUrl = computed(() => Boolean(authStore.user?.invitationUrl))
+const hasActiveProfileFilter = computed(() => (
+  profileFilter.value.field !== null && profileFilter.value.value !== null
+))
+
+function updateProfileFilter(nextFilter: GuestProfileFilterState) {
+  profileFilter.value = nextFilter
+}
+
+function clearFilters() {
+  activeFilter.value = 'all'
+  profileFilter.value = {
+    field: null,
+    value: null,
+  }
+}
 
 const filteredGuests = computed(() => {
-  if (activeFilter.value === 'answered') return props.guests.filter((g) => g.is_already_answered)
-  if (activeFilter.value === 'pending') return props.guests.filter((g) => !g.is_already_answered)
-  return props.guests
+  let guests = props.guests
+
+  if (activeFilter.value === 'answered') {
+    guests = guests.filter((guest) => guest.is_already_answered)
+  } else if (activeFilter.value === 'pending') {
+    guests = guests.filter((guest) => !guest.is_already_answered)
+  }
+
+  if (profileFilter.value.field && profileFilter.value.value !== null) {
+    guests = guests.filter((guest) => matchesProfileFilter(
+      guest,
+      profileFilter.value.field!,
+      profileFilter.value.value,
+    ))
+  }
+
+  const nameQuery = draftGuestName.value.trim().toLowerCase()
+  if (nameQuery) {
+    guests = guests.filter((guest) => guest.name.toLowerCase().includes(nameQuery))
+  }
+
+  return guests
 })
 
 const plusOneCount = computed(() =>
-  activeFilter.value === 'all'
+  activeFilter.value === 'all' && !hasActiveProfileFilter.value
     ? props.guests.filter((g) => g.response?.plus_one === true).length
     : undefined,
 )
@@ -44,6 +89,16 @@ const countLabel = computed(() => {
   if (activeFilter.value === 'answered') return t('guests.countAnswered', { count: filtered, total })
   return t('guests.countPending', { count: filtered, total })
 })
+
+watch(
+  hasInvitationUrl,
+  (value) => {
+    if (!value && activeFilter.value !== 'all') {
+      activeFilter.value = 'all'
+    }
+  },
+  { immediate: true },
+)
 
 watch(
   filteredGuests,
@@ -65,17 +120,24 @@ watch(
 <template>
   <section class="manage-section">
     <AddGuestForm
+      :guests="guests"
       :is-adding="isAdding"
       :is-updating="isUpdating"
       :editing-guest="selectedGuest"
+      :open-edit-signal="openEditSignal"
       @add="emit('add', $event)"
       @update="emit('update', $event.id, $event.payload)"
+      @update:draft-name="draftGuestName = $event"
     />
 
     <GuestFilterRow
       v-model="activeFilter"
+      :profile-filter="profileFilter"
       :count-label="countLabel"
       :plus-one-count="plusOneCount"
+      :has-invitation-url="hasInvitationUrl"
+      @update:profile-filter="updateProfileFilter"
+      @clear="clearFilters"
     />
 
     <ul v-if="filteredGuests.length" class="guest-list">
@@ -84,6 +146,7 @@ watch(
           :guest="guest"
           :number="index + 1"
           :is-selected="guest.id === selectedGuestId"
+          :highlight-query="draftGuestName"
           @remove="emit('remove', $event)"
           @select="emit('select', $event)"
         />
@@ -101,8 +164,6 @@ watch(
   flex-direction: column;
   gap: 1rem;
 }
-
-
 
 .guest-list {
   list-style: none;

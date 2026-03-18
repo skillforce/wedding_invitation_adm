@@ -32,10 +32,16 @@ const { t } = useI18n()
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .response-identity {
   justify-content: flex-start;
+  min-width: 0;
+}
+
+.response-identity > div {
+  min-width: 0;
 }
 
 .response-kicker {
@@ -51,6 +57,8 @@ const { t } = useI18n()
   font-size: 1.4rem;
   line-height: 1.05;
   color: var(--color-title);
+
+  min-width: 0;
 }
 
 @media (max-width: 480px) {

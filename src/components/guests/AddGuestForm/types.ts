@@ -38,12 +38,25 @@ export enum VipSelectionState {
   Selected = 'selected',
 }
 
+export enum CoupleOptionKey {
+  Yes = 'yes',
+  No = 'no',
+}
+
+export enum CoupleGuestListOptionKey {
+  Yes = 'yes',
+  No = 'no',
+}
+
 export enum ValidationField {
   RelationshipToCouple = 'relationship_to_couple',
   AgeGroup = 'age_group',
   HasKidsAttending = 'has_kids_attending',
   PersonalityType = 'personality_type',
   VipStatus = 'vip_status',
+  IfWithCouple = 'if_with_couple',
+  CoupleAlreadyInList = 'couple_already_in_list',
+  CoupleId = 'couple_id',
 }
 
 export type GuestVipFlag = VipOptionKey.Parents | VipOptionKey.Grandparents | VipOptionKey.Relatives
@@ -58,4 +71,7 @@ export type GuestProfileDraft = {
   vip_parents: boolean
   vip_grandparents: boolean
   vip_relatives: boolean
+  if_with_couple: boolean | null
+  couple_already_in_guest_list: boolean | null
+  couple_id: string | null
 }

@@ -3,7 +3,7 @@ import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/ProfileCard.vue'
-import SidebarToggle from '@/components/shared/SidebarToggle.vue'
+import SidebarCollapseButton from './SidebarCollapseButton.vue'
 import NavButton from './NavButton.vue'
 import { navItems } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
@@ -43,39 +43,42 @@ const onClickOption = async (path: string) => {
 </script>
 
 <template>
-  <aside :class="['app-sidebar', { collapsed }]">
-    <div class="sidebar-top">
+  <div class="sidebar-wrapper">
+    <aside :class="['app-sidebar', { collapsed }]">
+      <div class="sidebar-top">
+        <ProfileCard :collapsed="collapsed" :login="login" />
+      </div>
 
+      <nav class="sidebar-nav">
+        <NavButton
+          v-for="item in navItems"
+          :key="item.path"
+          :icon-url="item.iconUrl"
+          :label="t(item.labelKey)"
+          :active="isActive(item.path)"
+          :collapsed="collapsed"
+          @click="onClickOption(item.path)"
+        />
+      </nav>
 
-      <ProfileCard :collapsed="collapsed" :login="login" />
-    </div>
-
-    <nav class="sidebar-nav">
       <NavButton
-        v-for="item in navItems"
-        :key="item.path"
-        :icon-url="item.iconUrl"
-        :label="t(item.labelKey)"
-        :active="isActive(item.path)"
+        :icon-url="logoutIconUrl as string"
+        :label="t('nav.logout')"
+        :icon-alt="t('a11y.logoutIcon')"
         :collapsed="collapsed"
-        @click="onClickOption(item.path)"
+        class="logout-btn"
+        @click="emit('logout')"
       />
-    </nav>
-    <div :class="['sidebar-controls', { collapsed }]">
-      <SidebarToggle :collapsed="collapsed" @toggle="emit('toggle')" />
-    </div>
-    <NavButton
-      :icon-url="logoutIconUrl"
-      :label="t('nav.logout')"
-      :icon-alt="t('a11y.logoutIcon')"
-      :collapsed="collapsed"
-      class="logout-btn"
-      @click="emit('logout')"
-    />
-  </aside>
+    </aside>
+    <SidebarCollapseButton :collapsed="collapsed" @toggle="emit('toggle')" />
+  </div>
 </template>
 
 <style scoped>
+.sidebar-wrapper {
+  position: relative;
+}
+
 .app-sidebar {
   width: 260px;
   overflow: hidden;
@@ -85,10 +88,11 @@ const onClickOption = async (path: string) => {
   color: var(--color-text-primary);
   padding: 0.75rem;
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto;
   gap: 1rem;
   transition: width 0.2s ease;
   box-shadow: var(--shadow-card);
+  height: 100%;
 }
 
 .app-sidebar.collapsed {
@@ -100,21 +104,11 @@ const onClickOption = async (path: string) => {
   gap: 0.5rem;
 }
 
-.sidebar-controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.sidebar-controls.collapsed {
-  justify-content: center;
-}
-
 .sidebar-nav {
   display: grid;
   gap: 0.5rem;
   align-content: start;
-  overflow:hidden;
+  overflow: hidden;
   min-height: 0;
 }
 
@@ -122,8 +116,8 @@ const onClickOption = async (path: string) => {
   margin-top: auto;
 }
 
-@media (max-width: 768px) {
-  .app-sidebar {
+@media (max-width: 1024px) {
+  .sidebar-wrapper {
     display: none;
   }
 }

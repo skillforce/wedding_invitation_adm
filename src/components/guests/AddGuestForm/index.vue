@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import AddForm from './AddForm.vue'
-import EditStrip from './EditStrip.vue'
-import GuestProfileDialog from './GuestProfileDialog.vue'
+import GuestProfileDialog from './GuestProfileDialog/index.vue'
 import type { GuestDetailViewDto, GuestFormDto, NewGuestPayload } from '@/api/guests'
 import { useAppCommonStore } from '@/stores/app_common'
 import { ModalMode } from './types'
 
 const props = defineProps<{
+  guests: GuestDetailViewDto[]
   isAdding: boolean
   isUpdating: boolean
   editingGuest: GuestDetailViewDto | null
+  openEditSignal?: number
 }>()
 
 const emit = defineEmits<{
   add: [payload: NewGuestPayload]
   update: [payload: { id: string; payload: GuestFormDto }]
+  'update:draftName': [value: string]
 }>()
 
 const appCommon = useAppCommonStore()
@@ -25,7 +27,6 @@ const isProfileModalVisible = ref(false)
 const modalMode = ref(ModalMode.Create)
 
 const trimmedGuestName = computed(() => newGuestName.value.trim())
-const canEditSelectedGuest = computed(() => Boolean(props.editingGuest?.guestForm))
 
 const isAddGuestButtonDisabled = computed(() => {
   const nameLength = trimmedGuestName.value.length
@@ -50,6 +51,22 @@ function openEditProfileModal() {
   isProfileModalVisible.value = true
 }
 
+watch(
+  newGuestName,
+  (value) => {
+    emit('update:draftName', value)
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.openEditSignal,
+  (next, prev) => {
+    if (next === undefined || next === prev) return
+    openEditProfileModal()
+  },
+)
+
 function handleProfileSubmit(guestForm: GuestFormDto) {
   if (modalMode.value === ModalMode.Edit) {
     if (!props.editingGuest) return
@@ -73,20 +90,14 @@ function handleProfileSubmit(guestForm: GuestFormDto) {
       :disabled="isAddGuestButtonDisabled"
       @submit="openCreateProfileModal"
     />
-
-    <EditStrip
-      v-if="editingGuest"
-      :guest-name="editingGuest.name"
-      :can-edit="canEditSelectedGuest"
-      :is-updating="isUpdating"
-      @edit="openEditProfileModal"
-    />
   </div>
 
   <GuestProfileDialog
     v-model:visible="isProfileModalVisible"
     :mode="modalMode"
     :guest-name="dialogGuestName"
+    :guests="guests"
+    :editing-guest-id="editingGuest?.id ?? null"
     :edit-guest-form="editingGuest?.guestForm"
     :is-adding="isAdding"
     :is-updating="isUpdating"

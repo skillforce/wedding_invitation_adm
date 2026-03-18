@@ -81,7 +81,7 @@ const onLogout = async () => {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .authorized-layout {
     grid-template-columns: 1fr;
     padding: 0.05rem;
@@ -89,8 +89,20 @@ const onLogout = async () => {
 
   .mobile-header {
     display: flex;
+    align-items: center;
     justify-content: flex-start;
-    margin-bottom: 0.75rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: 3rem;
+    padding: 0 0.75rem;
+    background: var(--color-bg-app);
+  }
+
+  .authorized-content {
+    padding-top: calc(3rem + 0.5rem);
   }
 }
 </style>

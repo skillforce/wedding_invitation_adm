@@ -52,6 +52,9 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: 0.45rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .field-mark {

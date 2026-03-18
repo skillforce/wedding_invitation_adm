@@ -1,44 +1,17 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import type { Stage } from 'konva/lib/Stage'
 import type { SeatingShape } from '@/stores/seating'
-import { useExportData } from './composables/useExportData'
-import ExportPdf from './ExportPdf.vue'
 import BoardObjectPickerPopover from './BoardObjectPickerPopover.vue'
+import BoardExportPopover from './BoardExportPopover.vue'
 
 defineProps<{ isFitted: boolean; stageRef: { getNode(): Stage } | null }>()
-const emit = defineEmits<{ addObject: [shape: SeatingShape]; openWorkspaceSettings: []; autoSeat: [] }>()
+const emit = defineEmits<{ addObject: [shape: SeatingShape]; openWorkspaceSettings: []; autoSeat: []; fitToStage: [] }>()
 const { t } = useI18n()
-const { exportData } = useExportData()
 
 const popoverRef = ref<InstanceType<typeof BoardObjectPickerPopover> | null>(null)
-
-type ToolbarAction = {
-  key: string
-  labelKey: string
-  icon: string
-  severity?: 'secondary'
-  onClick: () => void
-}
-
-const toolbarActions = computed<ToolbarAction[]>(() => [
-  {
-    key: 'workspace-settings',
-    labelKey: 'seating.workspaceSettings',
-    icon: 'pi pi-sliders-h',
-    severity: 'secondary',
-    onClick: () => emit('openWorkspaceSettings'),
-  },
-  {
-    key: 'export-data',
-    labelKey: 'seating.exportData',
-    icon: 'pi pi-download',
-    severity: 'secondary',
-    onClick: exportData,
-  },
-])
 
 function togglePopover(event: MouseEvent) {
   popoverRef.value?.toggle(event)
@@ -62,15 +35,21 @@ function pickObject(shape: SeatingShape) {
       @click="emit('autoSeat')"
     />
     <Button
-      v-for="action in toolbarActions"
-      :key="action.key"
-      :label="t(action.labelKey)"
-      :icon="action.icon"
+      :label="t('seating.workspaceSettings')"
+      icon="pi pi-sliders-h"
       size="small"
-      :severity="action.severity"
-      @click="action.onClick"
+      severity="secondary"
+      @click="emit('openWorkspaceSettings')"
     />
-    <ExportPdf :stage-ref="stageRef" />
+    <BoardExportPopover :stage-ref="stageRef" />
+    <Button
+      :aria-label="t('seating.viewWorkspace')"
+      icon="pi pi-expand"
+      size="small"
+      severity="secondary"
+      :disabled="isFitted"
+      @click="emit('fitToStage')"
+    />
   </div>
 </template>
 

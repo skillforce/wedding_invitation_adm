@@ -323,16 +323,17 @@ export function guestNameConfig(
 ) {
   const { x, y } = guestPosition(table, index)
   const label = isHovered ? guestLabel : truncateGuestName(guestLabel, 4)
+  const width = isHovered ? 180 : 85
   return {
     text: label,
-    fontSize: 16,
+    fontSize: isHovered ? 15 : 16,
     fontWeight: 'bold',
     fill: palette.guestNameFill,
     align: 'center',
-    width: 85,
+    width,
     wrap: 'none',
-    ellipsis: true,
-    offsetX: 40,
+    ellipsis: !isHovered,
+    offsetX: width / 2,
     offsetY: -SEAT_RADIUS - 3,
     x,
     y,

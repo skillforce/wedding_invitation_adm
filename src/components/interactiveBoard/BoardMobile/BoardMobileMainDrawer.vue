@@ -6,7 +6,7 @@ import BottomDrawer from '@/components/shared/BottomDrawer.vue'
 import { useExportData } from '../composables/useExportData'
 import ExportPdf from '../ExportPdf.vue'
 
-defineProps<{
+const props = defineProps<{
   open: boolean
   isFitted: boolean
   stageRef: { getNode(): Stage } | null
@@ -28,6 +28,7 @@ type DrawerAction = {
   labelKey: string
   special?: boolean
   primary?: boolean
+  disabled?: boolean
   onClick: () => void
 }
 
@@ -79,6 +80,7 @@ function exportData() {
         v-for="action in drawerActions"
         :key="action.key"
         :class="['action-btn', action.special && 'action-btn--special', action.primary && 'action-btn--primary']"
+        :disabled="action.disabled"
         @click="action.onClick"
       >
         <i :class="action.icon" />
