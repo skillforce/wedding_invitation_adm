@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import {
   GUESTS_API,
   type GuestDetailViewDto,
-  type GuestFormDto,
   type NewGuestPayload,
+  type UpdateGuestFormPayload,
 } from '@/api/guests'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useAuthStore } from '@/stores/auth'
@@ -58,12 +58,15 @@ export const useGuestsStore = defineStore('guests', {
       appCommon.showSpinner()
 
       try {
-        const newGuest = await GUESTS_API.createGuest({
+        const affected = await GUESTS_API.createGuest({
           guest_name: trimmedName,
           user_id: authStore.user.id,
           guestForm: payload.guestForm,
         })
-        this.guests.push(newGuest)
+        const existingIds = new Set(this.guests.map((g) => g.id))
+        this.guests = this.guests.map((g) => affected.find((a) => a.id === g.id) ?? g)
+        const newlyAddedGuest = affected.filter((a) => !existingIds.has(a.id))
+        this.guests.push(...newlyAddedGuest)
       } catch (error) {
         appCommon.showError(error)
       } finally {
@@ -72,14 +75,14 @@ export const useGuestsStore = defineStore('guests', {
       }
     },
 
-    async updateGuestForm(id: string, payload: GuestFormDto) {
+    async updateGuestForm(id: string, payload: UpdateGuestFormPayload) {
       const appCommon = useAppCommonStore()
       this.isUpdating = true
       appCommon.showSpinner()
 
       try {
-        const updatedGuest = await GUESTS_API.updateGuestForm(id, payload)
-        this.guests = this.guests.map((guest) => (guest.id === id ? updatedGuest : guest))
+        const affected = await GUESTS_API.updateGuestForm(id, payload)
+        this.guests = this.guests.map((g) => affected.find((a) => a.id === g.id) ?? g)
       } catch (error) {
         appCommon.showError(error)
       } finally {

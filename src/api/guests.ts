@@ -33,7 +33,7 @@ export interface GuestFormDto {
   vip_parents: boolean
   vip_grandparents: boolean
   vip_relatives: boolean
-  ifWithCouple?: GuestCoupleStatusDto
+  ifWithCouple: GuestCoupleStatusDto
 }
 
 export interface NewGuestPayload {
@@ -54,7 +54,7 @@ export const GUESTS_API = {
     return res.json()
   },
 
-  async createGuest(dto: CreateGuestInputDto): Promise<GuestDetailViewDto> {
+  async createGuest(dto: CreateGuestInputDto): Promise<GuestDetailViewDto[]> {
     const res = await apiFetch('/guests', {
       method: HttpMethod.POST,
       body: JSON.stringify(dto),
@@ -63,7 +63,7 @@ export const GUESTS_API = {
     return res.json()
   },
 
-  async updateGuestForm(id: string, dto: UpdateGuestFormPayload): Promise<GuestDetailViewDto> {
+  async updateGuestForm(id: string, dto: UpdateGuestFormPayload): Promise<GuestDetailViewDto[]> {
     const res = await apiFetch(`/guests/${id}/form`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
