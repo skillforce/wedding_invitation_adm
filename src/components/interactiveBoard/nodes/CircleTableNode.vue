@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Circle as VCircle, Text as VText } from 'vue-konva'
 import type { SeatingTable } from '@/stores/seating'
 import type { KonvaThemePalette } from '../tableKonvaConfigs'
@@ -12,7 +13,7 @@ import {
 } from '../tableKonvaConfigs'
 import SeatNodes from './SeatNodes.vue'
 
-defineProps<{
+const props = defineProps<{
   table: SeatingTable
   isSelected: boolean
   isDropTarget: boolean
@@ -25,6 +26,24 @@ const emit = defineEmits<{
   guestDragEnd: []
   guestDrop: [guestId: string, pointer: { x: number; y: number }]
 }>()
+
+const selectionRing = computed(() =>
+  selectionRingConfig(props.table, props.isSelected || props.isDropTarget, props.palette),
+)
+
+const tableBody = computed(() =>
+  props.isOvercrowded
+    ? overcrowdedCircleConfig(props.table)
+    : tableCircleConfig(props.table, props.palette),
+)
+
+const tableText = computed(() =>
+  props.isOvercrowded
+    ? overcrowdedIconConfig(props.table)
+    : tableNameConfig(props.table, props.palette),
+)
+
+const overcrowdedLabel = computed(() => overcrowdedLabelConfig(props.table))
 
 function onGuestDrag(guestId: string, pointer: { x: number; y: number }) {
   emit('guestDrag', guestId, pointer)
@@ -40,10 +59,10 @@ function onGuestDrop(guestId: string, pointer: { x: number; y: number }) {
 </script>
 
 <template>
-  <VCircle :config="selectionRingConfig(table, isSelected || isDropTarget, palette)" />
-  <VCircle :config="isOvercrowded ? overcrowdedCircleConfig(table) : tableCircleConfig(table, palette)" />
-  <VText :config="isOvercrowded ? overcrowdedIconConfig(table) : tableNameConfig(table, palette)" />
-  <VText v-if="isOvercrowded" :config="overcrowdedLabelConfig(table)" />
+  <VCircle :config="selectionRing" />
+  <VCircle :config="tableBody" />
+  <VText :config="tableText" />
+  <VText v-if="isOvercrowded" :config="overcrowdedLabel" />
   <SeatNodes
     :table="table"
     :palette="palette"

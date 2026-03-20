@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Circle as VCircle, Rect as VRect, Text as VText } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { SeatingTable } from '@/stores/seating'
@@ -15,7 +16,7 @@ import {
 import SeatNodes from '../SeatNodes.vue'
 import RectRotationHandle from './RectRotationHandle.vue'
 
-defineProps<{
+const props = defineProps<{
   table: SeatingTable
   isSelected: boolean
   isDropTarget: boolean
@@ -34,6 +35,22 @@ const emit = defineEmits<{
   guestDragEnd: []
   guestDrop: [guestId: string, pointer: { x: number; y: number }]
 }>()
+
+const selectionRing = computed(() =>
+  selectionRingRectConfig(props.table, props.isSelected || props.isDropTarget, props.palette),
+)
+
+const tableBody = computed(() =>
+  props.isOvercrowded
+    ? overcrowdedRectConfig(props.table)
+    : tableRectConfig(props.table, props.palette),
+)
+
+const overcrowdedIcon = computed(() => overcrowdedIconConfig(props.table))
+const overcrowdedLabel = computed(() => overcrowdedLabelConfig(props.table))
+const dot0 = computed(() => newlywedsDotConfig(0, props.palette))
+const dot1 = computed(() => newlywedsDotConfig(1, props.palette))
+const nameRect = computed(() => tableNameRectConfig(props.table, props.palette))
 
 function onGuestDrag(id: string, pos: { x: number; y: number }) {
   emit('guestDrag', id, pos)
@@ -69,16 +86,16 @@ function onHandleClick(e: KonvaEventObject<MouseEvent>) {
 </script>
 
 <template>
-  <VRect :config="selectionRingRectConfig(table, isSelected || isDropTarget, palette)" />
-  <VRect :config="isOvercrowded ? overcrowdedRectConfig(table) : tableRectConfig(table, palette)" />
+  <VRect :config="selectionRing" />
+  <VRect :config="tableBody" />
   <template v-if="isOvercrowded">
-    <VText :config="overcrowdedIconConfig(table)" />
-    <VText :config="overcrowdedLabelConfig(table)" />
+    <VText :config="overcrowdedIcon" />
+    <VText :config="overcrowdedLabel" />
   </template>
   <template v-else>
-    <VCircle :config="newlywedsDotConfig(0, palette)" />
-    <VCircle :config="newlywedsDotConfig(1, palette)" />
-    <VText :config="tableNameRectConfig(table, palette)" />
+    <VCircle :config="dot0" />
+    <VCircle :config="dot1" />
+    <VText :config="nameRect" />
   </template>
 
   <RectRotationHandle

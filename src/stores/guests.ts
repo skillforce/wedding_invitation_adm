@@ -23,6 +23,16 @@ export const useGuestsStore = defineStore('guests', {
     isUpdating: false,
   }),
 
+  getters: {
+    guestById(): Map<string, GuestDetailViewDto> {
+      const map = new Map<string, GuestDetailViewDto>()
+      for (const g of this.guests) {
+        map.set(String(g.id), g)
+      }
+      return map
+    },
+  },
+
   actions: {
     async fetchGuests() {
       const appCommon = useAppCommonStore()
@@ -63,10 +73,17 @@ export const useGuestsStore = defineStore('guests', {
           user_id: authStore.user.id,
           guestForm: payload.guestForm,
         })
-        const existingIds = new Set(this.guests.map((g) => g.id))
-        this.guests = this.guests.map((g) => affected.find((a) => a.id === g.id) ?? g)
-        const newlyAddedGuest = affected.filter((a) => !existingIds.has(a.id))
-        this.guests.push(...newlyAddedGuest)
+        const affectedById = new Map(affected.map((a) => [a.id, a]))
+        for (let i = 0; i < this.guests.length; i++) {
+          const updated = affectedById.get(this.guests[i]!.id)
+          if (updated) {
+            this.guests[i] = updated
+            affectedById.delete(updated.id)
+          }
+        }
+        if (affectedById.size > 0) {
+          this.guests.push(...affectedById.values())
+        }
       } catch (error) {
         appCommon.showError(error)
       } finally {
@@ -82,7 +99,13 @@ export const useGuestsStore = defineStore('guests', {
 
       try {
         const affected = await GUESTS_API.updateGuestForm(id, payload)
-        this.guests = this.guests.map((g) => affected.find((a) => a.id === g.id) ?? g)
+        const affectedById = new Map(affected.map((a) => [a.id, a]))
+        for (let i = 0; i < this.guests.length; i++) {
+          const updated = affectedById.get(this.guests[i]!.id)
+          if (updated) {
+            this.guests[i] = updated
+          }
+        }
       } catch (error) {
         appCommon.showError(error)
       } finally {

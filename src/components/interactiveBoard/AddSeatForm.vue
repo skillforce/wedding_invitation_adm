@@ -21,20 +21,10 @@ const seatingStore = useSeatingStore()
 
 const selectedGuestId = ref<string | null>(null)
 
-const seatedGuestIds = computed(() => {
-  const ids = new Set<string>()
-  for (const table of seatingStore.tables) {
-    for (const guest of table.guests) {
-      ids.add(guest.guestId)
-    }
-  }
-  return ids
-})
-
 const occupiedSeats = computed(() => seatingStore.getTableOccupiedSeats(props.table))
 
 const unseatedGuests = computed(() =>
-  guestsStore.guests.filter((guest) => !seatedGuestIds.value.has(String(guest.id))),
+  guestsStore.guests.filter((guest) => !seatingStore.seatedGuestIds.has(String(guest.id))),
 )
 
 const availableGuests = computed(() =>

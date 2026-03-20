@@ -10,16 +10,17 @@ export function useTableDrag(
   isRotating: Ref<boolean>,
   onDragEnd: (id: string, x: number, y: number) => void,
 ) {
-  const stageRef = ref<Stage | null>(null)
+  let cachedStage: Stage | null = null
+
+  function dragBoundFunc(pos: { x: number; y: number }) {
+    if (!cachedStage) return pos
+    return tableDragBoundFunc(pos, cachedStage)
+  }
 
   const groupConfig = computed(() => ({
     ...tableGroupConfig(table()),
     draggable: !isRotating.value,
-    dragBoundFunc: (pos: { x: number; y: number }) => {
-      const stage = stageRef.value as Stage | null
-      if (!stage) return pos
-      return tableDragBoundFunc(pos, stage)
-    },
+    dragBoundFunc,
   }))
 
   function onMouseEnter(e: KonvaEventObject<MouseEvent>) {
@@ -31,7 +32,7 @@ export function useTableDrag(
   }
 
   function onDragStart(e: KonvaEventObject<MouseEvent>) {
-    stageRef.value = e.target.getStage() as Stage
+    cachedStage = e.target.getStage() as Stage
     e.target.getStage()!.container().style.cursor = 'grabbing'
   }
 

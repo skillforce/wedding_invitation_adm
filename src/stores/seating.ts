@@ -99,8 +99,30 @@ export const useSeatingStore = defineStore('seating', () => {
     maxSeatsPerTableAmount: MAX_SEATS_PER_TABLE_AMOUNT,
   }))
 
+  const seatedGuestIds = computed(() => {
+    const ids = new Set<string>()
+    for (const table of tables.value) {
+      for (const guest of table.guests) {
+        ids.add(guest.guestId)
+      }
+    }
+    return ids
+  })
+
+  const tableOccupiedSeatsMap = computed(() => {
+    const map = new Map<string, number>()
+    for (const table of tables.value) {
+      let total = 0
+      for (const seat of table.guests) {
+        total += 1 + getGuestAdditionalSeatsByGuestId(seat.guestId)
+      }
+      map.set(table.id, total)
+    }
+    return map
+  })
+
   function getGuestAdditionalSeatsByGuestId(guestId: string) {
-    const guest = guestsStore.guests.find((item) => item.id === guestId)
+    const guest = guestsStore.guestById.get(String(guestId))
     if (!guest) return 0
 
     const kidsSeats = guest.guestForm?.has_kids_attending
@@ -130,7 +152,7 @@ export const useSeatingStore = defineStore('seating', () => {
   }
 
   function getTableOccupiedSeats(table: SeatingTable) {
-    return table.guests.reduce((sum, seat) => sum + getSeatOccupiedSeats(seat), 0)
+    return tableOccupiedSeatsMap.value.get(table.id) ?? table.guests.reduce((sum, seat) => sum + getSeatOccupiedSeats(seat), 0)
   }
 
   function applyArrangement(data: SeatingArrangementDto) {
@@ -448,6 +470,8 @@ export const useSeatingStore = defineStore('seating', () => {
     moveGuestBetweenTables,
     setTableRotation,
     deleteTable,
+    seatedGuestIds,
+    tableOccupiedSeatsMap,
     getGuestAdditionalSeatsByGuestId,
     getGuestSeatDemandByGuestId,
     getSeatAdditionalSeats,

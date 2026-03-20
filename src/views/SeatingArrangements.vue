@@ -47,6 +47,30 @@ function onStageClick(e: KonvaEventObject<Event>) {
 }
 
 const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
+
+function onAddObject(shape: import('@/api/seating-arrangement').SeatingShape) {
+  seatingStore.addObject(shape)
+}
+
+function openWorkspaceSettings() {
+  workspaceSettingsOpen.value = true
+}
+
+function onAutoSeat() {
+  seatingStore.autoSeat()
+}
+
+function onSelectTable(id: string) {
+  selectedTableId.value = id
+}
+
+function onTableDragEnd(id: string, x: number, y: number) {
+  seatingStore.updateTablePosition(id, x, y)
+}
+
+function onTableRotate(id: string, deg: number) {
+  seatingStore.setTableRotation(id, deg)
+}
 </script>
 
 <template>
@@ -54,18 +78,18 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
     <BoardToolbar
       :is-fitted="isFitted"
       :stage-ref="stageRef"
-      @add-object="(shape) => seatingStore.addObject(shape)"
-      @open-workspace-settings="workspaceSettingsOpen = true"
-      @auto-seat="seatingStore.autoSeat()"
-      @fit-to-stage="fitToStage()"
+      @add-object="onAddObject"
+      @open-workspace-settings="openWorkspaceSettings"
+      @auto-seat="onAutoSeat"
+      @fit-to-stage="fitToStage"
     />
     <BoardMobileMenu
       :is-fitted="isFitted"
       :stage-ref="stageRef"
-      @add-object="(shape) => seatingStore.addObject(shape)"
-      @open-workspace-settings="workspaceSettingsOpen = true"
-      @auto-seat="seatingStore.autoSeat()"
-      @fit-to-stage="fitToStage()"
+      @add-object="onAddObject"
+      @open-workspace-settings="openWorkspaceSettings"
+      @auto-seat="onAutoSeat"
+      @fit-to-stage="fitToStage"
     />
 
     <WorkspaceSettings
@@ -83,9 +107,9 @@ const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
           :table="table"
           :is-selected="table.id === selectedTableId"
           :is-drop-target="table.id === dropTargetTableId"
-          @select="(id) => (selectedTableId = id)"
-          @dragend="(id, x, y) => seatingStore.updateTablePosition(id, x, y)"
-          @rotate="(id, deg) => seatingStore.setTableRotation(id, deg)"
+          @select="onSelectTable"
+          @dragend="onTableDragEnd"
+          @rotate="onTableRotate"
           @guest-drag="onGuestDrag"
           @guest-drag-end="onGuestDragEnd"
           @guest-drop="onGuestDrop"

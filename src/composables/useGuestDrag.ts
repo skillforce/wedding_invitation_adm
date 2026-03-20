@@ -5,10 +5,14 @@ import { useSeatingStore, type SeatingTable } from '@/stores/seating'
 import { RECT_H, RECT_W } from '@/components/interactiveBoard/tableKonvaConfigs'
 
 const DROP_TARGET_PADDING = 10
+const MOVE_THRESHOLD_SQ = 9
 
 export function useGuestDrag(stageRef: { value: { getNode(): Stage } | null }) {
   const seatingStore = useSeatingStore()
   const dropTargetTableId = ref<string | null>(null)
+
+  let rafId = 0
+  let lastPointer = { x: 0, y: 0 }
 
   function stagePointToCanvas(point: { x: number; y: number }) {
     const stage = stageRef.value?.getNode()
@@ -54,17 +58,37 @@ export function useGuestDrag(stageRef: { value: { getNode(): Stage } | null }) {
   }
 
   function onGuestDrag(sourceTableId: string, _guestId: string, stagePoint: { x: number; y: number }) {
-    const targetTable = findDropTargetTable(sourceTableId, stagePoint)
-    dropTargetTableId.value = targetTable?.id ?? null
+    const dx = stagePoint.x - lastPointer.x
+    const dy = stagePoint.y - lastPointer.y
+    if (dx * dx + dy * dy < MOVE_THRESHOLD_SQ) return
+
+    lastPointer = stagePoint
+
+    if (rafId) cancelAnimationFrame(rafId)
+    rafId = requestAnimationFrame(() => {
+      rafId = 0
+      const targetTable = findDropTargetTable(sourceTableId, stagePoint)
+      dropTargetTableId.value = targetTable?.id ?? null
+    })
   }
 
   function onGuestDragEnd() {
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+      rafId = 0
+    }
     dropTargetTableId.value = null
+    lastPointer = { x: 0, y: 0 }
   }
 
   function onGuestDrop(sourceTableId: string, guestId: string, stagePoint: { x: number; y: number }) {
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+      rafId = 0
+    }
     const targetTable = findDropTargetTable(sourceTableId, stagePoint)
     dropTargetTableId.value = null
+    lastPointer = { x: 0, y: 0 }
 
     if (!targetTable) return
     seatingStore.moveGuestBetweenTables(sourceTableId, targetTable.id, guestId)
