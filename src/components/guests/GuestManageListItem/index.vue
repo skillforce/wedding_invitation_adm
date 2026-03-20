@@ -67,7 +67,7 @@ const emit = defineEmits<{
 
 @media (max-width: 480px) {
   .guest-row :deep(.response-mark--badge) {
-    padding: 0.15rem 0.35rem;
+    padding: 0.15rem 0.2rem;
   }
 
   .guest-row :deep(.response-mark--muted.response-mark--badge .response-mark__label) {
