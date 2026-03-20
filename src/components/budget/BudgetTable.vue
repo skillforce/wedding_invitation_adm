@@ -92,7 +92,7 @@ function isVisible(index: number): boolean {
   padding: 2rem;
   text-align: center;
   color: var(--color-text-secondary, #9ca3af);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
 }
 
 .mobile-view {

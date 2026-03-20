@@ -107,8 +107,9 @@ export const useSeatingStore = defineStore('seating', () => {
       ? clampExtraSeats(guest.guestForm.amount_of_kids)
       : 0
     const plusOneSeats = guest.response?.plus_one ? 1 : 0
+    const coupleNotInListSeat = (guest.guestForm?.ifWithCouple?.response === true && !guest.guestForm?.ifWithCouple?.coupleId) ? 1 : 0
 
-    return kidsSeats + plusOneSeats
+    return kidsSeats + plusOneSeats + coupleNotInListSeat
   }
 
   function getGuestSeatDemandByGuestId(guestId: string) {

@@ -89,7 +89,12 @@ const dialogDescription = computed(() => (
 ))
 
 const coupleGuestOptions = computed(() => props.guests
-  .filter((guest) => guest.id !== props.editingGuestId)
+  .filter((guest) => {
+    if (guest.id === props.editingGuestId) return false
+    const isAlreadyAssigned = Boolean(guest.guestForm?.ifWithCouple?.coupleId)
+    const isCurrentlySelected = guest.id === guestProfileDraft.couple_id
+    return !isAlreadyAssigned || isCurrentlySelected
+  })
   .map((guest) => ({
     label: guest.name,
     value: guest.id,

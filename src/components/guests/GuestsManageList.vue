@@ -76,11 +76,23 @@ const filteredGuests = computed(() => {
   return guests
 })
 
-const plusOneCount = computed(() =>
-  activeFilter.value === 'all' && !hasActiveProfileFilter.value
-    ? props.guests.filter((g) => g.response?.plus_one === true).length
-    : undefined,
-)
+const isAllUnfiltered = computed(() => activeFilter.value === 'all' && !hasActiveProfileFilter.value)
+
+const partnerPlusCount = computed(() => {
+  if (!isAllUnfiltered.value) return undefined
+  return props.guests.reduce((sum, g) => {
+    const rsvpPlusOne = g.response?.plus_one === true ? 1 : 0
+    const coupleNotInList = (g.guestForm?.ifWithCouple?.response === true && !g.guestForm?.ifWithCouple?.coupleId) ? 1 : 0
+    return sum + rsvpPlusOne + coupleNotInList
+  }, 0)
+})
+
+const kidsPlusCount = computed(() => {
+  if (!isAllUnfiltered.value) return undefined
+  return props.guests.reduce((sum, g) => {
+    return sum + (g.guestForm?.has_kids_attending ? (g.guestForm.amount_of_kids ?? 0) : 0)
+  }, 0)
+})
 
 const countLabel = computed(() => {
   const total = props.guests.length
@@ -134,7 +146,8 @@ watch(
       v-model="activeFilter"
       :profile-filter="profileFilter"
       :count-label="countLabel"
-      :plus-one-count="plusOneCount"
+      :partner-plus-count="partnerPlusCount"
+      :kids-plus-count="kidsPlusCount"
       :has-invitation-url="hasInvitationUrl"
       @update:profile-filter="updateProfileFilter"
       @clear="clearFilters"

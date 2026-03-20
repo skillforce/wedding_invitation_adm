@@ -11,7 +11,8 @@ const props = defineProps<{
   modelValue: GuestFilter
   profileFilter: GuestProfileFilterState
   countLabel: string
-  plusOneCount?: number
+  partnerPlusCount?: number
+  kidsPlusCount?: number
   hasInvitationUrl?: boolean
 }>()
 
@@ -45,7 +46,7 @@ function clearFilters() {
       @toggle="toggleFilters"
       @clear="clearFilters"
     />
-    <GuestCountLabel :label="countLabel" :plus-one-count="plusOneCount" />
+    <GuestCountLabel :label="countLabel" :partner-plus-count="partnerPlusCount" :kids-plus-count="kidsPlusCount" />
 
     <GuestFiltersOverlay
       ref="filtersOverlayRef"

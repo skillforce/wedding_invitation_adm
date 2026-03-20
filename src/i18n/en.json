@@ -273,6 +273,7 @@
       "failedToCreate": "Failed to add guest",
       "failedToUpdate": "Failed to update guest profile",
       "duplicateGuest": "A guest with this name already exists",
+      "coupleConflict": "This guest is already assigned to another couple.",
       "completeGuestProfile": "Complete every guest profile field before saving.",
       "invalidUrl": "Please enter a valid URL starting with http:// or https://"
     },

@@ -37,6 +37,7 @@ const { t } = useI18n()
         option-label="label"
         option-value="value"
         filter
+        auto-filter-focus
         :placeholder="t('guests.profile.coupleSelectPlaceholder')"
         :invalid="invalidCoupleId"
         class="field-select"

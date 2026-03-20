@@ -59,6 +59,7 @@ export const GUESTS_API = {
       method: HttpMethod.POST,
       body: JSON.stringify(dto),
     })
+    if (res.status === 409) throw new Error('errors.guests.coupleConflict')
     if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
@@ -68,6 +69,7 @@ export const GUESTS_API = {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
+    if (res.status === 409) throw new Error('errors.guests.coupleConflict')
     if (!res.ok) throw await parseApiError(res)
     return res.json()
   },

@@ -14,17 +14,15 @@ import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
 import WorkspaceNode from '@/components/interactiveBoard/WorkspaceNode.vue'
 import WorkspaceSettings from '@/components/interactiveBoard/workspaceSettings/index.vue'
-import { useI18n } from 'vue-i18n'
 
 const seatingStore = useSeatingStore()
 const guestsStore = useGuestsStore()
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const stageRef = ref<{ getNode(): Stage } | null>(null)
-const { t } = useI18n()
 
 const { stageConfig, isMobile } = useStageSize(containerRef)
-const { onWheel, fitToStage, zoomToMin, isFitted } = useZoom(stageRef)
+const { onWheel, fitToStage, isFitted } = useZoom(stageRef)
 const { dropTargetTableId, onGuestDrag, onGuestDragEnd, onGuestDrop } = useGuestDrag(stageRef)
 
 onMounted(async () => {
@@ -33,7 +31,7 @@ onMounted(async () => {
     guestsStore.guests.length ? Promise.resolve() : guestsStore.fetchGuests(),
   ])
   await nextTick()
-  zoomToMin()
+  fitToStage()
 })
 
 const selectedTableId = ref<string | null>(null)

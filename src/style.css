@@ -90,10 +90,10 @@ input, textarea, select {
 
 ::view-transition-old(controls),
 ::view-transition-new(controls) {
-  animation-duration: 400ms;
+  animation-duration: 200ms;
 }
 
 ::view-transition-old(page),
 ::view-transition-new(page) {
-  animation-duration: 200ms;
+  animation-duration: 100ms;
 }

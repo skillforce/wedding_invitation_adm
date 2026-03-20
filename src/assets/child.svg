@@ -1,0 +1,10 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Child head -->
+  <circle cx="12" cy="7" r="3.5" fill="currentColor"/>
+  <!-- Child body (shorter, smaller) -->
+  <path d="M7 17C7 14 9 12.5 12 12.5C15 12.5 17 14 17 17V18.5H7V17Z" fill="currentColor"/>
+  <!-- Star left (playful) -->
+  <path d="M4.5 3.5L5 5H6.5L5.3 5.9L5.8 7.5L4.5 6.6L3.2 7.5L3.7 5.9L2.5 5H4L4.5 3.5Z" fill="currentColor"/>
+  <!-- Star right -->
+  <path d="M19.5 3.5L20 5H21.5L20.3 5.9L20.8 7.5L19.5 6.6L18.2 7.5L18.7 5.9L17.5 5H19L19.5 3.5Z" fill="currentColor"/>
+</svg>
