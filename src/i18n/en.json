@@ -156,7 +156,11 @@
     "textFileName": "seating-arrangement.txt",
     "defaultTableName": "Table {index}",
     "toCircleLayout": "Hall: oval",
-    "toRectLayout": "Hall: rectangle"
+    "toRectLayout": "Hall: rectangle",
+    "autoSeatConfirmHeader": "Are you sure?",
+    "autoSeatConfirmMessage": "All previously saved seating data will be overwritten!",
+    "autoSeatConfirmAccept": "OK",
+    "autoSeatConfirmReject": "Cancel"
   },
   "a11y": {
     "sidebarToggle": "Toggle sidebar",

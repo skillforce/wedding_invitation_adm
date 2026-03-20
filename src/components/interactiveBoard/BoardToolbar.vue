@@ -69,7 +69,7 @@ function pickObject(shape: SeatingShape) {
   padding: 8px 14px;
 }
 
-@media (max-width: 639px) {
+@media (max-width: 739px) {
   .board-toolbar {
     display: none;
   }

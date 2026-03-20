@@ -2,6 +2,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import type { Ref } from 'vue'
 import { MIN_SCALE } from '@/components/interactiveBoard/tableKonvaConfigs'
 
+const MOBILE_DRAG_DISTANCE = 10
+
 export function useStageSize(containerRef: Ref<HTMLDivElement | null>) {
   const stageWidth = ref(800)
   const stageHeight = ref(600)
@@ -38,7 +40,8 @@ export function useStageSize(containerRef: Ref<HTMLDivElement | null>) {
   const stageConfig = computed(() => ({
     width: stageWidth.value,
     height: stageHeight.value,
-    draggable: !isMobile.value,
+    draggable: true,
+    dragDistance: isMobile.value ? MOBILE_DRAG_DISTANCE : 0,
     scaleX: MIN_SCALE,
     scaleY: MIN_SCALE,
   }))

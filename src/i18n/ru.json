@@ -156,7 +156,11 @@
     "textFileName": "рассадка.txt",
     "defaultTableName": "Стол {index}",
     "toCircleLayout": "Зал: овал",
-    "toRectLayout": "Зал: прямоугольник"
+    "toRectLayout": "Зал: прямоугольник",
+    "autoSeatConfirmHeader": "Вы уверены?",
+    "autoSeatConfirmMessage": "Все ранее сохранённые данные рассадки будут перезаписаны!",
+    "autoSeatConfirmAccept": "ОК",
+    "autoSeatConfirmReject": "Отмена"
   },
   "a11y": {
     "sidebarToggle": "Переключить сайдбар",

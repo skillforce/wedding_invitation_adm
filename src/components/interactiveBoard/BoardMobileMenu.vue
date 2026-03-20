@@ -63,7 +63,7 @@ function pickObject(shape: SeatingShape) {
   display: none;
 }
 
-@media (max-width: 639px) {
+@media (max-width: 739px) {
   .board-mobile-menu {
     display: block;
   }

@@ -166,7 +166,10 @@ export function useZoom(stageRef: Ref<{ getNode(): Stage } | null>) {
       container.addEventListener('touchmove', handleTouchMove, { passive: false })
       container.addEventListener('touchend', handleTouchEnd, { passive: true })
     }
-    stageNode?.on('dragmove', () => { isFitted.value = false })
+    stageNode?.on('dragmove', () => {
+      isFitted.value = false
+      if (stageNode) clampPosition(stageNode)
+    })
     window.addEventListener('resize', handleResize)
   })
 

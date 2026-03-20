@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Layer as VLayer, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
 import type { Stage } from 'konva/lib/Stage'
+import { useConfirm } from 'primevue/useconfirm'
+import ConfirmDialog from 'primevue/confirmdialog'
 import { useSeatingStore } from '@/stores/seating'
 import { useGuestsStore } from '@/stores/guests'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
@@ -15,6 +18,8 @@ import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
 import WorkspaceNode from '@/components/interactiveBoard/WorkspaceNode.vue'
 import WorkspaceSettings from '@/components/interactiveBoard/workspaceSettings/index.vue'
 
+const { t } = useI18n()
+const confirm = useConfirm()
 const seatingStore = useSeatingStore()
 const guestsStore = useGuestsStore()
 
@@ -57,7 +62,13 @@ function openWorkspaceSettings() {
 }
 
 function onAutoSeat() {
-  seatingStore.autoSeat()
+  confirm.require({
+    header: t('seating.autoSeatConfirmHeader'),
+    message: t('seating.autoSeatConfirmMessage'),
+    acceptLabel: t('seating.autoSeatConfirmAccept'),
+    rejectLabel: t('seating.autoSeatConfirmReject'),
+    accept: () => seatingStore.autoSeat(),
+  })
 }
 
 function onSelectTable(id: string) {
@@ -75,6 +86,7 @@ function onTableRotate(id: string, deg: number) {
 
 <template>
   <div ref="containerRef" class="board-container">
+    <ConfirmDialog :breakpoints="{'640px': '70vw'}" />
     <BoardToolbar
       :is-fitted="isFitted"
       :stage-ref="stageRef"
