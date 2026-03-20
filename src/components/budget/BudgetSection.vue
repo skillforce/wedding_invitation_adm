@@ -48,10 +48,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
       <i :class="['pi', section.collapsed ? 'pi-chevron-right' : 'pi-chevron-down']" />
     </button>
 
-
-
-    <span class="paid-spacer" />
-
     <div class="section-name-group">
       <template v-if="isEditing">
         <InputWithError
@@ -68,6 +64,14 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
       </template>
 
       <template v-else>
+        <Button
+          icon="pi pi-plus"
+          size="small"
+          severity="secondary"
+          class="add-item-btn"
+          :aria-label="t('budget.addItem')"
+          @click.stop="addItemDialogRef?.open()"
+        />
         <span class="name-text">{{ index }}. {{ section.name }}</span>
         <Button
           icon="pi pi-pencil"
@@ -78,18 +82,11 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
           :aria-label="t('budget.editName')"
           @click.stop="startEdit"
         />
-        <Button
-          icon="pi pi-plus"
-          size="small"
-          severity="secondary"
-          class="add-item-btn"
-          :aria-label="t('budget.addItem')"
-          @click.stop="addItemDialogRef?.open()"
-        />
+
       </template>
     </div>
 
-    <span class="section-total">{{ store.formatCurrency(total) }}</span>
+          <span class="section-total"><span class="section-total-label">{{ t('budget.summary.total') }}:</span> {{ store.formatCurrency(total) }}</span>
 
     <Button
       icon="pi pi-trash"
@@ -110,7 +107,7 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem;
   background: var(--color-surface-section, rgba(0, 0, 0, 0.03));
   border-bottom: 1px solid var(--color-border, #e5e7eb);
   border-top: 1px solid var(--color-border, #e5e7eb);
@@ -129,17 +126,13 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   flex-shrink: 0;
   width: 36px;
   transition: background 0.15s;
+
 }
 
 .collapse-btn:hover {
   background: var(--color-surface-hover, rgba(0, 0, 0, 0.05));
 }
 
-.paid-spacer {
-  display: block;
-  width: 80px;
-  flex-shrink: 0;
-}
 
 .section-name-group {
   flex: 1;
@@ -189,6 +182,11 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   color: var(--color-text-primary);
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.section-total-label {
+  font-weight: 400;
+  color: var(--color-text-secondary, #6b7280);
 }
 
 

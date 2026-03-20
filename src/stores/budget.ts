@@ -36,6 +36,7 @@ function flattenBudget(dto: BudgetDto, collapsedIds: Set<number>): BudgetRow[] {
         name: item.name,
         estimatedCost: item.estimatedCost,
         actualCost: item.actualCost,
+        deposit: item.deposit ?? null,
         priority: item.priority,
         paid: item.paid,
       })
@@ -176,6 +177,7 @@ export const useBudgetStore = defineStore('budget', () => {
         name: changes.name,
         estimatedCost: changes.estimatedCost,
         actualCost: changes.actualCost,
+        deposit: changes.deposit,
         priority: changes.priority,
         paid: changes.paid,
       })
@@ -185,6 +187,7 @@ export const useBudgetStore = defineStore('budget', () => {
       if (changes.name !== undefined) current.name = changes.name
       if (changes.estimatedCost !== undefined) current.estimatedCost = changes.estimatedCost
       if (changes.actualCost !== undefined) current.actualCost = changes.actualCost
+      if (changes.deposit !== undefined) current.deposit = changes.deposit
       if (changes.priority !== undefined) current.priority = changes.priority
       if (changes.paid !== undefined) current.paid = changes.paid
     } catch {

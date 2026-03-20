@@ -20,13 +20,6 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
 <template>
   <div class="card-item">
     <div class="item-main">
-      <Checkbox
-        :model-value="item.paid"
-        :binary="true"
-        :aria-label="t('budget.paid')"
-        @update:model-value="(v) => store.updateItem(item.id, { paid: v as boolean })"
-      />
-
       <template v-if="isEditing">
         <InputWithError
           v-model="editName"
@@ -67,7 +60,28 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
       />
     </div>
 
+    <div class="item-paid">
+      <Checkbox
+        :model-value="item.paid"
+        :binary="true"
+        :aria-label="t('budget.paid')"
+        @update:model-value="(v) => store.updateItem(item.id, { paid: v as boolean })"
+      />
+      <span class="paid-label">{{ t('budget.paid') }}</span>
+    </div>
+
     <div class="item-amounts">
+      <div class="amount-field">
+        <span class="amount-label">{{ t('budget.deposit') }}</span>
+        <InputNumber
+          :model-value="item.deposit"
+          :min="0"
+          :max-fraction-digits="0"
+          :placeholder="t('budget.notKnownYet')"
+          class="amount-input"
+          @update:model-value="(v) => store.updateItem(item.id, { deposit: v })"
+        />
+      </div>
       <div class="amount-field">
         <span class="amount-label">{{ t('budget.estimated') }}</span>
         <InputNumber
@@ -119,14 +133,29 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   gap: 0.4rem;
 }
 
+.item-paid {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.45rem 0;
+}
+
+.paid-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary, #6b7280);
+}
+
 .item-name {
   flex: 1;
   font-size: 0.875rem;
   color: var(--color-text-primary);
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
   min-width: 0;
+  word-break: break-word;
 }
 
 .item-name.placeholder {
@@ -155,7 +184,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
 
 .item-amounts {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.4rem;
   margin-top: 0.4rem;
 }

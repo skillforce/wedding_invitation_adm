@@ -7,8 +7,9 @@ const { t } = useI18n()
 <template>
   <div class="budget-grid table-header">
     <div />
-    <div>{{ t('budget.paid') }}</div>
     <div>{{ t('budget.name') }}</div>
+    <div>{{ t('budget.paid') }}</div>
+    <div>{{ t('budget.deposit') }}</div>
     <div>{{ t('budget.estimated') }}</div>
     <div>{{ t('budget.actual') }}</div>
     <div>{{ t('budget.deviation') }}</div>
@@ -34,14 +35,20 @@ const { t } = useI18n()
 }
 
 .table-header > :nth-child(2),
-.table-header > :nth-child(7) {
+.table-header > :nth-child(8) {
   text-align: start;
 }
 
-.table-header > :nth-child(4),
-.table-header > :nth-child(5),
-.table-header > :nth-child(6) {
+.table-header > :nth-child(3),
+.table-header > :nth-child(6),
+.table-header > :nth-child(7) {
   text-align: start;
+  align-self: end;
+}
+
+.table-header > :nth-child(4),
+.table-header > :nth-child(5) {
+  text-align: center;
   align-self: end;
 }
 </style>

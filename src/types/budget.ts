@@ -7,6 +7,7 @@ export interface BudgetItemDto {
   name: string
   estimatedCost: number
   actualCost: number | null
+  deposit: number | null
   priority: Priority
   paid: boolean
 }
@@ -38,6 +39,7 @@ export interface BudgetItem {
   name: string
   estimatedCost: number
   actualCost: number | null
+  deposit: number | null
   priority: Priority
   paid: boolean
 }

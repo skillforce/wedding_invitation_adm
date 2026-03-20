@@ -181,6 +181,7 @@
     "title": "Wedding Budget",
     "empty": "Add a section and expense items",
     "paid": "Paid",
+    "deposit": "Deposit",
     "name": "Name",
     "estimated": "Estimated",
     "actual": "Actual",
@@ -213,7 +214,8 @@
       "planned": "Planned",
       "paid": "Paid",
       "remaining": "Remaining",
-      "saved": "Saved"
+      "saved": "Saved",
+      "total": "Total"
     },
     "priority": {
       "must": "Must have",

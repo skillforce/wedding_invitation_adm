@@ -70,7 +70,7 @@ function isVisible(index: number): boolean {
 
 <style scoped>
 .budget-table {
-  --budget-grid-cols: 36px 80px 1fr 130px 130px 100px 80px 36px;
+  --budget-grid-cols: 36px 1fr 80px 130px 130px 130px 100px 80px 36px;
   border-radius: 0;
   overflow: hidden;
 }

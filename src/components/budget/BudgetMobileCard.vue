@@ -48,6 +48,8 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
         <i :class="['pi', section.collapsed ? 'pi-chevron-right' : 'pi-chevron-down']" />
       </button>
 
+
+
       <div class="section-name-group">
         <template v-if="isEditingSection">
           <InputWithError
@@ -63,7 +65,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
           />
         </template>
         <template v-else>
-          <span class="section-name">{{ index }}. {{ section.name }}</span>
           <Button
             icon="pi pi-pencil"
             size="small"
@@ -73,6 +74,8 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
             :aria-label="t('budget.editName')"
             @click="isEditingSection = true"
           />
+          <span class="section-name">{{ index }}. {{ section.name }}</span>
+          <span class="card-total">{{ store.formatCurrency(total) }}</span>
           <Button
             icon="pi pi-plus"
             size="small"
@@ -84,7 +87,7 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
         </template>
       </div>
 
-      <span class="card-total">{{ store.formatCurrency(total) }}</span>
+
 
       <Button
         icon="pi pi-trash"
@@ -203,9 +206,4 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   font-style: italic;
 }
 
-@media (max-width: 400px) {
-  .card-total {
-    display: none;
-  }
-}
 </style>

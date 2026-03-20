@@ -18,6 +18,7 @@ export interface CreateItemDto {
   sectionId: number
   name: string
   estimatedCost?: number
+  deposit?: number | null
   priority?: Priority
 }
 
@@ -25,6 +26,7 @@ export interface PatchItemDto {
   name?: string
   estimatedCost?: number
   actualCost?: number | null
+  deposit?: number | null
   priority?: Priority
   paid?: boolean
 }

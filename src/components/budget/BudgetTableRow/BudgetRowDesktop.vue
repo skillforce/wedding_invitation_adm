@@ -24,9 +24,16 @@ const paidModel = computed({
 
 const estimatedDraft = ref<number | null>(props.item.estimatedCost)
 const actualDraft = ref<number | null>(props.item.actualCost)
+const depositDraft = ref<number | null>(props.item.deposit)
 
 watch(() => props.item.estimatedCost, (v) => { estimatedDraft.value = v })
 watch(() => props.item.actualCost, (v) => { actualDraft.value = v })
+watch(() => props.item.deposit, (v) => { depositDraft.value = v })
+
+function onDepositChange(val: number | null) {
+  depositDraft.value = val
+  store.updateItem(props.item.id, { deposit: val })
+}
 
 function onEstimatedChange(val: number | null) {
   estimatedDraft.value = val
@@ -42,10 +49,6 @@ function onActualChange(val: number | null) {
 <template>
   <div class="budget-row budget-grid">
     <div />
-
-    <div class="cell-center">
-      <Checkbox v-model="paidModel" :binary="true" :aria-label="t('budget.paid')" />
-    </div>
 
     <div class="col-name">
       <template v-if="isEditing">
@@ -77,6 +80,21 @@ function onActualChange(val: number | null) {
       </template>
     </div>
 
+    <div class="cell-center">
+      <Checkbox v-model="paidModel" :binary="true" :aria-label="t('budget.paid')" />
+    </div>
+
+    <div class="col-deposit">
+      <InputNumber
+        v-model="depositDraft"
+        :min="0"
+        :max-fraction-digits="0"
+        :placeholder="t('budget.notKnownYet')"
+        class="row-input"
+        @update:model-value="onDepositChange"
+      />
+    </div>
+
     <div class="col-estimated">
       <InputNumber
         v-model="estimatedDraft"
@@ -86,6 +104,8 @@ function onActualChange(val: number | null) {
         @update:model-value="onEstimatedChange"
       />
     </div>
+
+
 
     <div class="col-actual">
       <InputNumber
