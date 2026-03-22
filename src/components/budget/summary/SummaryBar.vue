@@ -20,6 +20,9 @@ const simpleCards = computed(() => [
     label: t('budget.summary.paid'),
     value: store.formatCurrency(store.totals.paid),
     valueClass: 'paid',
+    sub: store.totals.deposit > 0
+      ? t('budget.summary.deposit', { amount: store.formatCurrency(store.totals.deposit) })
+      : null,
   },
   {
     key: 'remaining',
@@ -28,6 +31,7 @@ const simpleCards = computed(() => [
     label: t('budget.summary.remaining'),
     value: store.formatCurrency(store.totals.remaining),
     valueClass: store.totals.remaining < 0 ? 'over' : 'under',
+    sub: null,
   },
 ])
 </script>
@@ -48,6 +52,7 @@ const simpleCards = computed(() => [
     <div v-for="card in simpleCards" :key="card.key" class="summary-card">
       <SummaryCard :label="card.label" :icon="card.icon" :icon-color="card.iconColor">
         <span class="card-value" :class="card.valueClass">{{ card.value }}</span>
+        <span v-if="card.sub" class="card-sub">{{ card.sub }}</span>
       </SummaryCard>
     </div>
     <div class="summary-card">
@@ -67,7 +72,7 @@ const simpleCards = computed(() => [
 .summary-bar {
   --summary-label-size: 0.8rem;
   --summary-value-size: 1.2rem;
-  --summary-badge-size: 0.72rem;
+  --summary-badge-size: 0.82rem;
   --summary-card-padding-y: 0.85rem;
   --summary-card-padding-x: 1rem;
 
@@ -80,7 +85,6 @@ const simpleCards = computed(() => [
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  box-shadow: 0 2px 8px var(--color-border);
   padding: var(--summary-card-padding-y) var(--summary-card-padding-x);
   display: flex;
   flex-direction: column;
@@ -100,6 +104,13 @@ const simpleCards = computed(() => [
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1.25;
+}
+
+.card-sub {
+  font-size: var(--summary-badge-size, 1rem);
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .card-value.paid  { color: #7aad8c; }

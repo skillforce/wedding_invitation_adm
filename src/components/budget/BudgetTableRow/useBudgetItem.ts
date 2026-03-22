@@ -26,7 +26,7 @@ export function useBudgetItem(getItem: () => BudgetItem) {
   const deviation = computed(() => {
     const item = getItem()
     if (item.actualCost === null) return null
-    return item.actualCost - item.estimatedCost
+    return (item.actualCost + (item.deposit ?? 0)) - item.estimatedCost
   })
 
   return { store, isEditing, editName, editNameInvalid, startEdit, commitName, deviation }

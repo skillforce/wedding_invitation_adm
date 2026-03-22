@@ -7,7 +7,7 @@ import SummaryCard from './SummaryCard.vue'
 const store = useBudgetStore()
 const { t } = useI18n()
 
-const savedAmount = computed(() => store.totals.planned - store.totals.paid)
+const savedAmount = computed(() => store.totals.deviationEstimated - store.totals.deviationActual)
 const isOverBudgetVsPlan = computed(() => savedAmount.value < 0)
 </script>
 
@@ -24,11 +24,11 @@ const isOverBudgetVsPlan = computed(() => savedAmount.value < 0)
     <div class="compare-list">
       <div class="compare-row">
         <span class="compare-label">{{ t('budget.estimated') }}</span>
-        <span class="compare-value">{{ store.formatCurrency(store.totals.planned) }}</span>
+        <span class="compare-value">{{ store.formatCurrency(store.totals.deviationEstimated) }}</span>
       </div>
       <div class="compare-row">
-        <span class="compare-label">{{ t('budget.actual') }}</span>
-        <span class="compare-value">{{ store.formatCurrency(store.totals.paid) }}</span>
+        <span class="compare-label">{{ t('budget.actual') }} + {{ t('budget.deposit') }}</span>
+        <span class="compare-value">{{ store.formatCurrency(store.totals.deviationActual) }}</span>
       </div>
     </div>
   </SummaryCard>

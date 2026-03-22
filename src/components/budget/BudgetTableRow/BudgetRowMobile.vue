@@ -61,13 +61,13 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
     </div>
 
     <div class="item-paid">
+      <span class="paid-label">{{ t('budget.paid') }}</span>
       <Checkbox
         :model-value="item.paid"
         :binary="true"
         :aria-label="t('budget.paid')"
         @update:model-value="(v) => store.updateItem(item.id, { paid: v as boolean })"
       />
-      <span class="paid-label">{{ t('budget.paid') }}</span>
     </div>
 
     <div class="item-amounts">
@@ -144,7 +144,8 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  margin: 3px 0;
   color: var(--color-text-secondary, #6b7280);
 }
 
@@ -185,6 +186,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
 .item-amounts {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  align-items: center;
   gap: 0.4rem;
   margin-top: 0.4rem;
 }
@@ -199,6 +201,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
+  white-space: nowrap;
   letter-spacing: 0.04em;
   color: var(--color-text-secondary, #6b7280);
   text-align: center;

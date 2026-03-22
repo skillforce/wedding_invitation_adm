@@ -183,7 +183,7 @@
     "paid": "Оплачено",
     "deposit": "Залог",
     "name": "Название",
-    "estimated": "Предв. цена",
+    "estimated": "Предв.цена",
     "actual": "Факт. цена",
     "deviation": "Отклонение",
     "priorityColumn": "Важность",
@@ -213,6 +213,7 @@
       "budgetLimit": "Лимит бюджета",
       "planned": "Запланировано оплатить",
       "paid": "Оплачено",
+      "deposit": "Из них залог: {amount}",
       "remaining": "Остаток",
       "saved": "Экономия",
       "total": "Итого"

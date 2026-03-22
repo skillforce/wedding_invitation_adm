@@ -219,7 +219,8 @@ export const useBudgetStore = defineStore('budget', () => {
     const items = rows.value.filter((r): r is BudgetItem => r.type === 'item')
 
     const planned = items.reduce((sum, i) => sum + i.estimatedCost, 0)
-    const paid = items.reduce((sum, item) => {
+    const deposit = items.reduce((sum, i) => sum + (i.deposit ?? 0), 0)
+    const paidWithoutDeposit = items.reduce((sum, item) => {
       if (typeof item.actualCost === 'number') {
         return sum + item.actualCost
       }
@@ -228,7 +229,9 @@ export const useBudgetStore = defineStore('budget', () => {
       }
       return sum
     }, 0)
-    const remaining = budgetLimit.value - paid
+
+    const paid = paidWithoutDeposit + deposit
+    const remaining = planned - paid
 
     const byPriority = {
       must: items.filter((i) => i.priority === 'must').reduce((sum, i) => sum + i.estimatedCost, 0),
@@ -238,7 +241,11 @@ export const useBudgetStore = defineStore('budget', () => {
 
     const percentUsed = budgetLimit.value > 0 ? Math.round((planned / budgetLimit.value) * 100) : 0
 
-    return { planned, paid, remaining, byPriority, percentUsed }
+    const itemsWithActual = items.filter((i) => typeof i.actualCost === 'number')
+    const deviationEstimated = itemsWithActual.reduce((sum, i) => sum + i.estimatedCost, 0)
+    const deviationActual = itemsWithActual.reduce((sum, i) => sum + (i.actualCost ?? 0) + (i.deposit ?? 0), 0)
+
+    return { planned, paid, deposit, remaining, byPriority, percentUsed, deviationEstimated, deviationActual }
   })
 
   function getSectionTotal(sectionId: number): number {

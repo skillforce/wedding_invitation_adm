@@ -49,6 +49,7 @@ export type BudgetRow = BudgetSection | BudgetItem
 export interface BudgetTotals {
   planned: number
   paid: number
+  deposit: number
   remaining: number
   byPriority: {
     must: number
@@ -56,4 +57,6 @@ export interface BudgetTotals {
     maybe: number
   }
   percentUsed: number
+  deviationEstimated: number
+  deviationActual: number
 }

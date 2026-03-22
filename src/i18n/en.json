@@ -213,6 +213,7 @@
       "budgetLimit": "Budget limit",
       "planned": "Planned",
       "paid": "Paid",
+      "deposit": "Of which deposit: {amount}",
       "remaining": "Remaining",
       "saved": "Saved",
       "total": "Total"
