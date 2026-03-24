@@ -1,36 +1,54 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { BudgetItem, BudgetSection } from '@/types/budget'
+import { computed, ref } from 'vue'
+import { BudgetRowType, type BudgetSection } from '@/types/budget'
 import { useBudgetStore } from '@/stores/budget'
 import { useI18n } from 'vue-i18n'
+import { useDragSort } from '@/composables/useDragSort'
 import BudgetSectionRow from './BudgetSection.vue'
-import BudgetRow from './BudgetTableRow/BudgetRowDesktop.vue'
 import BudgetMobileCard from './BudgetMobileCard.vue'
 import BudgetTableHeader from './BudgetTableHeader.vue'
 
 const store = useBudgetStore()
 const { t } = useI18n()
+const desktopSectionsRef = ref<HTMLElement | null>(null)
+const mobileSectionsRef = ref<HTMLElement | null>(null)
+
+const sections = computed(() =>
+  store.rows.filter((row): row is BudgetSection => row.type === BudgetRowType.Section),
+)
 
 const sectionNumbers = computed<Map<number, number>>(() => {
   const map = new Map<number, number>()
   let n = 1
-  for (const row of store.rows) {
-    if (row.type === 'section') map.set(row.id, n++)
+  for (const section of sections.value) {
+    map.set(section.id, n++)
   }
   return map
 })
 
-function getParentSection(item: BudgetItem): BudgetSection | undefined {
-  return store.rows.find(
-    (r): r is BudgetSection => r.type === 'section' && r.id === item.sectionId,
-  )
-}
+useDragSort(
+  desktopSectionsRef,
+  (fromIndex, toIndex) => {
+    store.moveSection(fromIndex, toIndex)
+  },
+  {
+    handle: '.budget-section-drag-handle',
+    ghostClass: 'budget-section-ghost',
+    chosenClass: 'budget-section-chosen',
+  },
+)
 
-function isVisible(index: number): boolean {
-  const row = store.rows[index]
-  if (!row || row.type !== 'item') return true
-  return !getParentSection(row as BudgetItem)?.collapsed
-}
+useDragSort(
+  mobileSectionsRef,
+  (fromIndex, toIndex) => {
+    store.moveSection(fromIndex, toIndex)
+  },
+  {
+    handle: '.budget-section-drag-handle',
+    ghostClass: 'budget-section-ghost',
+    chosenClass: 'budget-section-chosen',
+  },
+)
 </script>
 
 <template>
@@ -38,33 +56,33 @@ function isVisible(index: number): boolean {
     <div class="desktop-view">
       <BudgetTableHeader />
 
-      <template v-for="(row, index) in store.rows" :key="row.id">
-        <template v-if="row.type === 'section'">
-          <BudgetSectionRow :section="(row as BudgetSection)" :index="sectionNumbers.get(row.id)!" />
-        </template>
-        <template v-else-if="isVisible(index)">
-          <BudgetRow :item="(row as BudgetItem)" />
-        </template>
-      </template>
+      <div ref="desktopSectionsRef" class="desktop-sections">
+        <BudgetSectionRow
+          v-for="section in sections"
+          :key="section.id"
+          :section="section"
+          :index="sectionNumbers.get(section.id)!"
+        />
+      </div>
 
-      <div v-if="store.rows.length === 0" class="empty-state">
+      <div v-if="sections.length === 0" class="empty-state">
         {{ t('budget.empty') }}
       </div>
     </div>
 
     <div class="mobile-view">
-      <div v-if="store.rows.length === 0" class="empty-state">
+      <div v-if="sections.length === 0" class="empty-state">
         {{ t('budget.empty') }}
       </div>
-      <template v-for="row in store.rows" :key="row.id">
+      <div v-else ref="mobileSectionsRef" class="mobile-sections">
         <BudgetMobileCard
-          v-if="row.type === 'section'"
-          :section="(row as BudgetSection)"
-          :index="sectionNumbers.get(row.id)!"
+          v-for="section in sections"
+          :key="section.id"
+          :section="section"
+          :index="sectionNumbers.get(section.id)!"
         />
-      </template>
+      </div>
     </div>
-
   </div>
 </template>
 
@@ -95,11 +113,34 @@ function isVisible(index: number): boolean {
   font-size: 1.1rem;
 }
 
+.desktop-sections,
+.mobile-sections {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .mobile-view {
   display: none;
-  flex-direction: column;
-  gap: 0.75rem;
   padding: 0.75rem;
+}
+
+:deep(.budget-section-ghost) {
+  opacity: 0.55;
+}
+
+:deep(.budget-section-chosen) {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+:deep(.budget-item-ghost) {
+  opacity: 0.35;
+  background: rgba(122, 173, 140, 0.12);
+  border-color: #7aad8c !important;
+}
+
+:deep(.budget-item-chosen) {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
 }
 
 @media (max-width: 1144px) {
@@ -109,8 +150,11 @@ function isVisible(index: number): boolean {
 
   .mobile-view {
     display: flex;
-    gap: 0.5rem;
     padding: 0.5rem;
+  }
+
+  .mobile-sections {
+    gap: 0.5rem;
   }
 }
 </style>

@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
-import type { BudgetItem, BudgetSection } from '@/types/budget'
+import type { BudgetSection } from '@/types/budget'
 import { useBudgetStore } from '@/stores/budget'
+import { useDragSort } from '@/composables/useDragSort'
 import InputWithError from '@/components/shared/InputWithError.vue'
+import DragHandle from '@/components/shared/DragHandle.vue'
 import BudgetRowMobile from './BudgetTableRow/BudgetRowMobile.vue'
 import AddNameDialog from './AddNameDialog.vue'
+import { startBudgetItemAutoExpand, stopBudgetItemAutoExpand } from './useBudgetItemAutoExpand'
 import { useBudgetConfirm } from './useBudgetConfirm'
 
 const props = defineProps<{ section: BudgetSection; index: number }>()
@@ -15,17 +18,14 @@ const store = useBudgetStore()
 const { t } = useI18n()
 const { confirmDeleteSection } = useBudgetConfirm()
 
-const items = computed(() =>
-  store.rows.filter(
-    (r): r is BudgetItem => r.type === 'item' && r.sectionId === props.section.id,
-  ),
-)
+const items = computed(() => store.getSectionItems(props.section.id))
 
 const total = computed(() => store.getSectionTotal(props.section.id))
 
 const isEditingSection = ref(false)
 const editSectionName = ref(props.section.name)
 const sectionNameInvalid = computed(() => !editSectionName.value.trim())
+const itemListRef = ref<HTMLElement | null>(null)
 
 function commitSectionName() {
   if (editSectionName.value.trim()) {
@@ -35,11 +35,31 @@ function commitSectionName() {
 }
 
 const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
+
+useDragSort(
+  itemListRef,
+  (fromIndex, toIndex, fromEl, toEl) => {
+    const fromSectionId = Number(fromEl.dataset.sectionId ?? props.section.id)
+    const toSectionId = Number(toEl.dataset.sectionId ?? props.section.id)
+
+    store.moveItem(fromSectionId, toSectionId, fromIndex, toIndex)
+  },
+  {
+    handle: '.budget-item-drag-handle',
+    ghostClass: 'budget-item-ghost',
+    chosenClass: 'budget-item-chosen',
+    group: 'budget-mobile-items',
+    onDragStart: () => startBudgetItemAutoExpand(store),
+    onDragEnd: () => stopBudgetItemAutoExpand(),
+  },
+)
 </script>
 
 <template>
-  <div class="mobile-card">
+  <div class="mobile-card" :data-budget-section-id="section.id">
     <div class="card-header">
+      <DragHandle class="budget-section-drag-handle" size="sm" />
+
       <button
         class="collapse-btn"
         :aria-label="section.collapsed ? t('budget.expand') : t('budget.collapse')"
@@ -47,8 +67,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
       >
         <i :class="['pi', section.collapsed ? 'pi-chevron-right' : 'pi-chevron-down']" />
       </button>
-
-
 
       <div class="section-name-group">
         <template v-if="isEditingSection">
@@ -87,8 +105,6 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
         </template>
       </div>
 
-
-
       <Button
         icon="pi pi-trash"
         size="small"
@@ -100,15 +116,18 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
       />
     </div>
 
-    <template v-if="!section.collapsed">
-      <div v-if="items.length === 0" class="empty-items">
-        {{ t('budget.empty') }}
-      </div>
+    <div
+      v-show="!section.collapsed"
+      ref="itemListRef"
+      class="mobile-item-list"
+      :data-section-id="section.id"
+      :data-empty-label="t('budget.empty')"
+    >
       <BudgetRowMobile v-for="item in items" :key="item.id" :item="item" />
-    </template>
-  </div>
+    </div>
 
-  <AddNameDialog ref="addItemDialogRef" mode="item" :section-id="section.id" />
+    <AddNameDialog ref="addItemDialogRef" mode="item" :section-id="section.id" />
+  </div>
 </template>
 
 <style scoped>
@@ -127,6 +146,10 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   padding: 0.6rem 0.75rem;
   background: var(--color-surface-section, rgba(0, 0, 0, 0.03));
   border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.budget-section-drag-handle {
+  width: 24px;
 }
 
 .collapse-btn {
@@ -151,6 +174,7 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
 }
 
 .section-name {
+  display: block;
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--color-text-primary);
@@ -158,6 +182,7 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+  max-width: 100%;
   flex: 1;
 }
 
@@ -199,7 +224,17 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   }
 }
 
-.empty-items {
+.mobile-item-list {
+  position: relative;
+}
+
+.mobile-item-list:empty {
+  min-height: 3rem;
+}
+
+.mobile-item-list:empty::before {
+  content: attr(data-empty-label);
+  display: block;
   padding: 1rem 0.75rem;
   font-size: 0.85rem;
   color: var(--color-text-secondary, #9ca3af);

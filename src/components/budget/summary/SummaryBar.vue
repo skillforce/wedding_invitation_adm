@@ -124,7 +124,7 @@ const simpleCards = computed(() => [
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1300px) {
   .summary-bar {
     grid-template-columns: repeat(3, 1fr);
   }

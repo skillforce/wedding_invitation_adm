@@ -6,6 +6,7 @@ import Button from 'primevue/button'
 import type { BudgetItem } from '@/types/budget'
 import PriorityBadge from '../PriorityBadge.vue'
 import InputWithError from '@/components/shared/InputWithError.vue'
+import DragHandle from '@/components/shared/DragHandle.vue'
 import { useBudgetItem } from './useBudgetItem'
 import { useBudgetConfirm } from '../useBudgetConfirm'
 
@@ -20,6 +21,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
 <template>
   <div class="card-item">
     <div class="item-main">
+      <DragHandle class="budget-item-drag-handle" size="sm" />
       <template v-if="isEditing">
         <InputWithError
           v-model="editName"

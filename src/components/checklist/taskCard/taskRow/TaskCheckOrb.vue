@@ -4,10 +4,12 @@
       <i v-if="completed" class="pi pi-check check-icon" />
     </Transition>
   </div>
-  <i v-else class="pi pi-bars drag-handle" />
+  <DragHandle v-else class="drag-handle" size="sm" />
 </template>
 
 <script setup lang="ts">
+import DragHandle from '@/components/shared/DragHandle.vue'
+
 defineProps<{
   isEditing?: boolean
   completed: boolean
@@ -35,14 +37,6 @@ defineProps<{
 .check-icon {
   font-size: 11px;
   color: #fff;
-}
-
-.drag-handle {
-  flex-shrink: 0;
-  font-size: 13px;
-  color: var(--color-text-muted);
-  opacity: 0.5;
-  cursor: grab;
 }
 
 .pop-enter-active { animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }

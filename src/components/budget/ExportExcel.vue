@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import Button from 'primevue/button'
 import { useBudgetStore } from '@/stores/budget'
 import { useI18n } from 'vue-i18n'
-import type { BudgetItem, BudgetSection } from '@/types/budget'
+import { BudgetRowType, type BudgetItem, type BudgetSection } from '@/types/budget'
 
 const store = useBudgetStore()
 const { t, locale } = useI18n()
@@ -76,7 +76,7 @@ async function exportExcel() {
     }
 
     for (const row of store.rows) {
-      if (row.type === 'section') {
+      if (row.type === BudgetRowType.Section) {
         flushSection()
         currentSection = row as BudgetSection
         sectionItems = []
@@ -123,6 +123,7 @@ async function exportExcel() {
     :label="t('budget.export.button')"
     icon="pi pi-file-excel"
     severity="secondary"
+    class="export-excel-btn"
     outlined
     :loading="loading"
     @click="exportExcel"

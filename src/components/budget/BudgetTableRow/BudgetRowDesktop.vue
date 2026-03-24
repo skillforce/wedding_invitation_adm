@@ -7,6 +7,7 @@ import Button from 'primevue/button'
 import type { BudgetItem } from '@/types/budget'
 import PriorityBadge from '../PriorityBadge.vue'
 import InputWithError from '@/components/shared/InputWithError.vue'
+import DragHandle from '@/components/shared/DragHandle.vue'
 import { useBudgetItem } from './useBudgetItem'
 import { useBudgetConfirm } from '../useBudgetConfirm'
 
@@ -48,7 +49,9 @@ function onActualChange(val: number | null) {
 
 <template>
   <div class="budget-row budget-grid">
-    <div />
+    <div class="cell-center">
+      <DragHandle class="budget-item-drag-handle" />
+    </div>
 
     <div class="col-name">
       <template v-if="isEditing">

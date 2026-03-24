@@ -4,8 +4,12 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import type { BudgetSection } from '@/types/budget'
 import { useBudgetStore } from '@/stores/budget'
+import { useDragSort } from '@/composables/useDragSort'
 import InputWithError from '@/components/shared/InputWithError.vue'
+import DragHandle from '@/components/shared/DragHandle.vue'
 import AddNameDialog from './AddNameDialog.vue'
+import BudgetRowDesktop from './BudgetTableRow/BudgetRowDesktop.vue'
+import { startBudgetItemAutoExpand, stopBudgetItemAutoExpand } from './useBudgetItemAutoExpand'
 import { useBudgetConfirm } from './useBudgetConfirm'
 
 const props = defineProps<{
@@ -18,10 +22,12 @@ const { t } = useI18n()
 const { confirmDeleteSection } = useBudgetConfirm()
 
 const total = computed(() => store.getSectionTotal(props.section.id))
+const items = computed(() => store.getSectionItems(props.section.id))
 
 const isEditing = ref(false)
 const editName = ref(props.section.name)
 const editNameInvalid = computed(() => !editName.value.trim())
+const itemListRef = ref<HTMLElement | null>(null)
 
 function startEdit() {
   editName.value = props.section.name
@@ -36,73 +42,112 @@ function commitEdit() {
 }
 
 const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
+
+useDragSort(
+  itemListRef,
+  (fromIndex, toIndex, fromEl, toEl) => {
+    const fromSectionId = Number(fromEl.dataset.sectionId ?? props.section.id)
+    const toSectionId = Number(toEl.dataset.sectionId ?? props.section.id)
+
+    store.moveItem(fromSectionId, toSectionId, fromIndex, toIndex)
+  },
+  {
+    handle: '.budget-item-drag-handle',
+    ghostClass: 'budget-item-ghost',
+    chosenClass: 'budget-item-chosen',
+    group: 'budget-desktop-items',
+    onDragStart: () => startBudgetItemAutoExpand(store),
+    onDragEnd: () => stopBudgetItemAutoExpand(),
+  },
+)
 </script>
 
 <template>
-  <div class="budget-section-row">
-    <button
-      class="collapse-btn"
-      :aria-label="section.collapsed ? t('budget.expand') : t('budget.collapse')"
-      @click="store.toggleCollapse(section.id)"
-    >
-      <i :class="['pi', section.collapsed ? 'pi-chevron-right' : 'pi-chevron-down']" />
-    </button>
+  <div class="budget-section" :data-budget-section-id="section.id">
+    <div class="budget-section-row">
+      <DragHandle class="budget-section-drag-handle" />
 
-    <div class="section-name-group">
-      <template v-if="isEditing">
-        <InputWithError
-          v-model="editName"
-          :invalid="editNameInvalid"
-          :error-message="t('budget.nameRequired')"
-          :show-save="true"
-          :autofocus="true"
-          :maxlength="50"
-          class="name-input"
-          @save="commitEdit"
-          @cancel="isEditing = false"
-        />
-      </template>
+      <button
+        class="collapse-btn"
+        :aria-label="section.collapsed ? t('budget.expand') : t('budget.collapse')"
+        @click="store.toggleCollapse(section.id)"
+      >
+        <i :class="['pi', section.collapsed ? 'pi-chevron-right' : 'pi-chevron-down']" />
+      </button>
 
-      <template v-else>
-        <Button
-          icon="pi pi-plus"
-          size="small"
-          severity="secondary"
-          class="add-item-btn"
-          :aria-label="t('budget.addItem')"
-          @click.stop="addItemDialogRef?.open()"
-        />
-        <span class="name-text">{{ index }}. {{ section.name }}</span>
-        <Button
-          icon="pi pi-pencil"
-          size="small"
-          text
-          rounded
-          class="edit-name-btn"
-          :aria-label="t('budget.editName')"
-          @click.stop="startEdit"
-        />
+      <div class="section-name-group">
+        <template v-if="isEditing">
+          <InputWithError
+            v-model="editName"
+            :invalid="editNameInvalid"
+            :error-message="t('budget.nameRequired')"
+            :show-save="true"
+            :autofocus="true"
+            :maxlength="50"
+            class="name-input"
+            @save="commitEdit"
+            @cancel="isEditing = false"
+          />
+        </template>
 
-      </template>
+        <template v-else>
+          <Button
+            icon="pi pi-plus"
+            size="small"
+            severity="secondary"
+            class="add-item-btn"
+            :aria-label="t('budget.addItem')"
+            @click.stop="addItemDialogRef?.open()"
+          />
+          <span class="name-text">{{ index }}. {{ section.name }}</span>
+          <Button
+            icon="pi pi-pencil"
+            size="small"
+            text
+            rounded
+            class="edit-name-btn"
+            :aria-label="t('budget.editName')"
+            @click.stop="startEdit"
+          />
+        </template>
+      </div>
+
+      <span class="section-total">
+        <span class="section-total-label">{{ t('budget.summary.total') }}:</span>
+        {{ store.formatCurrency(total) }}
+      </span>
+
+      <Button
+        icon="pi pi-trash"
+        severity="danger"
+        text
+        rounded
+        size="small"
+        :aria-label="t('budget.deleteSection')"
+        @click="confirmDeleteSection(section.id, section.name)"
+      />
     </div>
 
-          <span class="section-total"><span class="section-total-label">{{ t('budget.summary.total') }}:</span> {{ store.formatCurrency(total) }}</span>
+    <div
+      v-show="!section.collapsed"
+      ref="itemListRef"
+      class="budget-section-items"
+      :data-section-id="section.id"
+      :data-empty-label="t('budget.empty')"
+    >
+      <BudgetRowDesktop v-for="item in items" :key="item.id" :item="item" />
+    </div>
 
-    <Button
-      icon="pi pi-trash"
-      severity="danger"
-      text
-      rounded
-      size="small"
-      :aria-label="t('budget.deleteSection')"
-      @click="confirmDeleteSection(section.id, section.name)"
-    />
+    <AddNameDialog ref="addItemDialogRef" mode="item" :section-id="section.id" />
   </div>
-
-  <AddNameDialog ref="addItemDialogRef" mode="item" :section-id="section.id" />
 </template>
 
 <style scoped>
+.budget-section {
+  display: flex;
+  flex-direction: column;
+}
+
 .budget-section-row {
   display: flex;
   align-items: center;
@@ -111,6 +156,10 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   background: var(--color-surface-section, rgba(0, 0, 0, 0.03));
   border-bottom: 1px solid var(--color-border, #e5e7eb);
   border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.budget-section-drag-handle {
+  width: 28px;
 }
 
 .collapse-btn {
@@ -143,6 +192,8 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
 }
 
 .name-text {
+  flex: 1;
+  display: block;
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--color-text-primary);
@@ -189,6 +240,22 @@ const addItemDialogRef = ref<InstanceType<typeof AddNameDialog> | null>(null)
   color: var(--color-text-secondary, #6b7280);
 }
 
+.budget-section-items {
+  position: relative;
+}
+
+.budget-section-items:empty {
+  min-height: 2.9rem;
+}
+
+.budget-section-items:empty::before {
+  content: attr(data-empty-label);
+  display: block;
+  padding: 0.9rem 1.35rem;
+  color: var(--color-text-secondary, #9ca3af);
+  font-size: 0.85rem;
+  font-style: italic;
+}
 
 
 </style>

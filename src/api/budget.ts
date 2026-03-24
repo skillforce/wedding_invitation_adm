@@ -1,5 +1,5 @@
 import { HttpMethod, apiFetch, parseApiError } from '@/api/consts'
-import type { BudgetCurrency, BudgetDto, Priority } from '@/types/budget'
+import type { BudgetCurrency, BudgetDto, BudgetSectionDto, Priority } from '@/types/budget'
 
 export interface PatchBudgetDto {
   budgetLimit?: number
@@ -29,6 +29,17 @@ export interface PatchItemDto {
   deposit?: number | null
   priority?: Priority
   paid?: boolean
+}
+
+export interface MoveSectionDto {
+  sectionId: number
+  targetIndex: number
+}
+
+export interface MoveItemDto {
+  itemId: number
+  targetSectionId: number
+  targetIndex: number
 }
 
 export const BUDGET_API = {
@@ -65,6 +76,15 @@ export const BUDGET_API = {
     return res.json()
   },
 
+  async moveSection(dto: MoveSectionDto): Promise<BudgetSectionDto[]> {
+    const res = await apiFetch('/budget/sections/move', {
+      method: HttpMethod.PATCH,
+      body: JSON.stringify(dto),
+    })
+    if (!res.ok) throw await parseApiError(res)
+    return res.json()
+  },
+
   async deleteSection(id: number): Promise<void> {
     const res = await apiFetch(`/budget/sections/${id}`, {
       method: HttpMethod.DELETE,
@@ -83,6 +103,15 @@ export const BUDGET_API = {
 
   async patchItem(id: number, dto: PatchItemDto): Promise<BudgetDto> {
     const res = await apiFetch(`/budget/items/${id}`, {
+      method: HttpMethod.PATCH,
+      body: JSON.stringify(dto),
+    })
+    if (!res.ok) throw await parseApiError(res)
+    return res.json()
+  },
+
+  async moveItem(dto: MoveItemDto): Promise<BudgetSectionDto[]> {
+    const res = await apiFetch('/budget/items/move', {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })

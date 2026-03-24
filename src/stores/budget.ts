@@ -1,6 +1,17 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { BudgetCurrency, BudgetDto, BudgetItem, BudgetRow, BudgetSection, BudgetTotals, Priority } from '@/types/budget'
+import { BudgetRowType } from '@/types/budget'
+import type {
+  BudgetCurrency,
+  BudgetDto,
+  BudgetItem,
+  BudgetItemDto,
+  BudgetRow,
+  BudgetSection,
+  BudgetSectionDto,
+  BudgetTotals,
+  Priority,
+} from '@/types/budget'
 import { BUDGET_API } from '@/api/budget'
 import { useAppCommonStore } from '@/stores/app_common'
 
@@ -19,37 +30,70 @@ function saveCollapsed(ids: Set<number>): void {
   localStorage.setItem(COLLAPSED_STORAGE_KEY, JSON.stringify([...ids]))
 }
 
-function flattenBudget(dto: BudgetDto, collapsedIds: Set<number>): BudgetRow[] {
+interface BudgetSectionState extends BudgetSection {
+  items: BudgetItem[]
+}
+
+function sortByOrder<T extends { sortOrder: number }>(items: T[]): T[] {
+  return [...items].sort((a, b) => a.sortOrder - b.sortOrder)
+}
+
+function mapItem(sectionId: number, item: BudgetItemDto): BudgetItem {
+  return {
+    id: item.id,
+    type: BudgetRowType.Item,
+    sectionId,
+    name: item.name,
+    sortOrder: item.sortOrder,
+    estimatedCost: item.estimatedCost,
+    actualCost: item.actualCost,
+    deposit: item.deposit ?? null,
+    priority: item.priority,
+    paid: item.paid,
+  }
+}
+
+function mapSection(section: BudgetSectionDto, collapsedIds: Set<number>, collapsed = collapsedIds.has(section.id)): BudgetSectionState {
+  return {
+    id: section.id,
+    type: BudgetRowType.Section,
+    name: section.name,
+    sortOrder: section.sortOrder,
+    collapsed,
+    items: sortByOrder(section.items).map((item) => mapItem(section.id, item)),
+  }
+}
+
+function cloneSections(sections: BudgetSectionState[]): BudgetSectionState[] {
+  return sections.map((section) => ({
+    ...section,
+    items: section.items.map((item) => ({ ...item })),
+  }))
+}
+
+function flattenSections(sections: BudgetSectionState[]): BudgetRow[] {
   const rows: BudgetRow[] = []
-  for (const section of dto.sections) {
+  for (const section of sortByOrder(sections)) {
     rows.push({
       id: section.id,
-      type: 'section',
+      type: BudgetRowType.Section,
       name: section.name,
-      collapsed: collapsedIds.has(section.id),
+      sortOrder: section.sortOrder,
+      collapsed: section.collapsed,
     })
-    for (const item of section.items) {
-      rows.push({
-        id: item.id,
-        type: 'item',
-        sectionId: section.id,
-        name: item.name,
-        estimatedCost: item.estimatedCost,
-        actualCost: item.actualCost,
-        deposit: item.deposit ?? null,
-        priority: item.priority,
-        paid: item.paid,
-      })
+    for (const item of sortByOrder(section.items)) {
+      rows.push(item)
     }
   }
   return rows
 }
 
 export const useBudgetStore = defineStore('budget', () => {
-  const rows = ref<BudgetRow[]>([])
+  const sections = ref<BudgetSectionState[]>([])
   const budgetLimit = ref<number>(0)
   const currency = ref<BudgetCurrency>('BYN')
   const collapsedSections = loadCollapsed()
+  const rows = computed<BudgetRow[]>(() => flattenSections(sections.value))
 
   const CURRENCY_SYMBOLS: Record<BudgetCurrency, string> = {
     RUB: '₽',
@@ -66,7 +110,64 @@ export const useBudgetStore = defineStore('budget', () => {
   function applyBudget(dto: BudgetDto): void {
     budgetLimit.value = dto.budgetLimit
     currency.value = dto.currency
-    rows.value = flattenBudget(dto, collapsedSections)
+    sections.value = sortByOrder(dto.sections).map((section) => mapSection(section, collapsedSections))
+  }
+
+  function applyMovedSections(updatedSections: BudgetSectionDto[]): void {
+    const nextSections = cloneSections(sections.value)
+
+    for (const updatedSection of updatedSections) {
+      const sectionIndex = nextSections.findIndex((section) => section.id === updatedSection.id)
+      const collapsed = sectionIndex === -1
+        ? collapsedSections.has(updatedSection.id)
+        : nextSections[sectionIndex]?.collapsed
+
+      const mappedSection = mapSection(
+        updatedSection,
+        collapsedSections,
+        collapsed ?? collapsedSections.has(updatedSection.id),
+      )
+
+      if (sectionIndex === -1) {
+        nextSections.push(mappedSection)
+      } else {
+        nextSections[sectionIndex] = mappedSection
+      }
+    }
+
+    sections.value = sortByOrder(nextSections).map((section) => ({
+      ...section,
+      items: sortByOrder(section.items),
+    }))
+  }
+
+  function findSection(sectionId: number): BudgetSectionState | undefined {
+    return sections.value.find((section) => section.id === sectionId)
+  }
+
+  function findItem(itemId: number): { section: BudgetSectionState; index: number; item: BudgetItem } | undefined {
+    for (const section of sections.value) {
+      const index = section.items.findIndex((item) => item.id === itemId)
+      if (index !== -1) {
+        const item = section.items[index]
+        if (item) {
+          return { section, index, item }
+        }
+      }
+    }
+  }
+
+  function reindexSectionOrders(items: BudgetSectionState[]): void {
+    items.forEach((section, index) => {
+      section.sortOrder = index
+    })
+  }
+
+  function reindexItemOrders(section: BudgetSectionState): void {
+    section.items.forEach((item, index) => {
+      item.sectionId = section.id
+      item.sortOrder = index
+    })
   }
 
   async function fetchBudget(): Promise<void> {
@@ -115,7 +216,7 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function updateSection(id: number, changes: Partial<BudgetSection>): Promise<void> {
-    const current = rows.value.find((r) => r.id === id && r.type === 'section') as BudgetSection | undefined
+    const current = findSection(id)
     if (current && changes.name !== undefined && changes.name === current.name) return
     const appCommon = useAppCommonStore()
     try {
@@ -132,7 +233,7 @@ export const useBudgetStore = defineStore('budget', () => {
       await BUDGET_API.deleteSection(id)
       collapsedSections.delete(id)
       saveCollapsed(collapsedSections)
-      rows.value = rows.value.filter((r) => !(r.id === id || (r.type === 'item' && r.sectionId === id)))
+      sections.value = sections.value.filter((section) => section.id !== id)
     } catch {
       appCommon.showError(new Error('errors.budget.failedToDeleteSection'))
     }
@@ -146,9 +247,21 @@ export const useBudgetStore = defineStore('budget', () => {
     }
     saveCollapsed(collapsedSections)
 
-    const section = rows.value.find((r) => r.id === sectionId)
-    if (section && section.type === 'section') {
+    const section = findSection(sectionId)
+    if (section) {
       section.collapsed = collapsedSections.has(sectionId)
+    }
+  }
+
+  function expandSection(sectionId: number): void {
+    if (!collapsedSections.has(sectionId)) return
+
+    collapsedSections.delete(sectionId)
+    saveCollapsed(collapsedSections)
+
+    const section = findSection(sectionId)
+    if (section) {
+      section.collapsed = false
     }
   }
 
@@ -165,7 +278,7 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function updateItem(id: number, changes: Partial<BudgetItem>): Promise<void> {
-    const current = rows.value.find((r) => r.id === id && r.type === 'item') as BudgetItem | undefined
+    const current = findItem(id)?.item
     if (current) {
       const keys = Object.keys(changes) as (keyof BudgetItem)[]
       const allSame = keys.every((k) => changes[k] === current[k])
@@ -199,15 +312,19 @@ export const useBudgetStore = defineStore('budget', () => {
     const appCommon = useAppCommonStore()
     try {
       await BUDGET_API.deleteItem(id)
-      rows.value = rows.value.filter((r) => r.id !== id)
+      const location = findItem(id)
+      if (location) {
+        location.section.items.splice(location.index, 1)
+        reindexItemOrders(location.section)
+      }
     } catch {
       appCommon.showError(new Error('errors.budget.failedToDeleteItem'))
     }
   }
 
   async function cyclePriority(id: number): Promise<void> {
-    const item = rows.value.find((r) => r.id === id)
-    if (!item || item.type !== 'item') return
+    const item = findItem(id)?.item
+    if (!item) return
     const currentIdx = PRIORITY_CYCLE.indexOf(item.priority)
     const nextPriority = PRIORITY_CYCLE[(currentIdx + 1) % PRIORITY_CYCLE.length]
     if (nextPriority) {
@@ -215,8 +332,73 @@ export const useBudgetStore = defineStore('budget', () => {
     }
   }
 
+  async function moveSection(fromIndex: number, toIndex: number): Promise<void> {
+    if (fromIndex === toIndex) return
+    if (fromIndex < 0 || toIndex < 0 || fromIndex >= sections.value.length || toIndex >= sections.value.length) return
+
+    const snapshot = cloneSections(sections.value)
+    const [section] = sections.value.splice(fromIndex, 1)
+    if (!section) return
+
+    sections.value.splice(toIndex, 0, section)
+    reindexSectionOrders(sections.value)
+
+    const appCommon = useAppCommonStore()
+
+    try {
+      const updatedSections = await BUDGET_API.moveSection({
+        sectionId: section.id,
+        targetIndex: toIndex,
+      })
+      applyMovedSections(updatedSections)
+    } catch (error) {
+      sections.value = snapshot
+      appCommon.showError(error instanceof Error ? error : new Error('errors.budget.failedToUpdateSection'))
+    }
+  }
+
+  async function moveItem(
+    fromSectionId: number,
+    toSectionId: number,
+    fromIndex: number,
+    toIndex: number,
+  ): Promise<void> {
+    if (fromSectionId === toSectionId && fromIndex === toIndex) return
+
+    const fromSection = findSection(fromSectionId)
+    const toSection = findSection(toSectionId)
+    if (!fromSection || !toSection) return
+    if (fromIndex < 0 || toIndex < 0 || fromIndex >= fromSection.items.length || toIndex > toSection.items.length) return
+
+    const snapshot = cloneSections(sections.value)
+    const [item] = fromSection.items.splice(fromIndex, 1)
+    if (!item) return
+
+    item.sectionId = toSectionId
+    toSection.items.splice(toIndex, 0, item)
+    reindexItemOrders(fromSection)
+
+    if (fromSection !== toSection) {
+      reindexItemOrders(toSection)
+    }
+
+    const appCommon = useAppCommonStore()
+
+    try {
+      const updatedSections = await BUDGET_API.moveItem({
+        itemId: item.id,
+        targetSectionId: toSectionId,
+        targetIndex: toIndex,
+      })
+      applyMovedSections(updatedSections)
+    } catch (error) {
+      sections.value = snapshot
+      appCommon.showError(error instanceof Error ? error : new Error('errors.budget.failedToUpdateItem'))
+    }
+  }
+
   const totals = computed<BudgetTotals>(() => {
-    const items = rows.value.filter((r): r is BudgetItem => r.type === 'item')
+    const items = sections.value.flatMap((section) => section.items)
 
     const planned = items.reduce((sum, i) => sum + i.estimatedCost, 0)
     const deposit = items.reduce((sum, i) => sum + (i.deposit ?? 0), 0)
@@ -249,9 +431,11 @@ export const useBudgetStore = defineStore('budget', () => {
   })
 
   function getSectionTotal(sectionId: number): number {
-    return rows.value
-      .filter((r): r is BudgetItem => r.type === 'item' && r.sectionId === sectionId)
-      .reduce((sum, i) => sum + i.estimatedCost, 0)
+    return findSection(sectionId)?.items.reduce((sum, item) => sum + item.estimatedCost, 0) ?? 0
+  }
+
+  function getSectionItems(sectionId: number): BudgetItem[] {
+    return findSection(sectionId)?.items ?? []
   }
 
   return {
@@ -264,10 +448,14 @@ export const useBudgetStore = defineStore('budget', () => {
     addSection,
     updateSection,
     deleteSection,
+    moveSection,
     toggleCollapse,
+    expandSection,
+    getSectionItems,
     addItem,
     updateItem,
     deleteItem,
+    moveItem,
     cyclePriority,
     setBudgetLimit,
     setCurrency,

@@ -2,9 +2,15 @@ export type Priority = 'must' | 'want' | 'maybe'
 
 export type BudgetCurrency = 'RUB' | 'USD' | 'BYN'
 
+export enum BudgetRowType {
+  Section = 'section',
+  Item = 'item',
+}
+
 export interface BudgetItemDto {
   id: number
   name: string
+  sortOrder: number
   estimatedCost: number
   actualCost: number | null
   deposit: number | null
@@ -15,6 +21,7 @@ export interface BudgetItemDto {
 export interface BudgetSectionDto {
   id: number
   name: string
+  sortOrder: number
   items: BudgetItemDto[]
 }
 
@@ -27,16 +34,18 @@ export interface BudgetDto {
 
 export interface BudgetSection {
   id: number
-  type: 'section'
+  type: BudgetRowType.Section
   name: string
+  sortOrder: number
   collapsed?: boolean
 }
 
 export interface BudgetItem {
   id: number
-  type: 'item'
+  type: BudgetRowType.Item
   sectionId: number
   name: string
+  sortOrder: number
   estimatedCost: number
   actualCost: number | null
   deposit: number | null

@@ -8,6 +8,8 @@ interface DragSortOptions {
   chosenClass?: string
   animation?: number
   group?: string | Sortable.GroupOptions
+  onDragStart?: (fromEl: HTMLElement, itemEl: HTMLElement) => void
+  onDragEnd?: (fromEl: HTMLElement, toEl: HTMLElement, itemEl: HTMLElement) => void
 }
 
 type ReorderCallback = (
@@ -34,7 +36,11 @@ export function useDragSort(
         ghostClass: options.ghostClass,
         chosenClass: options.chosenClass,
         group: options.group,
-        onEnd({ oldIndex, newIndex, from, to }) {
+        onStart({ from, item }) {
+          options.onDragStart?.(from as HTMLElement, item as HTMLElement)
+        },
+        onEnd({ oldIndex, newIndex, from, to, item }) {
+          options.onDragEnd?.(from as HTMLElement, to as HTMLElement, item as HTMLElement)
           if (oldIndex === undefined || newIndex === undefined) return
           if (from === to && oldIndex === newIndex) return
           onReorder(oldIndex, newIndex, from as HTMLElement, to as HTMLElement)
