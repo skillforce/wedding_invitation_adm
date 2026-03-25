@@ -54,15 +54,17 @@ useDragSort(
 <template>
   <div class="budget-table">
     <div class="desktop-view">
-      <BudgetTableHeader />
+      <div class="desktop-table-content">
+        <BudgetTableHeader />
 
-      <div ref="desktopSectionsRef" class="desktop-sections">
-        <BudgetSectionRow
-          v-for="section in sections"
-          :key="section.id"
-          :section="section"
-          :index="sectionNumbers.get(section.id)!"
-        />
+        <div ref="desktopSectionsRef" class="desktop-sections">
+          <BudgetSectionRow
+            v-for="section in sections"
+            :key="section.id"
+            :section="section"
+            :index="sectionNumbers.get(section.id)!"
+          />
+        </div>
       </div>
 
       <div v-if="sections.length === 0" class="empty-state">
@@ -88,7 +90,8 @@ useDragSort(
 
 <style scoped>
 .budget-table {
-  --budget-grid-cols: 36px 1fr 80px 130px 130px 130px 100px 80px 36px;
+  --budget-grid-cols: 36px minmax(180px, 1fr) 108px 80px 130px 130px 130px 100px 80px 36px;
+  --budget-grid-min-width: 1120px;
   border-radius: 0;
   overflow: hidden;
 }
@@ -100,6 +103,7 @@ useDragSort(
   padding: 0 0.85rem;
   align-items: center;
   border-radius: 0;
+  min-width: var(--budget-grid-min-width);
 }
 
 :deep(.budget-grid > *) {
@@ -118,6 +122,15 @@ useDragSort(
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+.desktop-view {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.desktop-table-content {
+  min-width: var(--budget-grid-min-width);
 }
 
 .mobile-view {

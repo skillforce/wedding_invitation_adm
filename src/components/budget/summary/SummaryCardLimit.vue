@@ -3,10 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
-import Select from 'primevue/select'
 import { useBudgetStore } from '@/stores/budget'
-import type { BudgetCurrency } from '@/types/budget'
 import SummaryCard from './SummaryCard.vue'
+import BudgetCurrencySelect from '../BudgetCurrencySelect.vue'
 
 const props = defineProps<{ hovered?: boolean }>()
 
@@ -16,12 +15,6 @@ const { t } = useI18n()
 const isEditingLimit = ref(false)
 const limitDraft = ref<number | null>(store.budgetLimit)
 const limitError = ref(false)
-
-const currencyOptions: { label: string; value: BudgetCurrency }[] = [
-  { label: '₽', value: 'RUB' },
-  { label: '$', value: 'USD' },
-  { label: 'BYN', value: 'BYN' },
-]
 
 function startEditLimit() {
   limitDraft.value = store.budgetLimit
@@ -42,13 +35,10 @@ function commitLimit() {
 <template>
   <SummaryCard :label="t('budget.summary.budgetLimit')" icon="pi pi-briefcase" icon-color="var(--p-primary-400)">
     <template #header-end>
-      <Select
+      <BudgetCurrencySelect
         :model-value="store.currency"
-        :options="currencyOptions"
-        option-label="label"
-        option-value="value"
-        append-to="body"
-        class="currency-select"
+        :aria-label="t('budget.currency')"
+        variant="compact"
         @update:model-value="store.setCurrency"
       />
     </template>
@@ -151,18 +141,4 @@ function commitLimit() {
   font-size: var(--summary-label-size, 0.8rem);
 }
 
-.currency-select {
-  flex-shrink: 0;
-}
-
-.currency-select :deep(.p-select-label) {
-  padding: 0.15rem 0.25rem;
-  font-size: var(--summary-label-size, 0.8rem);
-  font-weight: 600;
-}
-
-.currency-select :deep(.p-select-dropdown) {
-  width: 1.2rem;
-  padding: 0;
-}
 </style>

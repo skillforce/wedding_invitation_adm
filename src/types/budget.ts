@@ -10,6 +10,7 @@ export enum BudgetRowType {
 export interface BudgetItemDto {
   id: number
   name: string
+  currency: BudgetCurrency
   sortOrder: number
   estimatedCost: number
   actualCost: number | null
@@ -45,6 +46,7 @@ export interface BudgetItem {
   type: BudgetRowType.Item
   sectionId: number
   name: string
+  currency: BudgetCurrency
   sortOrder: number
   estimatedCost: number
   actualCost: number | null

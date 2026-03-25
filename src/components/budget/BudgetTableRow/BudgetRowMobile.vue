@@ -7,6 +7,7 @@ import type { BudgetItem } from '@/types/budget'
 import PriorityBadge from '../PriorityBadge.vue'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import DragHandle from '@/components/shared/DragHandle.vue'
+import BudgetCurrencySelect from '../BudgetCurrencySelect.vue'
 import { useBudgetItem } from './useBudgetItem'
 import { useBudgetConfirm } from '../useBudgetConfirm'
 
@@ -62,7 +63,17 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
       />
     </div>
 
-    <div class="item-paid">
+    <div class="item-meta">
+      <div class="item-currency">
+        <span class="meta-label">{{ t('budget.currency') }}</span>
+        <BudgetCurrencySelect
+          :model-value="item.currency"
+          variant="compact"
+          :aria-label="t('budget.currency')"
+          @update:model-value="(value) => store.updateItem(item.id, { currency: value })"
+        />
+      </div>
+  <div class="paid-field">
       <span class="paid-label">{{ t('budget.paid') }}</span>
       <Checkbox
         :model-value="item.paid"
@@ -70,6 +81,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
         :aria-label="t('budget.paid')"
         @update:model-value="(v) => store.updateItem(item.id, { paid: v as boolean })"
       />
+  </div>
     </div>
 
     <div class="item-amounts">
@@ -111,7 +123,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
           v-if="deviation !== null"
           :class="['deviation', deviation > 0 ? 'over' : deviation < 0 ? 'under' : '']"
         >
-          {{ deviation > 0 ? '+' : '' }}{{ store.formatCurrency(deviation) }}
+          {{ deviation > 0 ? '+' : '' }}{{ store.formatCurrencyAmount(deviation, item.currency) }}
         </span>
         <span v-else class="deviation-empty">—</span>
       </div>
@@ -135,20 +147,32 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   gap: 0.4rem;
 }
 
-.item-paid {
+.item-meta {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  margin: 0.45rem 0;
+  justify-content: flex-start;
+  gap: 20px;
+  margin: 10px 0;
 }
 
+.item-currency {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.meta-label,
 .paid-label {
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
   margin: 3px 0;
   color: var(--color-text-secondary, #6b7280);
+}
+
+.item-currency :deep(.currency-select) {
+  max-width: 7rem;
 }
 
 .item-name {
@@ -183,6 +207,12 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
 
 .card-item:hover .edit-btn {
   opacity: 1;
+}
+
+.paid-field{
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .item-amounts {
@@ -234,5 +264,12 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   color: var(--color-text-secondary, #9ca3af);
   align-self: center;
   padding-top: 0.15rem;
+}
+
+@media (max-width: 640px) {
+  .item-amounts {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }
 </style>

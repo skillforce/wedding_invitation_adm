@@ -183,6 +183,7 @@
     "paid": "Paid",
     "deposit": "Deposit",
     "name": "Name",
+    "currency": "Currency",
     "estimated": "Estimated",
     "actual": "Actual",
     "deviation": "Deviation",

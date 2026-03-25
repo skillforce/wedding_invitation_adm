@@ -34,6 +34,9 @@ const { t } = useI18n()
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1.25;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .card-value.over { color: #e8927a; }

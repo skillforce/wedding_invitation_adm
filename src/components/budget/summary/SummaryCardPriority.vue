@@ -54,8 +54,9 @@ const priorityRows = computed(() => [
 
 .priority-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 0.45rem;
 }
 
@@ -87,6 +88,8 @@ const priorityRows = computed(() => [
   line-height: 1.2;
   color: var(--color-text-secondary, #6b7280);
   min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .priority-value {
@@ -94,6 +97,9 @@ const priorityRows = computed(() => [
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-text-primary);
-  white-space: nowrap;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 </style>

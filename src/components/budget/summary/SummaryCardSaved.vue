@@ -40,6 +40,9 @@ const isOverBudgetVsPlan = computed(() => savedAmount.value < 0)
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-text-primary);
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .card-value.saved { color: #7aad8c; }
@@ -53,19 +56,26 @@ const isOverBudgetVsPlan = computed(() => savedAmount.value < 0)
 .compare-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 0.4rem;
 }
 
 .compare-label {
   font-size: calc(var(--summary-label-size, 0.8rem) * 0.9);
   color: var(--color-text-secondary, #6b7280);
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .compare-value {
   font-size: calc(var(--summary-value-size, 1.2rem) * 0.62);
   font-weight: 600;
   color: var(--color-text-primary);
-  white-space: nowrap;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 </style>

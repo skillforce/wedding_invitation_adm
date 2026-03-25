@@ -104,6 +104,9 @@ const simpleCards = computed(() => [
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1.25;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .card-sub {
@@ -111,6 +114,9 @@ const simpleCards = computed(() => [
   color: var(--color-text-secondary, #6b7280);
   font-weight: 700;
   line-height: 1.2;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .card-value.paid  { color: #7aad8c; }
@@ -132,7 +138,7 @@ const simpleCards = computed(() => [
 
 @media (max-width: 640px) {
   .summary-bar {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0.4rem;
     width: 100%;
     box-sizing: border-box;
@@ -152,7 +158,7 @@ const simpleCards = computed(() => [
 }
 @media (max-width: 380px) {
   .summary-bar {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     --summary-card-padding-y: 0.4rem;
     --summary-card-padding-x: 0.5rem;
     --summary-value-size: 0.9rem;

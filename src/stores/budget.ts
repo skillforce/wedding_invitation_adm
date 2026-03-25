@@ -44,6 +44,7 @@ function mapItem(sectionId: number, item: BudgetItemDto): BudgetItem {
     type: BudgetRowType.Item,
     sectionId,
     name: item.name,
+    currency: item.currency,
     sortOrder: item.sortOrder,
     estimatedCost: item.estimatedCost,
     actualCost: item.actualCost,
@@ -101,10 +102,14 @@ export const useBudgetStore = defineStore('budget', () => {
     BYN: 'BYN',
   }
 
-  function formatCurrency(val: number): string {
-    const sym = CURRENCY_SYMBOLS[currency.value]
+  function formatCurrencyAmount(val: number, valueCurrency: BudgetCurrency): string {
+    const sym = CURRENCY_SYMBOLS[valueCurrency]
     const formatted = val.toLocaleString('ru-RU')
-    return currency.value === 'USD' ? `${sym}${formatted}` : `${formatted} ${sym}`
+    return valueCurrency === 'USD' ? `${sym}${formatted}` : `${formatted} ${sym}`
+  }
+
+  function formatCurrency(val: number): string {
+    return formatCurrencyAmount(val, currency.value)
   }
 
   function applyBudget(dto: BudgetDto): void {
@@ -268,7 +273,7 @@ export const useBudgetStore = defineStore('budget', () => {
   async function addItem(sectionId: number, name = ''): Promise<void> {
     const appCommon = useAppCommonStore()
     try {
-      const dto = await BUDGET_API.createItem({ sectionId, name })
+      const dto = await BUDGET_API.createItem({ sectionId, name, currency: currency.value })
       collapsedSections.delete(sectionId)
       saveCollapsed(collapsedSections)
       applyBudget(dto)
@@ -288,6 +293,7 @@ export const useBudgetStore = defineStore('budget', () => {
     try {
       await BUDGET_API.patchItem(id, {
         name: changes.name,
+        currency: changes.currency,
         estimatedCost: changes.estimatedCost,
         actualCost: changes.actualCost,
         deposit: changes.deposit,
@@ -298,6 +304,7 @@ export const useBudgetStore = defineStore('budget', () => {
       if (!current) return
 
       if (changes.name !== undefined) current.name = changes.name
+      if (changes.currency !== undefined) current.currency = changes.currency
       if (changes.estimatedCost !== undefined) current.estimatedCost = changes.estimatedCost
       if (changes.actualCost !== undefined) current.actualCost = changes.actualCost
       if (changes.deposit !== undefined) current.deposit = changes.deposit
@@ -444,6 +451,7 @@ export const useBudgetStore = defineStore('budget', () => {
     currency,
     totals,
     formatCurrency,
+    formatCurrencyAmount,
     fetchBudget,
     addSection,
     updateSection,

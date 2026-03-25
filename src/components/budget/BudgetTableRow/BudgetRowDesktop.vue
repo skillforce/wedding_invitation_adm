@@ -8,6 +8,7 @@ import type { BudgetItem } from '@/types/budget'
 import PriorityBadge from '../PriorityBadge.vue'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import DragHandle from '@/components/shared/DragHandle.vue'
+import BudgetCurrencySelect from '../BudgetCurrencySelect.vue'
 import { useBudgetItem } from './useBudgetItem'
 import { useBudgetConfirm } from '../useBudgetConfirm'
 
@@ -84,6 +85,14 @@ function onActualChange(val: number | null) {
     </div>
 
     <div class="cell-center">
+      <BudgetCurrencySelect
+        :model-value="item.currency"
+        :aria-label="t('budget.currency')"
+        @update:model-value="(value) => store.updateItem(item.id, { currency: value })"
+      />
+    </div>
+
+    <div class="cell-center">
       <Checkbox v-model="paidModel" :binary="true" :aria-label="t('budget.paid')" />
     </div>
 
@@ -126,7 +135,7 @@ function onActualChange(val: number | null) {
         v-if="deviation !== null"
         :class="['deviation', deviation > 0 ? 'over' : deviation < 0 ? 'under' : '']"
       >
-        {{ deviation > 0 ? '+' : '' }}{{ store.formatCurrency(deviation) }}
+        {{ deviation > 0 ? '+' : '' }}{{ store.formatCurrencyAmount(deviation, item.currency) }}
       </span>
       <span v-else class="deviation-empty">—</span>
     </div>
