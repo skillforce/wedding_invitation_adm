@@ -1,71 +1,49 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useBudgetStore } from '@/stores/budget'
-import SummaryCard from './SummaryCard.vue'
+import { ref } from 'vue'
 import SummaryCardLimit from './SummaryCardLimit.vue'
 import SummaryCardPlanned from './SummaryCardPlanned.vue'
+import SummaryCardCurrency from './SummaryCardCurrency.vue'
+import SummaryCardRemaining from './SummaryCardRemaining.vue'
+import SummaryCardPaid from './SummaryCardPaid.vue'
 import SummaryCardPriority from './SummaryCardPriority.vue'
-import SummaryCardSaved from './SummaryCardSaved.vue'
 
-const store = useBudgetStore()
-const { t } = useI18n()
 const limitCardHovered = ref(false)
-
-const simpleCards = computed(() => [
-  {
-    key: 'paid',
-    icon: 'pi pi-check-circle',
-    iconColor: '#7aad8c',
-    label: t('budget.summary.paid'),
-    value: store.formatCurrency(store.totals.paid),
-    valueClass: 'paid',
-    sub: store.totals.deposit > 0
-      ? t('budget.summary.deposit', { amount: store.formatCurrency(store.totals.deposit) })
-      : null,
-  },
-  {
-    key: 'remaining',
-    icon: store.totals.remaining < 0 ? 'pi pi-exclamation-triangle' : 'pi pi-wallet',
-    iconColor: store.totals.remaining < 0 ? '#e8927a' : '#7aad8c',
-    label: t('budget.summary.remaining'),
-    value: store.formatCurrency(store.totals.remaining),
-    valueClass: store.totals.remaining < 0 ? 'over' : 'under',
-    sub: null,
-  },
-])
 </script>
 
 <template>
-  <div class="summary-bar">
-    <div
-      class="summary-card"
-      @mouseenter="limitCardHovered = true"
-      @mouseleave="limitCardHovered = false"
-    >
-      <SummaryCardLimit :hovered="limitCardHovered" />
-    </div>
+  <section class="summary-bar">
+    <div class="summary-row summary-row--top">
+      <article
+        class="summary-card"
+        @mouseenter="limitCardHovered = true"
+        @mouseleave="limitCardHovered = false"
+      >
+        <SummaryCardLimit :hovered="limitCardHovered" />
+      </article>
+      <article class="summary-card">
+        <SummaryCardCurrency />
+      </article>
 
-    <div class="summary-card">
-      <SummaryCardPlanned />
-    </div>
-    <div v-for="card in simpleCards" :key="card.key" class="summary-card">
-      <SummaryCard :label="card.label" :icon="card.icon" :icon-color="card.iconColor">
-        <span class="card-value" :class="card.valueClass">{{ card.value }}</span>
-        <span v-if="card.sub" class="card-sub">{{ card.sub }}</span>
-      </SummaryCard>
-    </div>
-    <div class="summary-card">
-      <SummaryCardSaved />
-    </div>
-    <div class="summary-card">
-      <SummaryCardPriority />
-    </div>
+      <article class="summary-card">
+        <SummaryCardPlanned />
+      </article>
 
 
 
+      <article class="summary-card">
+        <SummaryCardRemaining />
+      </article>
+    </div>
 
-  </div>
+    <div class="summary-row summary-row--bottom">
+      <article class="summary-card">
+        <SummaryCardPaid />
+      </article>
+      <article class="summary-card">
+        <SummaryCardPriority />
+      </article>
+    </div>
+  </section>
 </template>
 
 <style scoped>
@@ -76,9 +54,22 @@ const simpleCards = computed(() => [
   --summary-card-padding-y: 0.85rem;
   --summary-card-padding-x: 1rem;
 
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
+}
+
+.summary-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.summary-row--top {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.summary-row--bottom {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .summary-card {
@@ -99,30 +90,6 @@ const simpleCards = computed(() => [
   box-shadow: 0 4px 12px var(--color-border-strong);
 }
 
-.card-value {
-  font-size: var(--summary-value-size, 1.2rem);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.25;
-  min-width: 0;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.card-sub {
-  font-size: var(--summary-badge-size, 1rem);
-  color: var(--color-text-secondary, #6b7280);
-  font-weight: 700;
-  line-height: 1.2;
-  min-width: 0;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.card-value.paid  { color: #7aad8c; }
-.card-value.under { color: #7aad8c; }
-.card-value.over  { color: #e8927a; }
-
 @media (min-width: 1025px) {
   .summary-bar {
     --summary-icon-font-size: 1.5rem;
@@ -130,15 +97,14 @@ const simpleCards = computed(() => [
   }
 }
 
-@media (max-width: 1300px) {
-  .summary-bar {
-    grid-template-columns: repeat(3, 1fr);
+@media (max-width: 1100px) {
+  .summary-row--top {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 640px) {
   .summary-bar {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0.4rem;
     width: 100%;
     box-sizing: border-box;
@@ -149,6 +115,15 @@ const simpleCards = computed(() => [
     --summary-card-padding-x: 0.7rem;
   }
 
+  .summary-row--top,
+  .summary-row--bottom {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .summary-row {
+    gap: 0.4rem;
+  }
+
   .summary-card {
     gap: 0.2rem;
     min-width: 0;
@@ -156,13 +131,22 @@ const simpleCards = computed(() => [
     border-radius: 12px;
   }
 }
+
 @media (max-width: 380px) {
-  .summary-bar {
+  .summary-row--top,
+  .summary-row--bottom {
     grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .summary-row--top > .summary-card,
+  .summary-row--bottom > .summary-card {
+    width: 100%;
+  }
+  .summary-bar {
     --summary-card-padding-y: 0.4rem;
     --summary-card-padding-x: 0.5rem;
     --summary-value-size: 0.9rem;
   }
 }
-
 </style>

@@ -217,7 +217,9 @@
       "deposit": "Из них залог: {amount}",
       "remaining": "Остаток",
       "saved": "Экономия",
-      "total": "Итого"
+      "total": "Итого",
+      "currency": "Курсы валют",
+      "currencyLoading": "Загрузка..."
     },
     "priority": {
       "must": "Обязательно",

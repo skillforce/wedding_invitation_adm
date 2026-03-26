@@ -217,7 +217,9 @@
       "deposit": "Of which deposit: {amount}",
       "remaining": "Remaining",
       "saved": "Saved",
-      "total": "Total"
+      "total": "Total",
+      "currency": "Exchange rates",
+      "currencyLoading": "Loading..."
     },
     "priority": {
       "must": "Must have",

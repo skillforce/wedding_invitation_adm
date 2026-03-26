@@ -8,12 +8,15 @@ import AddRowMenu from '@/components/budget/AddRowMenu.vue'
 import ExportExcel from "@/components/budget/ExportExcel.vue"
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useBudgetStore } from '@/stores/budget'
+import { useCurrencyStore } from '@/stores/currency'
 
 const { t } = useI18n()
 const budgetStore = useBudgetStore()
+const currencyStore = useCurrencyStore()
 
 onMounted(() => {
   budgetStore.fetchBudget()
+  currencyStore.fetchRates()
 })
 </script>
 

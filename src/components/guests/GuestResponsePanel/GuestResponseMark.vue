@@ -77,4 +77,25 @@ const iconClass = computed(() => {
 .response-mark__label {
   min-width: 0;
 }
+
+@media (max-width: 480px) {
+  .response-mark--badge {
+    padding: 0.15rem 0.2rem;
+  }
+
+  .response-mark--muted.response-mark--badge .response-mark__label {
+    display: none;
+  }
+  .response-mark--active.response-mark--badge .response-mark__label {
+    display: none;
+  }
+
+  .response-mark--muted.response-mark--badge {
+    gap: 0;
+  }
+
+  .response-mark--muted.response-mark--badge .pi {
+    font-size: 0.75rem;
+  }
+}
 </style>

@@ -177,10 +177,11 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
 
 .item-name {
   flex: 1;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: var(--color-text-primary);
   white-space: normal;
   overflow: hidden;
+  font-weight: 600;
   min-width: 0;
   word-break: break-word;
 }

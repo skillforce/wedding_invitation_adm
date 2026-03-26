@@ -57,6 +57,11 @@ export interface BudgetItem {
 
 export type BudgetRow = BudgetSection | BudgetItem
 
+export interface CurrencyBreakdown {
+  byCurrency: Partial<Record<BudgetCurrency, number>>
+  total: number
+}
+
 export interface BudgetTotals {
   planned: number
   paid: number
@@ -70,4 +75,19 @@ export interface BudgetTotals {
   percentUsed: number
   deviationEstimated: number
   deviationActual: number
+}
+
+export interface MultiCurrencyTotals {
+  planned: CurrencyBreakdown
+  paid: CurrencyBreakdown
+  deposit: CurrencyBreakdown
+  remaining: CurrencyBreakdown
+  deviationEstimated: CurrencyBreakdown
+  deviationActual: CurrencyBreakdown
+  byPriority: {
+    must: CurrencyBreakdown
+    want: CurrencyBreakdown
+    maybe: CurrencyBreakdown
+  }
+  hasNonBaseCurrency: boolean
 }

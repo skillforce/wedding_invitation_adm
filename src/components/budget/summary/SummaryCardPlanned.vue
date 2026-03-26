@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { useBudgetStore } from '@/stores/budget'
 import SummaryCard from './SummaryCard.vue'
+import CurrencyBreakdownList from './CurrencyBreakdownList.vue'
 
 const store = useBudgetStore()
 const { t } = useI18n()
@@ -11,8 +12,9 @@ const { t } = useI18n()
   <SummaryCard :label="t('budget.summary.planned')" icon="pi pi-chart-bar" icon-color="#818cf8">
 
     <span class="card-value" :class="{ over: store.totals.planned > store.budgetLimit }">
-      {{ store.formatCurrency(store.totals.planned) }}
+      {{ store.multiCurrencyTotals.hasNonBaseCurrency ? '≈' : '' }}{{ store.formatCurrency(store.totals.planned) }}
     </span>
+    <CurrencyBreakdownList :by-currency="store.multiCurrencyTotals.planned.byCurrency" />
     <div class="progress-track">
       <div
         class="progress-fill"

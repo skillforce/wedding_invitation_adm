@@ -10,10 +10,13 @@ import type {
   BudgetSection,
   BudgetSectionDto,
   BudgetTotals,
+  CurrencyBreakdown,
+  MultiCurrencyTotals,
   Priority,
 } from '@/types/budget'
 import { BUDGET_API } from '@/api/budget'
 import { useAppCommonStore } from '@/stores/app_common'
+import { useCurrencyStore } from '@/stores/currency'
 
 const PRIORITY_CYCLE: Priority[] = ['must', 'want', 'maybe']
 const COLLAPSED_STORAGE_KEY = 'wedly_budget_collapsed'
@@ -404,17 +407,24 @@ export const useBudgetStore = defineStore('budget', () => {
     }
   }
 
+  function toBaseCurrency(amount: number, from: BudgetCurrency): number {
+    if (from === currency.value) return amount
+    const cs = useCurrencyStore()
+    const converted = cs.convert(amount, from, currency.value)
+    return converted !== null ? Math.round(converted) : amount
+  }
+
   const totals = computed<BudgetTotals>(() => {
     const items = sections.value.flatMap((section) => section.items)
 
-    const planned = items.reduce((sum, i) => sum + i.estimatedCost, 0)
-    const deposit = items.reduce((sum, i) => sum + (i.deposit ?? 0), 0)
+    const planned = items.reduce((sum, i) => sum + toBaseCurrency(i.estimatedCost, i.currency), 0)
+    const deposit = items.reduce((sum, i) => sum + toBaseCurrency(i.deposit ?? 0, i.currency), 0)
     const paidWithoutDeposit = items.reduce((sum, item) => {
       if (typeof item.actualCost === 'number') {
-        return sum + item.actualCost
+        return sum + toBaseCurrency(item.actualCost, item.currency)
       }
       if (item.paid) {
-        return sum + item.estimatedCost
+        return sum + toBaseCurrency(item.estimatedCost, item.currency)
       }
       return sum
     }, 0)
@@ -423,18 +433,85 @@ export const useBudgetStore = defineStore('budget', () => {
     const remaining = planned - paid
 
     const byPriority = {
-      must: items.filter((i) => i.priority === 'must').reduce((sum, i) => sum + i.estimatedCost, 0),
-      want: items.filter((i) => i.priority === 'want').reduce((sum, i) => sum + i.estimatedCost, 0),
-      maybe: items.filter((i) => i.priority === 'maybe').reduce((sum, i) => sum + i.estimatedCost, 0),
+      must: items.filter((i) => i.priority === 'must').reduce((sum, i) => sum + toBaseCurrency(i.estimatedCost, i.currency), 0),
+      want: items.filter((i) => i.priority === 'want').reduce((sum, i) => sum + toBaseCurrency(i.estimatedCost, i.currency), 0),
+      maybe: items.filter((i) => i.priority === 'maybe').reduce((sum, i) => sum + toBaseCurrency(i.estimatedCost, i.currency), 0),
     }
 
     const percentUsed = budgetLimit.value > 0 ? Math.round((planned / budgetLimit.value) * 100) : 0
 
     const itemsWithActual = items.filter((i) => typeof i.actualCost === 'number')
-    const deviationEstimated = itemsWithActual.reduce((sum, i) => sum + i.estimatedCost, 0)
-    const deviationActual = itemsWithActual.reduce((sum, i) => sum + (i.actualCost ?? 0) + (i.deposit ?? 0), 0)
+    const deviationEstimated = itemsWithActual.reduce((sum, i) => sum + toBaseCurrency(i.estimatedCost, i.currency), 0)
+    const deviationActual = itemsWithActual.reduce((sum, i) => sum + toBaseCurrency((i.actualCost ?? 0) + (i.deposit ?? 0), i.currency), 0)
 
     return { planned, paid, deposit, remaining, byPriority, percentUsed, deviationEstimated, deviationActual }
+  })
+
+  const multiCurrencyTotals = computed<MultiCurrencyTotals>(() => {
+    const items = sections.value.flatMap((section) => section.items)
+    const base = currency.value
+
+    function accumulate(acc: Partial<Record<BudgetCurrency, number>>, cur: BudgetCurrency, val: number) {
+      acc[cur] = (acc[cur] ?? 0) + val
+    }
+
+    function makeBreakdown(byCurrency: Partial<Record<BudgetCurrency, number>>): CurrencyBreakdown {
+      const total = Object.entries(byCurrency).reduce(
+        (sum, [cur, val]) => sum + toBaseCurrency(val!, cur as BudgetCurrency), 0,
+      )
+      return { byCurrency, total }
+    }
+
+    const plannedBy: Partial<Record<BudgetCurrency, number>> = {}
+    const paidBy: Partial<Record<BudgetCurrency, number>> = {}
+    const depositBy: Partial<Record<BudgetCurrency, number>> = {}
+    const mustBy: Partial<Record<BudgetCurrency, number>> = {}
+    const wantBy: Partial<Record<BudgetCurrency, number>> = {}
+    const maybeBy: Partial<Record<BudgetCurrency, number>> = {}
+    const devEstBy: Partial<Record<BudgetCurrency, number>> = {}
+    const devActBy: Partial<Record<BudgetCurrency, number>> = {}
+
+    for (const item of items) {
+      accumulate(plannedBy, item.currency, item.estimatedCost)
+
+      if (item.deposit) {
+        accumulate(depositBy, item.currency, item.deposit)
+        accumulate(paidBy, item.currency, item.deposit)
+      }
+      if (typeof item.actualCost === 'number') {
+        accumulate(paidBy, item.currency, item.actualCost)
+        accumulate(devEstBy, item.currency, item.estimatedCost)
+        accumulate(devActBy, item.currency, item.actualCost + (item.deposit ?? 0))
+      } else if (item.paid) {
+        accumulate(paidBy, item.currency, item.estimatedCost)
+      }
+
+      const priorityTarget = item.priority === 'must' ? mustBy : item.priority === 'want' ? wantBy : maybeBy
+      accumulate(priorityTarget, item.currency, item.estimatedCost)
+    }
+
+    const allCurrencies = new Set([...Object.keys(plannedBy), ...Object.keys(paidBy)]) as Set<BudgetCurrency>
+    const remainingBy: Partial<Record<BudgetCurrency, number>> = {}
+    for (const cur of allCurrencies) {
+      const p = plannedBy[cur] ?? 0
+      const pd = paidBy[cur] ?? 0
+      if (p !== 0 || pd !== 0) remainingBy[cur] = p - pd
+    }
+
+    return {
+      planned: makeBreakdown(plannedBy),
+      paid: makeBreakdown(paidBy),
+      deposit: makeBreakdown(depositBy),
+      remaining: makeBreakdown(remainingBy),
+      deviationEstimated: makeBreakdown(devEstBy),
+      deviationActual: makeBreakdown(devActBy),
+      byPriority: {
+        must: makeBreakdown(mustBy),
+        want: makeBreakdown(wantBy),
+        maybe: makeBreakdown(maybeBy),
+      },
+      hasNonBaseCurrency: items.some((i) => i.currency !== base),
+    }
   })
 
   function getSectionTotal(sectionId: number): number {
@@ -450,6 +527,7 @@ export const useBudgetStore = defineStore('budget', () => {
     budgetLimit,
     currency,
     totals,
+    multiCurrencyTotals,
     formatCurrency,
     formatCurrencyAmount,
     fetchBudget,

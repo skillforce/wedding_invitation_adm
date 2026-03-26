@@ -65,21 +65,4 @@ const emit = defineEmits<{
   background: color-mix(in srgb, var(--p-primary-100) 20%, var(--color-surface));
 }
 
-@media (max-width: 480px) {
-  .guest-row :deep(.response-mark--badge) {
-    padding: 0.15rem 0.2rem;
-  }
-
-  .guest-row :deep(.response-mark--muted.response-mark--badge .response-mark__label) {
-    display: none;
-  }
-
-  .guest-row :deep(.response-mark--muted.response-mark--badge) {
-    gap: 0;
-  }
-
-  .guest-row :deep(.response-mark--muted.response-mark--badge .pi) {
-    font-size: 0.75rem;
-  }
-}
 </style>

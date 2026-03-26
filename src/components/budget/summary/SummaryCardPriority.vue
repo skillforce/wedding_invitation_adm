@@ -3,31 +3,38 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBudgetStore } from '@/stores/budget'
 import SummaryCard from './SummaryCard.vue'
+import CurrencyBreakdownList from './CurrencyBreakdownList.vue'
+import type { CurrencyBreakdown } from '@/types/budget'
 
 const store = useBudgetStore()
 const { t } = useI18n()
+
+const approxPrefix = computed(() => store.multiCurrencyTotals.hasNonBaseCurrency ? '≈' : '')
 
 const priorityRows = computed(() => [
   {
     key: 'must',
     label: t('budget.priority.must'),
-    value: store.formatCurrency(store.totals.byPriority.must),
+    value: approxPrefix.value + store.formatCurrency(store.totals.byPriority.must),
     icon: '!',
     iconClass: 'icon-must',
+    breakdown: store.multiCurrencyTotals.byPriority.must as CurrencyBreakdown,
   },
   {
     key: 'want',
     label: t('budget.priority.want'),
-    value: store.formatCurrency(store.totals.byPriority.want),
+    value: approxPrefix.value + store.formatCurrency(store.totals.byPriority.want),
     icon: '♥',
     iconClass: 'icon-want',
+    breakdown: store.multiCurrencyTotals.byPriority.want as CurrencyBreakdown,
   },
   {
     key: 'maybe',
     label: t('budget.priority.maybe'),
-    value: store.formatCurrency(store.totals.byPriority.maybe),
+    value: approxPrefix.value + store.formatCurrency(store.totals.byPriority.maybe),
     icon: '?',
     iconClass: 'icon-maybe',
+    breakdown: store.multiCurrencyTotals.byPriority.maybe as CurrencyBreakdown,
   },
 ])
 </script>
@@ -40,7 +47,10 @@ const priorityRows = computed(() => [
           <span class="priority-icon" :class="row.iconClass">{{ row.icon }}</span>
           <span class="priority-label">{{ row.label }}</span>
         </div>
-        <span class="priority-value">{{ row.value }}</span>
+        <div class="priority-values">
+          <span class="priority-value">{{ row.value }}</span>
+          <CurrencyBreakdownList :by-currency="row.breakdown.byCurrency" />
+        </div>
       </div>
     </div>
   </SummaryCard>
@@ -58,12 +68,27 @@ const priorityRows = computed(() => [
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.45rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.priority-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .priority-meta {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  min-width: 0;
+}
+
+.priority-values {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
   min-width: 0;
 }
 

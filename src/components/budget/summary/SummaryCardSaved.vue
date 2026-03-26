@@ -3,12 +3,27 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBudgetStore } from '@/stores/budget'
 import SummaryCard from './SummaryCard.vue'
+import CurrencyBreakdownList from './CurrencyBreakdownList.vue'
+import type { BudgetCurrency } from '@/types/budget'
 
 const store = useBudgetStore()
 const { t } = useI18n()
 
 const savedAmount = computed(() => store.totals.deviationEstimated - store.totals.deviationActual)
 const isOverBudgetVsPlan = computed(() => savedAmount.value < 0)
+const approxPrefix = computed(() => store.multiCurrencyTotals.hasNonBaseCurrency ? '≈' : '')
+
+const savedByCurrency = computed(() => {
+  const est = store.multiCurrencyTotals.deviationEstimated.byCurrency
+  const act = store.multiCurrencyTotals.deviationActual.byCurrency
+  const allCurrencies = new Set([...Object.keys(est), ...Object.keys(act)]) as Set<BudgetCurrency>
+  const result: Partial<Record<BudgetCurrency, number>> = {}
+  for (const cur of allCurrencies) {
+    const diff = (est[cur] ?? 0) - (act[cur] ?? 0)
+    if (diff !== 0) result[cur] = diff
+  }
+  return result
+})
 </script>
 
 <template>
@@ -18,17 +33,19 @@ const isOverBudgetVsPlan = computed(() => savedAmount.value < 0)
     :icon-color="isOverBudgetVsPlan ? '#e8927a' : '#7aad8c'"
   >
     <span class="card-value" :class="{ over: isOverBudgetVsPlan, saved: !isOverBudgetVsPlan }">
-      {{ store.formatCurrency(savedAmount) }}
+      {{ approxPrefix }}{{ store.formatCurrency(savedAmount) }}
     </span>
+
+    <CurrencyBreakdownList :by-currency="savedByCurrency" />
 
     <div class="compare-list">
       <div class="compare-row">
         <span class="compare-label">{{ t('budget.estimated') }}</span>
-        <span class="compare-value">{{ store.formatCurrency(store.totals.deviationEstimated) }}</span>
+        <span class="compare-value">{{ approxPrefix }}{{ store.formatCurrency(store.totals.deviationEstimated) }}</span>
       </div>
       <div class="compare-row">
         <span class="compare-label">{{ t('budget.actual') }} + {{ t('budget.deposit') }}</span>
-        <span class="compare-value">{{ store.formatCurrency(store.totals.deviationActual) }}</span>
+        <span class="compare-value">{{ approxPrefix }}{{ store.formatCurrency(store.totals.deviationActual) }}</span>
       </div>
     </div>
   </SummaryCard>
