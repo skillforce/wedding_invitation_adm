@@ -125,11 +125,18 @@ export const useSeatingStore = defineStore('seating', () => {
     const guest = guestsStore.guestById.get(String(guestId))
     if (!guest) return 0
 
-    const kidsSeats = guest.guestForm?.has_kids_attending
-      ? clampExtraSeats(guest.guestForm.amount_of_kids)
+    const hasKids = guest.guestForm?.has_kids_attending ?? false
+    const hasCouple = guest.guestForm?.ifWithCouple?.response === true
+
+    const kidsSeats = hasKids
+      ? clampExtraSeats(guest.guestForm!.amount_of_kids)
       : 0
-    const plusOneSeats = guest.response?.plus_one ? 1 : 0
-    const coupleNotInListSeat = (guest.guestForm?.ifWithCouple?.response === true && !guest.guestForm?.ifWithCouple?.coupleId) ? 1 : 0
+    const coupleNotInListSeat = (hasCouple && !guest.guestForm?.ifWithCouple?.coupleId) ? 1 : 0
+
+    // If profile already accounts for companions (spouse or kids), ignore response +1
+    const plusOneSeats = (hasCouple || hasKids)
+      ? 0
+      : (guest.response?.plus_one ? 1 : 0)
 
     return kidsSeats + plusOneSeats + coupleNotInListSeat
   }

@@ -56,6 +56,10 @@
     "invitationUrlPlaceholder": "URL сайта приглашения",
     "addGuestPlaceholder": "Имя гостя (3–20 символов)",
     "addGuestButton": "Добавить",
+    "confirmDeleteHeader": "Подтверждение удаления",
+    "confirmDeleteGuest": "Удалить гостя «{name}»?",
+    "cancel": "Отмена",
+    "delete": "Удалить",
     "profile": {
       "modalTitle": "Профиль гостя",
       "editTitle": "Редактирование профиля гостя",

@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
+import ConfirmDialog from 'primevue/confirmdialog'
 import { useGuestsStore } from '@/stores/guests'
 import { useAuthStore } from '@/stores/auth'
 import type { GuestDetailViewDto } from '@/api/guests'
@@ -47,6 +48,7 @@ function requestEditSelectedGuest() {
 
 <template>
   <div class="guests-page">
+    <ConfirmDialog :breakpoints="{'640px': '70vw'}" />
     <Card class="guests-card">
       <template #title>{{ t('guests.title') }}</template>
       <template #content>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useConfirm } from 'primevue/useconfirm'
 import Button from 'primevue/button'
 import GuestResponseMark from '@/components/guests/GuestResponsePanel/GuestResponseMark.vue'
 import { useAuthStore } from '@/stores/auth.ts'
 
 const props = defineProps<{
   guestId: string
+  guestName: string
   isAlreadyAnswered: boolean
 }>()
 
@@ -15,6 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const confirm = useConfirm()
 const authStore = useAuthStore()
 const copied = ref(false)
 
@@ -25,6 +28,17 @@ async function copyLink() {
   await navigator.clipboard.writeText(url)
   copied.value = true
   setTimeout(() => (copied.value = false), 2000)
+}
+
+function confirmRemove() {
+  confirm.require({
+    header: t('guests.confirmDeleteHeader'),
+    message: t('guests.confirmDeleteGuest', { name: props.guestName }),
+    rejectLabel: t('guests.cancel'),
+    acceptLabel: t('guests.delete'),
+    acceptClass: 'p-button-danger',
+    accept: () => emit('remove', props.guestId),
+  })
 }
 </script>
 
@@ -54,7 +68,7 @@ async function copyLink() {
     text
     rounded
     :aria-label="t('a11y.removeGuest')"
-    @click.stop="emit('remove', guestId)"
+    @click.stop="confirmRemove"
   />
 </template>
 

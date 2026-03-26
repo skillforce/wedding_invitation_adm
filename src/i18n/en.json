@@ -56,6 +56,10 @@
     "invitationUrlPlaceholder": "Invitation site URL",
     "addGuestPlaceholder": "Guest name (3–20 chars)",
     "addGuestButton": "Add guest",
+    "confirmDeleteHeader": "Confirm deletion",
+    "confirmDeleteGuest": "Delete guest \"{name}\"?",
+    "cancel": "Cancel",
+    "delete": "Delete",
     "profile": {
       "modalTitle": "Guest profile",
       "editTitle": "Edit guest profile",

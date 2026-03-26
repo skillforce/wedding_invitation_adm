@@ -33,6 +33,7 @@ const emit = defineEmits<{
     />
     <GuestActions
       :guest-id="guest.id"
+      :guest-name="guest.name"
       :is-already-answered="guest.is_already_answered"
       @remove="emit('remove', $event)"
     />
