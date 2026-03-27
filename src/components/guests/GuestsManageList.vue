@@ -77,15 +77,21 @@ const filteredGuests = computed(() => {
 })
 
 const isAllUnfiltered = computed(() => activeFilter.value === 'all' && !hasActiveProfileFilter.value)
-
 const partnerPlusCount = computed(() => {
   if (!isAllUnfiltered.value) return undefined
   return props.guests.reduce((sum, g) => {
-    const rsvpPlusOne = g.response?.plus_one === true ? 1 : 0
-    const coupleNotInList = (g.guestForm?.ifWithCouple?.response === true && !g.guestForm?.ifWithCouple?.coupleId) ? 1 : 0
-    return sum + rsvpPlusOne + coupleNotInList
+    if (g.response?.plus_one !== true && !g.guestForm?.ifWithCouple?.response) return sum
+
+    const hasCoupleInForm = g.guestForm?.ifWithCouple?.response === true
+    const coupleInGuestList = Boolean(g.guestForm?.ifWithCouple?.coupleId)
+
+    if (hasCoupleInForm && coupleInGuestList) {
+      return sum
+    }
+    return sum + 1
   }, 0)
 })
+
 
 const kidsPlusCount = computed(() => {
   if (!isAllUnfiltered.value) return undefined
