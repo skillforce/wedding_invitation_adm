@@ -7,6 +7,7 @@ const props = defineProps<{
   guestId: string
   name: string
   number: number
+  extraCount?: number
   highlightQuery?: string
 }>()
 
@@ -47,6 +48,7 @@ const highlightedGuestNameParts = computed(() => {
     >
       {{ part.text }}
     </span>
+    <span v-if="extraCount && extraCount > 0" class="guest-extra-count">+{{ extraCount }}</span>
   </span>
 </template>
 
@@ -66,8 +68,10 @@ const highlightedGuestNameParts = computed(() => {
   font-weight: 600;
   color: var(--color-text-primary);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .guest-name-part--highlighted {
@@ -76,6 +80,26 @@ const highlightedGuestNameParts = computed(() => {
   border-radius: 0.28rem;
   padding: 0 0.12rem;
   box-shadow: 0 0 0 1px color-mix(in srgb, #e0b400 22%, transparent);
+}
+
+.guest-name-part {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guest-extra-count {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--p-primary-100) 65%, white);
+  border: 1px solid color-mix(in srgb, var(--p-primary-300) 50%, transparent);
+  color: var(--p-primary-700);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 @media (max-width: 480px) {

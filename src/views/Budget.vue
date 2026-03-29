@@ -88,6 +88,7 @@ onMounted(() => {
   overflow: hidden;
   box-shadow: var(--shadow-card);
   border-radius: 12px;
+  background: var(--color-budget-card-bg);
 }
 
 .table-card :deep(.p-card-body),

@@ -24,6 +24,7 @@ defineProps<{
 .response-list {
   margin: 0;
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.65rem;
 }
 

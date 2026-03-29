@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { GuestDetailViewDto } from '@/api/guests.ts'
 import GuestIdentity from './GuestIdentity.vue'
 import GuestActions from './GuestActions.vue'
@@ -14,6 +15,21 @@ const emit = defineEmits<{
   remove: [id: string]
   select: [id: string]
 }>()
+
+const extraCount = computed(() => {
+  const hasKids = props.guest.guestForm?.has_kids_attending ?? false
+  const hasCouple = props.guest.guestForm?.ifWithCouple?.response === true
+
+  const kidsSeats = hasKids
+    ? Math.max(0, props.guest.guestForm?.amount_of_kids ?? 0)
+    : 0
+  const coupleNotInListSeat = (hasCouple && !props.guest.guestForm?.ifWithCouple?.coupleId) ? 1 : 0
+  const plusOneSeats = (hasCouple || hasKids)
+    ? 0
+    : (props.guest.response?.plus_one ? 1 : 0)
+
+  return kidsSeats + plusOneSeats + coupleNotInListSeat
+})
 </script>
 
 <template>
@@ -29,6 +45,7 @@ const emit = defineEmits<{
       :guest-id="guest.id"
       :name="guest.name"
       :number="number"
+      :extra-count="extraCount"
       :highlight-query="highlightQuery"
     />
     <GuestActions

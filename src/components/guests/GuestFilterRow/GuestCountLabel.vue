@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import coupleIconUrl from '@/assets/couple.svg'
 import childIconUrl from '@/assets/child.svg'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   label: string
@@ -10,8 +13,8 @@ const props = defineProps<{
 }>()
 
 const badges = computed(() => [
-  { key: 'couple', iconUrl: coupleIconUrl, count: props.partnerPlusCount, label: 'партнёры', modifier: 'badge--couple' },
-  { key: 'kids',   iconUrl: childIconUrl,  count: props.kidsPlusCount,    label: 'дети',     modifier: 'badge--kids'   },
+  { key: 'couple', iconUrl: coupleIconUrl, count: props.partnerPlusCount, label: t('guests.badgePartners'), modifier: 'badge--couple' },
+  { key: 'kids',   iconUrl: childIconUrl,  count: props.kidsPlusCount,    label: t('guests.badgeKids'),     modifier: 'badge--kids'   },
 ].filter(b => b.count && b.count > 0))
 </script>
 

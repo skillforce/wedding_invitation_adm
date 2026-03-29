@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Slider from 'primevue/slider'
 import { SeatingShape } from '@/api/seating-arrangement'
@@ -9,77 +9,84 @@ import TableGuestList from './TableGuestList.vue'
 const MIN_RADIUS = 40
 const MAX_RADIUS = 120
 
-const props = defineProps<{ table: SeatingTable }>()
+const props = defineProps<{ table: SeatingTable | null; isMobile: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
 const seatingStore = useSeatingStore()
 const { t } = useI18n()
 
-const editingName = ref(props.table.name)
-const sizeValue = ref(props.table.radius)
+const transitionName = computed(() => (props.isMobile ? 'drawer' : 'panel'))
+
+const editingName = ref(props.table?.name ?? '')
+const sizeValue = ref(props.table?.radius ?? MIN_RADIUS)
 
 watch(
-  () => props.table.id,
+  () => props.table?.id,
   () => {
+    if (!props.table) return
     editingName.value = props.table.name
     sizeValue.value = props.table.radius
   },
 )
 
 function onSizeChange(val: number | number[]) {
-  if (typeof val !== 'number') return
+  if (typeof val !== 'number' || !props.table) return
   seatingStore.updateTableRadius(props.table.id, val)
 }
 
 function saveName() {
-  if (editingName.value.trim()) {
+  if (editingName.value.trim()  && props.table) {
     seatingStore.renameTable(props.table.id, editingName.value.trim())
   }
 }
 
 async function deleteTable() {
-  await seatingStore.deleteTable(props.table.id)
+  if(props.table) {
+    await seatingStore.deleteTable(props.table.id)
+  }
   emit('close')
 }
 </script>
 
 <template>
-  <aside class="side-panel">
-    <div class="drawer-handle" />
+  <Transition :name="transitionName">
+    <aside v-if="table" class="side-panel">
+      <div class="drawer-handle" />
 
-    <div class="panel-header">
-      <input
-        v-model="editingName"
-        class="name-input"
-        maxlength="30"
-        :placeholder="t('seating.tableNamePlaceholder')"
-        @blur="saveName"
-        @keydown.enter="($event.target as HTMLInputElement).blur()"
-      />
-      <button class="close-btn" :aria-label="t('a11y.closePanel')" @click="emit('close')">✕</button>
-    </div>
-
-    <div class="size-section">
-      <div class="size-label">
-        <span class="size-label-text">{{ t('seating.size') }}</span>
-        <span class="size-value">{{ sizeValue }}</span>
+      <div class="panel-header">
+        <input
+          v-model="editingName"
+          class="name-input"
+          maxlength="30"
+          :placeholder="t('seating.tableNamePlaceholder')"
+          @blur="saveName"
+          @keydown.enter="($event.target as HTMLInputElement).blur()"
+        />
+        <button class="close-btn" :aria-label="t('a11y.closePanel')" @click="emit('close')">✕</button>
       </div>
-      <Slider
-        v-model="sizeValue"
-        :min="MIN_RADIUS"
-        :max="MAX_RADIUS"
-        :step="5"
-        class="size-slider"
-        @change="onSizeChange"
-      />
-    </div>
 
-    <TableGuestList v-if="table.shape !== SeatingShape.Pillar" :table="table" />
+      <div class="size-section">
+        <div class="size-label">
+          <span class="size-label-text">{{ t('seating.size') }}</span>
+          <span class="size-value">{{ sizeValue }}</span>
+        </div>
+        <Slider
+          v-model="sizeValue"
+          :min="MIN_RADIUS"
+          :max="MAX_RADIUS"
+          :step="5"
+          class="size-slider"
+          @change="onSizeChange"
+        />
+      </div>
 
-    <div class="panel-footer">
-      <button class="delete-table-btn" @click="deleteTable">{{ t('seating.deleteTable') }}</button>
-    </div>
-  </aside>
+      <TableGuestList v-if="table.shape !== SeatingShape.Pillar" :table="table" />
+
+      <div class="panel-footer">
+        <button class="delete-table-btn" @click="deleteTable">{{ t('seating.deleteTable') }}</button>
+      </div>
+    </aside>
+  </Transition>
 </template>
 
 <style scoped>
@@ -250,5 +257,29 @@ async function deleteTable() {
 
 .delete-table-btn:active {
   transform: scale(0.97);
+}
+
+/* ── Desktop panel slide-in (from right) ──────────────────────────────────── */
+.panel-enter-active,
+.panel-leave-active {
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.panel-enter-from,
+.panel-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* ── Mobile drawer slide-up (from bottom) ─────────────────────────────────── */
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: transform 0.24s ease, opacity 0.24s ease;
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
 }
 </style>

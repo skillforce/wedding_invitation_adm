@@ -17,6 +17,7 @@ import TableNode from '@/components/interactiveBoard/TableNode.vue'
 import TablePanel from '@/components/interactiveBoard/TablePanel.vue'
 import WorkspaceNode from '@/components/interactiveBoard/WorkspaceNode.vue'
 import WorkspaceSettings from '@/components/interactiveBoard/workspaceSettings/index.vue'
+import AutoSeatMagicOverlay from '@/components/interactiveBoard/AutoSeatMagicOverlay.vue'
 
 const { t } = useI18n()
 const confirm = useConfirm()
@@ -39,6 +40,8 @@ onMounted(async () => {
   fitToStage()
 })
 
+const autoSeatAnimating = ref(false)
+
 const selectedTableId = ref<string | null>(null)
 const workspaceSettingsOpen = ref(false)
 const selectedTable = computed(
@@ -51,7 +54,6 @@ function onStageClick(e: KonvaEventObject<Event>) {
   }
 }
 
-const panelTransition = computed(() => (isMobile.value ? 'drawer' : 'panel'))
 
 function onAddObject(shape: import('@/api/seating-arrangement').SeatingShape) {
   seatingStore.addObject(shape)
@@ -61,13 +63,20 @@ function openWorkspaceSettings() {
   workspaceSettingsOpen.value = true
 }
 
+async function onHandleAutoSeat (){
+    autoSeatAnimating.value = true
+    const minDelay = new Promise((r) => setTimeout(r, 2500))
+    await Promise.all([seatingStore.autoSeat(), minDelay])
+    autoSeatAnimating.value = false
+}
+
 function onAutoSeat() {
   confirm.require({
     header: t('seating.autoSeatConfirmHeader'),
     message: t('seating.autoSeatConfirmMessage'),
     acceptLabel: t('seating.autoSeatConfirmAccept'),
     rejectLabel: t('seating.autoSeatConfirmReject'),
-    accept: () => seatingStore.autoSeat(),
+    accept: onHandleAutoSeat,
   })
 }
 
@@ -129,13 +138,13 @@ function onTableRotate(id: string, deg: number) {
       </VLayer>
     </VStage>
 
-    <Transition :name="panelTransition">
-      <TablePanel
-        v-if="selectedTable"
-        :table="selectedTable"
-        @close="selectedTableId = null"
-      />
-    </Transition>
+    <TablePanel
+      :table="selectedTable"
+      :is-mobile="isMobile"
+      @close="selectedTableId = null"
+    />
+
+    <AutoSeatMagicOverlay :visible="autoSeatAnimating" />
   </div>
 </template>
 
@@ -183,27 +192,4 @@ function onTableRotate(id: string, deg: number) {
   }
 }
 
-/* ── Desktop panel slide-in (from right) ──────────────────────────────────── */
-.panel-enter-active,
-.panel-leave-active {
-  transition: transform 0.22s ease, opacity 0.22s ease;
-}
-
-.panel-enter-from,
-.panel-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-/* ── Mobile drawer slide-up (from bottom) ─────────────────────────────────── */
-.drawer-enter-active,
-.drawer-leave-active {
-  transition: transform 0.24s ease, opacity 0.24s ease;
-}
-
-.drawer-enter-from,
-.drawer-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
-}
 </style>

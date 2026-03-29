@@ -49,9 +49,11 @@
     },
     "profileFilterFieldPlaceholder": "Сортировать по полю профиля",
     "profileFilterValuePlaceholder": "Выберите значение профиля",
-    "countAll": "Всего: {count}",
+    "countAll": "Всего в списке: {count}",
     "countAnswered": "Ответили: {count} из {total}",
     "countPending": "Не ответили: {count} из {total}",
+    "badgePartners": "партнёры",
+    "badgeKids": "дети",
     "noMatchingGuests": "Нет гостей по этому фильтру.",
     "invitationUrlPlaceholder": "URL сайта приглашения",
     "addGuestPlaceholder": "Имя гостя (3–20 символов)",
@@ -164,7 +166,11 @@
     "autoSeatConfirmHeader": "Вы уверены?",
     "autoSeatConfirmMessage": "Все ранее сохранённые данные рассадки будут перезаписаны!",
     "autoSeatConfirmAccept": "ОК",
-    "autoSeatConfirmReject": "Отмена"
+    "autoSeatConfirmReject": "Отмена",
+    "autoSeatAnimating": "Рассаживаем гостей…",
+    "autoSeatPhase1": "Анализируем гостей…",
+    "autoSeatPhase2": "Подбираем лучшую рассадку…",
+    "autoSeatPhase3": "Рассаживаем за столы…"
   },
   "a11y": {
     "sidebarToggle": "Переключить сайдбар",

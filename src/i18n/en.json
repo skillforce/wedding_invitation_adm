@@ -49,9 +49,11 @@
     },
     "profileFilterFieldPlaceholder": "Sort by profile field",
     "profileFilterValuePlaceholder": "Choose profile value",
-    "countAll": "Total: {count}",
+    "countAll": "Total in list: {count}",
     "countAnswered": "Answered: {count} of {total}",
     "countPending": "Pending: {count} of {total}",
+    "badgePartners": "partners",
+    "badgeKids": "kids",
     "noMatchingGuests": "No guests match this filter.",
     "invitationUrlPlaceholder": "Invitation site URL",
     "addGuestPlaceholder": "Guest name (3–20 chars)",
@@ -164,7 +166,11 @@
     "autoSeatConfirmHeader": "Are you sure?",
     "autoSeatConfirmMessage": "All previously saved seating data will be overwritten!",
     "autoSeatConfirmAccept": "OK",
-    "autoSeatConfirmReject": "Cancel"
+    "autoSeatConfirmReject": "Cancel",
+    "autoSeatAnimating": "Seating guests…",
+    "autoSeatPhase1": "Analyzing guests…",
+    "autoSeatPhase2": "Finding best arrangement…",
+    "autoSeatPhase3": "Assigning seats…"
   },
   "a11y": {
     "sidebarToggle": "Toggle sidebar",
