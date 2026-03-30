@@ -3,9 +3,10 @@ import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useChecklistStore } from '@/stores/checklist'
 import ChecklistHero from '@/components/checklist/checklistHero/ChecklistHero.vue'
-import ChecklistNormalView from '@/components/checklist/ChecklistNormalView.vue'
-import ChecklistEditView from '@/components/checklist/ChecklistEditView.vue'
+import ChecklistNormalView from '@/components/checklist/normalView/ChecklistNormalView.vue'
+import ChecklistEditView from '@/components/checklist/editView/ChecklistEditView.vue'
 import ChecklistEditFab from '@/components/checklist/ChecklistEditFab.vue'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 const EXPANDED_PHASES_STORAGE_KEY = 'wedding-checklist-expanded-phases'
 
@@ -115,6 +116,7 @@ onMounted(() => {
     </main>
 
     <ChecklistEditFab :is-editing="isEditing" @toggle="isEditing = !isEditing" />
+    <ConfirmDialog :breakpoints="{ '640px': '70vw' }" />
   </div>
 </template>
 

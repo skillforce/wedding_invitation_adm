@@ -1,44 +1,29 @@
 <template>
-  <div class="edit-view">
-    <div class="phase-list">
-      <PhaseCard
-        v-for="phase in phases"
-        :key="phase.id"
-        :phase="phase"
-        :is-open="expandedPhases.has(phase.id)"
-        :is-editing="true"
-        @toggle="$emit('toggle-phase', phase.id)"
-        @task-toggle="handleTaskToggle(phase.id, $event)"
-        @remove-phase="store.removePhase(phase.id)"
-      />
-    </div>
+  <div class="add-phase-card">
+    <div class="add-phase-row">
+      <div class="add-phase-icon-btn" @click="showIconPicker = !showIconPicker">
+        <i :class="newIcon" />
+        <i class="pi pi-chevron-down chevron" />
 
-    <div class="add-phase-card">
-      <div class="add-phase-row">
-        <div class="add-phase-icon-btn" @click="showIconPicker = !showIconPicker">
-          <i :class="newIcon" />
-          <i class="pi pi-chevron-down chevron" />
-
-          <Transition name="picker-drop">
-            <div v-if="showIconPicker" class="icon-picker-shell">
-              <PhaseIconPalette :model-value="newIcon" @select="selectNewIcon" />
-            </div>
-          </Transition>
-        </div>
-
-        <input
-          v-model="newName"
-          class="add-phase-input"
-          placeholder="New section name…"
-          maxlength="50"
-          @keydown.enter.prevent="submit"
-        />
-
-        <button class="add-phase-submit" :disabled="!newName.trim()" @click="submit">
-          <i class="pi pi-plus" />
-          Add section
-        </button>
+        <Transition name="picker-drop">
+          <div v-if="showIconPicker" class="icon-picker-shell">
+            <PhaseIconPalette :model-value="newIcon" @select="selectNewIcon" />
+          </div>
+        </Transition>
       </div>
+
+      <input
+        v-model="newName"
+        class="add-phase-input"
+        placeholder="New section name…"
+        maxlength="50"
+        @keydown.enter.prevent="submit"
+      />
+
+      <button class="add-phase-submit" :disabled="!newName.trim()" @click="submit">
+        <i class="pi pi-plus" />
+        Add section
+      </button>
     </div>
   </div>
 </template>
@@ -46,17 +31,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useChecklistStore } from '@/stores/checklist'
-import PhaseCard from './phaseCard/PhaseCard.vue'
-import type { Phase } from '@/stores/checklist'
-import PhaseIconPalette from './phaseCard/PhaseIconPalette.vue'
-
-defineProps<{
-  phases: Phase[]
-  expandedPhases: Set<string>
-}>()
+import PhaseIconPalette from '../phaseCard/PhaseIconPalette.vue'
 
 const emit = defineEmits<{
-  'toggle-phase': [id: string]
   'phase-added': [id: string]
 }>()
 
@@ -65,10 +42,6 @@ const store = useChecklistStore()
 const newName = ref('')
 const newIcon = ref('pi pi-sparkles')
 const showIconPicker = ref(false)
-
-function handleTaskToggle(phaseId: string, taskId: string) {
-  store.toggleTask(phaseId, taskId)
-}
 
 function selectNewIcon(icon: string) {
   newIcon.value = icon
@@ -88,18 +61,6 @@ function submit() {
 </script>
 
 <style scoped>
-.edit-view {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.phase-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 .add-phase-card {
   background: var(--color-surface);
   border: 1.5px dashed rgba(122, 173, 140, 0.4);

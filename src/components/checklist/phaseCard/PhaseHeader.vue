@@ -1,5 +1,5 @@
 <template>
-  <div class="phase-header" @click="!isEditing && $emit('toggle')">
+  <div class="phase-header" @click="!isEditing && canCollapse && $emit('toggle')">
     <PhaseIconPicker :phase-id="phase.id" :icon="phase.icon" :is-editing="isEditing" />
 
     <div class="phase-meta">
@@ -19,6 +19,7 @@
     <PhaseHeaderActions
       :is-editing="isEditing"
       :is-open="isOpen"
+      :can-collapse="canCollapse"
       @toggle="$emit('toggle')"
       @remove="$emit('remove')"
     />
@@ -62,6 +63,7 @@ watch(
 )
 
 const doneTasks = computed(() => props.phase.tasks.filter((task) => task.completed).length)
+const canCollapse = computed(() => props.phase.tasks.length > 0 && doneTasks.value === props.phase.tasks.length)
 </script>
 
 <style scoped>

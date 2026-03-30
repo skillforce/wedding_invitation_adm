@@ -29,12 +29,11 @@ const { t } = useI18n()
 }
 
 .hero-eyebrow {
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #7aad8c;
-  margin-bottom: 6px;
 }
 
 .hero-title {

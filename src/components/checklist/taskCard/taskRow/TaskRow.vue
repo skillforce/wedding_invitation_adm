@@ -6,7 +6,7 @@
     :tabindex="isEditing ? -1 : 0"
     @click="!isEditing && $emit('toggle')"
     @keydown.enter.prevent="!isEditing && $emit('toggle')"
-    @keydown.space.prevent="!isEditing && $emit('toggle')"
+    @keydown.space="onSpace"
   >
     <TaskCheckOrb :is-editing="isEditing" :completed="task.completed" />
 
@@ -39,13 +39,13 @@ import TaskBody from './TaskBody.vue'
 import TaskCommentBtn from './TaskCommentBtn.vue'
 import TaskRowActions from './TaskRowActions.vue'
 
-defineProps<{
+const props = defineProps<{
   task: Task
   isEditing?: boolean
   showComment: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   toggle: []
   remove: []
   'toggle-priority': []
@@ -53,6 +53,13 @@ defineEmits<{
   'update-note': [v: string]
   'toggle-comment': []
 }>()
+
+function onSpace(e: KeyboardEvent) {
+  if (!props.isEditing) {
+    e.preventDefault()
+    emit('toggle')
+  }
+}
 </script>
 
 <style scoped>

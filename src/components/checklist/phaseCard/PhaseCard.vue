@@ -11,9 +11,12 @@
     <CollapseTransition :show="isOpen">
       <div class="task-list-inner">
         <PhaseTaskList :phase="phase" :is-editing="isEditing" />
-        <PhaseAddTask v-if="isEditing" :phase-id="phase.id" />
       </div>
     </CollapseTransition>
+
+    <div v-if="isEditing" class="add-task-inner">
+      <PhaseAddTask :phase-id="phase.id" />
+    </div>
   </section>
 </template>
 
@@ -56,7 +59,12 @@ defineEmits<{
   padding: 0 14px 14px;
 }
 
+.add-task-inner {
+  padding: 0 14px 14px;
+}
+
 @media (max-width: 480px) {
   .task-list-inner { padding: 0 10px 10px; }
+  .add-task-inner { padding: 0 10px 10px; }
 }
 </style>

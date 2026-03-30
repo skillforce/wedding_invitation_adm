@@ -9,6 +9,7 @@
   </button>
 
   <button
+    v-if="canCollapse"
     class="phase-toggle-btn"
     :aria-label="isOpen ? t('checklist.collapse') : t('checklist.expand')"
     :aria-expanded="isOpen"
@@ -27,6 +28,7 @@ import { useI18n } from 'vue-i18n'
 defineProps<{
   isEditing: boolean
   isOpen: boolean
+  canCollapse: boolean
 }>()
 
 defineEmits<{ toggle: []; remove: [] }>()

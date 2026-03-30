@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { CHECKLIST_API } from '@/api/checklist'
 import type { ChecklistPhaseDto, ChecklistItemDto } from '@/api/checklist'
 import { useAppCommonStore } from '@/stores/app_common'
+import { usePreferencesStore } from '@/stores/preferences'
 
 export interface Task {
   id: string
@@ -73,7 +74,8 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const appCommon = useAppCommonStore()
     appCommon.showSpinner()
     try {
-      const dto = await CHECKLIST_API.getChecklist()
+      const { locale } = usePreferencesStore()
+      const dto = await CHECKLIST_API.getChecklist(locale)
       phases.value = dto.phases.map(mapPhase)
     } catch {
       appCommon.showError(new Error('errors.checklist.failedToLoad'))
@@ -285,7 +287,8 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const appCommon = useAppCommonStore()
     appCommon.showSpinner()
     try {
-      const dto = await CHECKLIST_API.resetChecklist()
+      const { locale } = usePreferencesStore()
+      const dto = await CHECKLIST_API.resetChecklist(locale)
       phases.value = dto.phases.map(mapPhase)
     } catch {
       appCommon.showError(new Error('errors.checklist.failedToReset'))

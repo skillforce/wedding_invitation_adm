@@ -62,14 +62,14 @@ export interface MoveItemDto {
 }
 
 export const CHECKLIST_API = {
-  async getChecklist(): Promise<ChecklistDto> {
-    const res = await apiFetch('/checklist')
+  async getChecklist(locale: string): Promise<ChecklistDto> {
+    const res = await apiFetch(`/checklist?locale=${locale}`)
     if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
-  async resetChecklist(): Promise<ChecklistDto> {
-    const res = await apiFetch('/checklist/reset', { method: HttpMethod.POST })
+  async resetChecklist(locale: string): Promise<ChecklistDto> {
+    const res = await apiFetch(`/checklist/reset?locale=${locale}`, { method: HttpMethod.POST })
     if (!res.ok) throw await parseApiError(res)
     return res.json()
   },

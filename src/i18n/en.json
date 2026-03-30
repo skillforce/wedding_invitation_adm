@@ -274,6 +274,11 @@
       "done": "Done",
       "priority": "Priority"
     },
+    "edit": "Edit",
+    "editDone": "Done",
+    "resetToDefaults": "Reset to default sections",
+    "resetConfirmHeader": "Reset checklist?",
+    "resetConfirmMessage": "All current sections and tasks will be deleted and replaced with defaults. This cannot be undone.",
     "celebration": {
       "title": "All Done!",
       "subtitle": "You're ready for your big day"

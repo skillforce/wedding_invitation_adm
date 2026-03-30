@@ -4,7 +4,7 @@
       v-for="phase in phases"
       :key="phase.id"
       :phase="phase"
-      :is-open="expandedPhases.has(phase.id)"
+      :is-open="isPhaseOpen(phase)"
       :is-editing="false"
       @toggle="$emit('toggle-phase', phase.id)"
       @task-toggle="handleTaskToggle(phase.id, $event)"
@@ -14,10 +14,10 @@
 
 <script setup lang="ts">
 import { useChecklistStore } from '@/stores/checklist'
-import PhaseCard from './phaseCard/PhaseCard.vue'
+import PhaseCard from '../phaseCard/PhaseCard.vue'
 import type { Phase } from '@/stores/checklist'
 
-defineProps<{
+const { expandedPhases } = defineProps<{
   phases: Phase[]
   expandedPhases: Set<string>
 }>()
@@ -28,6 +28,12 @@ defineEmits<{
 
 const store = useChecklistStore()
 
+function isPhaseOpen(phase: Phase): boolean {
+  const allDone = phase.tasks.length > 0 && phase.tasks.every((t) => t.completed)
+  if (!allDone) return true
+  return expandedPhases.has(phase.id)
+}
+
 function handleTaskToggle(phaseId: string, taskId: string) {
   store.toggleTask(phaseId, taskId)
 }
@@ -35,6 +41,7 @@ function handleTaskToggle(phaseId: string, taskId: string) {
 
 <style scoped>
 .phase-list {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -46,7 +53,8 @@ function handleTaskToggle(phaseId: string, taskId: string) {
 .phase-list-leave-active {
   animation: phaseIn 0.25s ease reverse both;
   position: absolute;
-  width: 100%;
+  left: 0;
+  right: 0;
 }
 .phase-list-move {
   transition: transform 0.35s ease;
