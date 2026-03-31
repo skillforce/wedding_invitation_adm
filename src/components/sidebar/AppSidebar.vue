@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/ProfileCard.vue'
 import SidebarCollapseButton from './SidebarCollapseButton.vue'
 import NavButton from './NavButton.vue'
-import { navItems } from './sidebarConfig'
+import { navItems, miniGameNavItem } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
 import { useAppCommonStore } from '@/stores/app_common'
 
@@ -60,6 +60,14 @@ const onClickOption = async (path: string) => {
           @click="onClickOption(item.path)"
         />
       </nav>
+
+      <NavButton
+        :icon-url="miniGameNavItem.iconUrl"
+        :label="t(miniGameNavItem.labelKey)"
+        :active="isActive(miniGameNavItem.path)"
+        :collapsed="collapsed"
+        @click="onClickOption(miniGameNavItem.path)"
+      />
 
       <NavButton
         :icon-url="logoutIconUrl as string"

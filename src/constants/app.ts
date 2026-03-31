@@ -9,6 +9,7 @@ export enum AppRoute {
   SeatingArrangements = '/seating-arrangements',
   Budget = '/budget',
   Checklist = '/checklist',
+  MiniGame = '/mini-game',
 }
 
 export enum AppChildRoute {
@@ -16,4 +17,5 @@ export enum AppChildRoute {
   SeatingArrangements = 'seating-arrangements',
   Budget = 'budget',
   Checklist = 'checklist',
+  MiniGame = 'mini-game',
 }

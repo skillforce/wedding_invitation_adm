@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/ProfileCard.vue'
 import NavButton from './NavButton.vue'
-import { navItems } from './sidebarConfig'
+import { navItems, miniGameNavItem } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
 import { useAppCommonStore } from '@/stores/app_common'
 import BottomDrawer from '@/components/shared/BottomDrawer.vue'
@@ -27,7 +27,7 @@ const { t } = useI18n()
 watch(
   () => route.path,
   (path) => {
-    if (navItems.some((item) => item.path === path)) {
+    if (navItems.some((item) => item.path === path) || path === miniGameNavItem.path) {
       appCommonStore.setSelectedSidebarOption(path)
     }
   },
@@ -58,6 +58,13 @@ const navigate = async (path: string) => {
           @click="navigate(item.path)"
         />
       </nav>
+
+      <NavButton
+        :icon-url="miniGameNavItem.iconUrl"
+        :label="t(miniGameNavItem.labelKey)"
+        :active="isActive(miniGameNavItem.path)"
+        @click="navigate(miniGameNavItem.path)"
+      />
 
       <NavButton
         :icon-url="logoutIconUrl"

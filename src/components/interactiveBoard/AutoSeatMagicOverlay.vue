@@ -66,7 +66,7 @@ onBeforeUnmount(() => { if (interval) clearInterval(interval) })
 
       <!-- phase text -->
       <Transition name="phase-text" mode="out-in">
-        <p class="phase" :key="phaseIndex">{{ phases[phaseIndex]() }}</p>
+        <p class="phase" :key="phaseIndex">{{ phases[phaseIndex]?.() }}</p>
       </Transition>
     </div>
   </Transition>

@@ -24,6 +24,10 @@ const routes = [
         path: AppChildRoute.Checklist,
         component: () => import('../views/Checklist.vue'),
       },
+      {
+        path: AppChildRoute.MiniGame,
+        component: () => import('../views/MiniGame.vue'),
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: AppRoute.Login },

@@ -17,7 +17,8 @@
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
     "@types/sortablejs": "^1.15.9",
-    "jspdf": "^4.2.0",
+    "jspdf": "^4.2.1",
+    "kontra": "^10.0.2",
     "konva": "^10.2.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",

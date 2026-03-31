@@ -20,6 +20,7 @@
     "seatingArrangements": "Seating Arrangements",
     "budget": "Budget",
     "checklist": "Checklist",
+    "miniGame": "Mini Game",
     "logout": "Logout"
   },
   "profile": {
@@ -283,6 +284,14 @@
       "title": "All Done!",
       "subtitle": "You're ready for your big day"
     }
+  },
+  "miniGame": {
+    "title": "Wedding Run",
+    "subtitle": "Press space or tap to start",
+    "gameOver": "Game Over!",
+    "score": "Score",
+    "best": "Best",
+    "restart": "Press space or tap to restart"
   },
   "errors": {
     "internalServerError": "Internal server error",

@@ -6,12 +6,23 @@ export const DEFAULT_THEME = AppTheme.Light
 
 export type ThemeName = AppTheme
 
+export interface GameColors {
+  sky: [string, string, string]
+  ground: string
+  groundLine: string
+  groundDark: string
+  cloud: string
+  text: string
+  textShadow: string
+}
+
 export interface ThemeDefinition {
   cssVars: Record<`--${string}`, string>
   board: {
     canvasBackground: string
     canvasDot: string
   }
+  game: GameColors
   konva: {
     tableStroke: string
     tableFill: string
@@ -111,6 +122,15 @@ const themes: Record<ThemeName, ThemeDefinition> = {
       canvasBackground: '#1a1f2e',
       canvasDot: 'rgba(184, 148, 63, 0.18)',
     },
+    game: {
+      sky: ['#0d0516', '#1e0a3c', '#2a1040'],
+      ground: '#1e0d2e',
+      groundLine: '#5a2d7a',
+      groundDark: '#0f0818',
+      cloud: 'rgba(140,70,200,0.28)',
+      text: '#e8b4ff',
+      textShadow: 'rgba(10,0,20,0.85)',
+    },
     konva: {
       tableStroke: '#b8943f',
       tableFill: '#faf5ee',
@@ -207,6 +227,15 @@ const themes: Record<ThemeName, ThemeDefinition> = {
     board: {
       canvasBackground: '#bdbaba',
       canvasDot: 'rgba(74, 95, 125, 0.22)',
+    },
+    game: {
+      sky: ['#a18cd1', '#fbc2eb', '#ffe4ec'],
+      ground: '#f8e1f4',
+      groundLine: '#e8b4d8',
+      groundDark: '#d4a0c8',
+      cloud: 'rgba(255,255,255,0.6)',
+      text: '#7b2d5f',
+      textShadow: 'rgba(255,255,255,0.8)',
     },
     konva: {
       tableStroke: '#7a93b3',
