@@ -87,6 +87,13 @@ function startLoop() {
   let obstacleTimer = 0
   let particles: Particle[] = []
 
+  // ── Flip state ──
+  const FLIP_SPEED = (Math.PI * 2) / 0.45 // full rotation in 0.45 s
+  const DOUBLE_PRESS_WINDOW = 300 // ms
+  let lastPressTime = 0
+  let isFlipping = false
+  let flipAngle = 0
+
   const clouds: Cloud[] = Array.from({ length: 5 }, () => ({
     x: Math.random() * W(),
     y: 30 + Math.random() * groundY() * 0.4,
@@ -126,7 +133,7 @@ function startLoop() {
       spawnParticle(brideX + Math.random() * 20, brideY - 40 - Math.random() * 20, 'sparkle')
   }
 
-  // ── Jump ──
+  // ── Jump / flip ──
   function jump() {
     if (dead) {
       dead = false
@@ -138,6 +145,9 @@ function startLoop() {
       brideY = groundY()
       brideVy = 0
       squash = 1
+      isFlipping = false
+      flipAngle = 0
+      lastPressTime = 0
       emit('update:score', 0)
       emit('update:gameState', 'playing')
       return
@@ -145,7 +155,27 @@ function startLoop() {
     if (!playing) {
       playing = true
       emit('update:gameState', 'playing')
+      lastPressTime = performance.now()
+      if (brideY >= groundY() - 1) {
+        brideVy = PHYSICS.JUMP_FORCE
+        squash = 1.3
+        for (let i = 0; i < 2; i++) spawnParticle(brideX, brideY, 'petal')
+      }
+      return
     }
+
+    // Double-press detection → flip
+    const now = performance.now()
+    const gap = now - lastPressTime
+    if (!isFlipping && gap < DOUBLE_PRESS_WINDOW && gap > 50) {
+      isFlipping = true
+      flipAngle = 0
+      lastPressTime = 0
+      for (let i = 0; i < 8; i++) spawnParticle(brideX, brideY - 38, 'sparkle')
+      return
+    }
+    lastPressTime = now
+
     if (brideY >= groundY() - 1) {
       brideVy = PHYSICS.JUMP_FORCE
       squash = 1.3
@@ -176,6 +206,15 @@ function startLoop() {
       squash += (1 - squash) * 5 * dt
       brideFrame++
       spawnTrail()
+
+      // Flip animation
+      if (isFlipping) {
+        flipAngle += FLIP_SPEED * dt
+        if (flipAngle >= Math.PI * 2) {
+          flipAngle = 0
+          isFlipping = false
+        }
+      }
 
       // Obstacles — reduce speed on narrow (mobile) screens
       const mobileFactor = Math.min(1, Math.max(0.6, W() / 700))
@@ -285,7 +324,7 @@ function startLoop() {
       // ── Bride (scaled around her feet) ──
       if (!dead) {
         scaleAround(brideX, brideY, s, () => {
-          drawBride(ctx, brideX, brideY, brideFrame, squash, gy)
+          drawBride(ctx, brideX, brideY, brideFrame, squash, gy, flipAngle)
         })
       }
 

@@ -9,9 +9,18 @@ export function drawBride(
   frame: number,
   squash: number,
   groundY: number,
+  flipAngle = 0,
 ) {
   ctx.save()
   ctx.translate(cx, cy)
+
+  // Flip rotation around character center (~y = -38)
+  if (flipAngle !== 0) {
+    const pivotY = -38
+    ctx.translate(0, pivotY)
+    ctx.rotate(flipAngle)
+    ctx.translate(0, -pivotY)
+  }
 
   // Very gentle squash-stretch (max ±5%)
   const sx = 1 + (squash - 1) * 0.25
