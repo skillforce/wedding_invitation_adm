@@ -6,7 +6,7 @@ import ChecklistHero from '@/components/checklist/checklistHero/ChecklistHero.vu
 import ChecklistNormalView from '@/components/checklist/normalView/ChecklistNormalView.vue'
 import ChecklistEditView from '@/components/checklist/editView/ChecklistEditView.vue'
 import ChecklistEditFab from '@/components/checklist/ChecklistEditFab.vue'
-import WeddingCountdown from '@/components/checklist/WeddingCountdown.vue'
+import WeddingCountdown from '@/components/checklist/countdown/WeddingCountdown.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
 
 const EXPANDED_PHASES_STORAGE_KEY = 'wedding-checklist-expanded-phases'
