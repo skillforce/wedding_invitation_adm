@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import GlobalControls from '@/components/global/GlobalControls.vue'
-import GlobalErrorAlert from '@/components/global/GlobalErrorAlert.vue'
+import GlobalAlert from '@/components/global/GlobalAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 import { useRouter } from 'vue-router'
 import { configureApiAuth } from '@/api/consts'
@@ -26,7 +26,7 @@ configureApiAuth(
 
 <template>
   <GlobalSpinner />
-  <GlobalErrorAlert />
+  <GlobalAlert />
   <div class="router">
     <RouterView />
   </div>

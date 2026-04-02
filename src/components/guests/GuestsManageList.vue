@@ -34,7 +34,7 @@ const profileFilter = ref<GuestProfileFilterState>({
   field: null,
   value: null,
 })
-const hasInvitationUrl = computed(() => Boolean(authStore.user?.invitationUrl))
+const hasInvitationUrl = computed(() => Boolean(authStore.user?.profile?.invitationUrl))
 const hasActiveProfileFilter = computed(() => (
   profileFilter.value.field !== null && profileFilter.value.value !== null
 ))

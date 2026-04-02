@@ -21,7 +21,7 @@ const confirm = useConfirm()
 const authStore = useAuthStore()
 const copied = ref(false)
 
-const invitationUrl = computed(() => authStore.user?.invitationUrl ?? '')
+const invitationUrl = computed(() => authStore.user?.profile?.invitationUrl ?? '')
 
 async function copyLink() {
   const url = `${invitationUrl.value.replace(/\/$/, '')}/${props.guestId}`

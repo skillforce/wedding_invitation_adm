@@ -2,11 +2,14 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps<{
   login?: string
   collapsed?: boolean
 }>()
+
+const authStore = useAuthStore()
 
 const { t } = useI18n()
 
@@ -28,7 +31,7 @@ watch(
 
 <template>
   <div :class="['profile-card', { collapsed }]">
-    <UserAvatar :size="44" :alt="t('a11y.userAvatar')" variant="default" />
+    <UserAvatar :size="44" :alt="t('a11y.userAvatar')" variant="default" :src="authStore.user?.profile?.profileImg ?? null" />
     <div v-if="showText" class="profile-text">
       <p class="profile-label">{{ t('profile.loggedAs') }}</p>
       <p class="profile-login">{{ login || t('profile.unknownUser') }}</p>

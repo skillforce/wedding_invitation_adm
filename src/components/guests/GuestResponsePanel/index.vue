@@ -21,7 +21,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const authStore = useAuthStore()
 const guestsStore = useGuestsStore()
-const hasInvitationUrl = computed(() => Boolean(authStore.user?.invitationUrl))
+const hasInvitationUrl = computed(() => Boolean(authStore.user?.profile?.invitationUrl))
 
 const relationshipKeyMap = {
   bride_side: 'brideSide',

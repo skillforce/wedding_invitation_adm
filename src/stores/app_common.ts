@@ -12,6 +12,7 @@ export const useAppCommonStore = defineStore('app_common', () => {
   const selectedSidebarOption = ref<string>(DEFAULT_SIDEBAR_OPTION)
   const isSidebarCollapsed = ref(false)
   const errorMessage = ref<string | null>(null)
+  const successMessage = ref<string | null>(null)
   const isLoading = ref(false)
 
   function toggleSidebar() {
@@ -40,6 +41,14 @@ export const useAppCommonStore = defineStore('app_common', () => {
     errorMessage.value = null
   }
 
+  function showSuccess(message: string) {
+    successMessage.value = message
+  }
+
+  function clearSuccess() {
+    successMessage.value = null
+  }
+
   function showSpinner() {
     isLoading.value = true
   }
@@ -52,11 +61,14 @@ export const useAppCommonStore = defineStore('app_common', () => {
     selectedSidebarOption,
     isSidebarCollapsed,
     errorMessage,
+    successMessage,
     isLoading,
     setSelectedSidebarOption,
     toggleSidebar,
     showError,
     clearError,
+    showSuccess,
+    clearSuccess,
     showSpinner,
     hideSpinner,
   }

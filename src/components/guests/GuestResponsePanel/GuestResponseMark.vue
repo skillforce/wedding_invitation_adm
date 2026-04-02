@@ -11,7 +11,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const hasInvitationUrl = computed(() => Boolean(useAuthStore().user?.invitationUrl))
+const hasInvitationUrl = computed(() => Boolean(useAuthStore().user?.profile?.invitationUrl))
 
 const label = computed(() => (
   props.labelScope === 'guest'

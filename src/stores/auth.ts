@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { AUTH_API, type MeResponseDto } from '@/api/auth'
+import { PROFILE_API, type UpdateProfileDto } from '@/api/profile'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -14,9 +15,9 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(login: string, password: string) {
-      const { accessToken, id, invitationUrl } = await AUTH_API.login({ login, password })
+      const { accessToken, id, profile } = await AUTH_API.login({ login, password })
       this.token = accessToken
-      this.user = { id, login, invitationUrl }
+      this.user = { id, login, profile }
     },
 
     async fetchMe() {
@@ -47,6 +48,20 @@ export const useAuthStore = defineStore('auth', {
       await AUTH_API.logout()
       this.token = null
       this.user = null
+    },
+
+    async updateProfile(data: UpdateProfileDto) {
+      const updatedProfile = await PROFILE_API.updateProfile(data)
+      if (this.user) {
+        this.user = { ...this.user, profile: updatedProfile }
+      }
+    },
+
+    async uploadProfileImage(file: File) {
+      const updatedProfile = await PROFILE_API.uploadProfileImage(file)
+      if (this.user) {
+        this.user = { ...this.user, profile: updatedProfile }
+      }
     },
   },
   persist: {

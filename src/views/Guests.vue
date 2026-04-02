@@ -15,7 +15,7 @@ const guests = computed(() => guestsStore.guests)
 const selectedGuestId = ref<string | null>(null)
 const openEditSignal = ref(0)
 const { t } = useI18n()
-const hasInvitationUrl = computed(() => Boolean(authStore.user?.invitationUrl))
+const hasInvitationUrl = computed(() => Boolean(authStore.user?.profile?.invitationUrl))
 
 const selectedGuest = computed<GuestDetailViewDto | null>(
   () => guests.value.find((guest) => guest.id === selectedGuestId.value) ?? null,

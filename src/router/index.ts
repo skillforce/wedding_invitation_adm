@@ -28,6 +28,10 @@ const routes = [
         path: AppChildRoute.MiniGame,
         component: () => import('../views/MiniGame.vue'),
       },
+      {
+        path: AppChildRoute.UserProfile,
+        component: () => import('../views/UserProfile.vue'),
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: AppRoute.Login },

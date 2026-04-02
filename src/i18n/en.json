@@ -20,8 +20,9 @@
     "seatingArrangements": "Seating Arrangements",
     "budget": "Budget",
     "checklist": "Checklist",
-    "miniGame": "Mini Game",
-    "logout": "Logout"
+    "miniGame": "When It's Too Much",
+    "logout": "Logout",
+    "profile": "Profile"
   },
   "profile": {
     "loggedAs": "Logged as",
@@ -261,6 +262,15 @@
     }
   },
   "checklist": {
+    "countdown": {
+      "title": "Until the wedding",
+      "days": "days",
+      "hours": "hours",
+      "minutes": "minutes",
+      "seconds": "seconds",
+      "today": "Today is your day!",
+      "passed": "Wedding has passed"
+    },
     "eyebrow": "Your Wedding Journey",
     "title_the": "The",
     "title_checklist": "Checklist",
@@ -292,6 +302,26 @@
     "score": "Score",
     "best": "Best",
     "restart": "Press space or tap to restart"
+  },
+  "userProfile": {
+    "title": "Profile",
+    "avatarSection": "Profile photo",
+    "dropZoneHint": "Drag & drop image here",
+    "or": "or",
+    "chooseFile": "Choose file",
+    "allowedFormats": "JPEG, PNG, WebP, AVIF, GIF · max 15 MB",
+    "invitationUrlLabel": "Invitation site URL",
+    "invitationUrlPlaceholder": "https://example.com/invite",
+    "weddingDateLabel": "Wedding date",
+    "phoneNumberLabel": "Phone number",
+    "phoneNumberPlaceholder": "Enter phone number",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "user@example.com",
+    "saveButton": "Save profile",
+    "uploadingImage": "Uploading...",
+    "saving": "Saving...",
+    "saveSuccess": "Profile saved",
+    "uploadSuccess": "Photo updated"
   },
   "errors": {
     "internalServerError": "Internal server error",
@@ -331,6 +361,17 @@
       "failedToCreateItem": "Failed to create item",
       "failedToUpdateItem": "Failed to update item",
       "failedToDeleteItem": "Failed to delete item"
+    },
+    "userProfile": {
+      "invalidUrl": "Please enter a valid URL starting with http:// or https://",
+      "invalidEmail": "Please enter a valid email address",
+      "invalidPhone": "Please enter a valid phone number",
+      "imageTooLarge": "File exceeds the maximum allowed size of 15 MB",
+      "imageInvalidType": "Allowed formats: JPEG, PNG, WebP, AVIF, GIF",
+      "imageRejected": "File is too large or has an unsupported format",
+      "imageDailyLimit": "Daily image upload limit reached (5 per day)",
+      "saveFailed": "Failed to save profile",
+      "uploadFailed": "Failed to upload image"
     },
     "checklist": {
       "failedToLoad": "Failed to load checklist",

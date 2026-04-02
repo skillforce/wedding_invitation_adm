@@ -20,8 +20,9 @@
     "seatingArrangements": "Рассадка гостей",
     "budget": "Бюджет",
     "checklist": "Чеклист",
-    "miniGame": "Мини-игра",
-    "logout": "Выйти"
+    "miniGame": "Когда все достало",
+    "logout": "Выйти",
+    "profile": "Профиль"
   },
   "profile": {
     "loggedAs": "Вы вошли как",
@@ -261,6 +262,15 @@
     }
   },
   "checklist": {
+    "countdown": {
+      "title": "До свадьбы",
+      "days": "дней",
+      "hours": "часов",
+      "minutes": "минут",
+      "seconds": "секунд",
+      "today": "Сегодня ваш день!",
+      "passed": "Свадьба состоялась"
+    },
     "eyebrow": "Ваше Свадебное Путешествие",
     "title_the": "Свадебный",
     "title_checklist": "Чеклист",
@@ -292,6 +302,26 @@
     "score": "Счёт",
     "best": "Рекорд",
     "restart": "Нажмите пробел или тапните чтобы начать заново"
+  },
+  "userProfile": {
+    "title": "Профиль",
+    "avatarSection": "Фото профиля",
+    "dropZoneHint": "Перетащите изображение сюда",
+    "or": "или",
+    "chooseFile": "Выбрать файл",
+    "allowedFormats": "JPEG, PNG, WebP, AVIF, GIF · не более 15 МБ",
+    "invitationUrlLabel": "URL сайта приглашения",
+    "invitationUrlPlaceholder": "https://example.com/invite",
+    "weddingDateLabel": "Дата свадьбы",
+    "phoneNumberLabel": "Номер телефона",
+    "phoneNumberPlaceholder": "Введите номер телефона",
+    "emailLabel": "Электронная почта",
+    "emailPlaceholder": "user@example.com",
+    "saveButton": "Сохранить профиль",
+    "uploadingImage": "Загрузка...",
+    "saving": "Сохранение...",
+    "saveSuccess": "Профиль сохранён",
+    "uploadSuccess": "Фото обновлено"
   },
   "errors": {
     "internalServerError": "Внутренняя ошибка сервера",
@@ -331,6 +361,17 @@
       "failedToCreateItem": "Не удалось создать позицию",
       "failedToUpdateItem": "Не удалось обновить позицию",
       "failedToDeleteItem": "Не удалось удалить позицию"
+    },
+    "userProfile": {
+      "invalidUrl": "Введите корректный URL, начинающийся с http:// или https://",
+      "invalidEmail": "Введите корректный адрес электронной почты",
+      "invalidPhone": "Введите корректный номер телефона",
+      "imageTooLarge": "Файл превышает допустимый размер 15 МБ",
+      "imageInvalidType": "Допустимые форматы: JPEG, PNG, WebP, AVIF, GIF",
+      "imageRejected": "Файл слишком большой или имеет недопустимый формат",
+      "imageDailyLimit": "Достигнут дневной лимит загрузки изображений (5 в день)",
+      "saveFailed": "Не удалось сохранить профиль",
+      "uploadFailed": "Не удалось загрузить изображение"
     },
     "checklist": {
       "failedToLoad": "Не удалось загрузить чеклист",
