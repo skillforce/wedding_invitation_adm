@@ -14,7 +14,7 @@ const isPending = ref(true)
 
 onMounted(async () => {
   try {
-    await authStore.fetchMe()
+    if (!authStore.user) await authStore.fetchMe()
   } catch (err) {
     appCommon.showError(err)
   } finally {
