@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { VueTelInput } from 'vue-tel-input'
 import 'vue-tel-input/vue-tel-input.css'
 import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
@@ -22,6 +22,13 @@ const touched = ref(false)
 
 const showError = () => props.invalid && touched.value
 
+const defaultCountry = computed(() => {
+  const locale = Intl.DateTimeFormat().resolvedOptions().locale
+  const region = locale.split('-')[1]
+
+  return region?.toLowerCase() || undefined
+})
+
 function onValidate(phoneObject: { valid: boolean }) {
   emit('validate', phoneObject.valid)
 }
@@ -35,9 +42,10 @@ defineExpose({ touch: () => { touched.value = true } })
     <VueTelInput
       v-else
       :model-value="modelValue"
-       mode="international"
+      mode="international"
       :input-options="{ placeholder }"
-      :auto-default-country="!modelValue"
+      :default-country="!modelValue ? defaultCountry : undefined"
+      :auto-default-country="false"
       class="phone-input"
       :class="{ 'phone-input--invalid': showError() }"
       @update:model-value="emit('update:modelValue', $event ?? '')"
