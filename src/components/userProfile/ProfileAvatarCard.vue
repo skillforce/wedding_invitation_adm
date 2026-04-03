@@ -38,19 +38,15 @@ async function handleFile(file: File) {
     return
   }
 
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    imagePreview.value = e.target?.result as string
-  }
-  reader.readAsDataURL(file)
-
+  const previousImage = imagePreview.value
   isUploading.value = true
   appCommon.showSpinner()
   try {
     await authStore.uploadProfileImage(file)
-    imagePreview.value = authStore.user?.profile?.profileImg ?? imagePreview.value
+    imagePreview.value = authStore.user?.profile?.profileImg ?? null
     appCommon.showSuccess(t('userProfile.uploadSuccess'))
   } catch (err) {
+    imagePreview.value = previousImage
     appCommon.showError(err)
   } finally {
     isUploading.value = false
