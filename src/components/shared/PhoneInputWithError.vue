@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { VueTelInput } from 'vue-tel-input'
 import 'vue-tel-input/vue-tel-input.css'
 import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
@@ -19,18 +19,29 @@ const emit = defineEmits<{
 }>()
 
 const touched = ref(false)
+const currentDialCode = ref('')
 
 const showError = () => props.invalid && touched.value
 
-const defaultCountry = computed(() => {
-  const locale = Intl.DateTimeFormat().resolvedOptions().locale
-  const region = locale.split('-')[1]
-
-  return region?.toLowerCase() || undefined
-})
-
 function onValidate(phoneObject: { valid: boolean }) {
   emit('validate', phoneObject.valid)
+}
+
+function onCountryChanged(country: { dialCode: string }) {
+  const dialCode = '+' + country.dialCode
+  currentDialCode.value = dialCode
+  if (!props.modelValue || !props.modelValue.startsWith(dialCode.slice(0, 2))) {
+    emit('update:modelValue', dialCode)
+  }
+}
+
+function onInput(value: string) {
+  const val = value ?? ''
+  if (currentDialCode.value && !val.startsWith(currentDialCode.value)) {
+    emit('update:modelValue', currentDialCode.value)
+  } else {
+    emit('update:modelValue', val)
+  }
 }
 
 defineExpose({ touch: () => { touched.value = true } })
@@ -44,12 +55,12 @@ defineExpose({ touch: () => { touched.value = true } })
       :model-value="modelValue"
       mode="international"
       :input-options="{ placeholder }"
-      :default-country="!modelValue ? defaultCountry : undefined"
-      :auto-default-country="false"
+      :auto-default-country="!modelValue"
       class="phone-input"
       :class="{ 'phone-input--invalid': showError() }"
-      @update:model-value="emit('update:modelValue', $event ?? '')"
+      @update:model-value="onInput"
       @validate="onValidate"
+      @country-changed="onCountryChanged"
       @blur="touched = true"
     />
     <small v-if="showError()" class="phone-with-error__message">{{ errorMessage }}</small>

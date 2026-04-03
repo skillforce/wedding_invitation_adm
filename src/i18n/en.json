@@ -316,7 +316,7 @@
     "phoneNumberLabel": "Phone number",
     "phoneNumberPlaceholder": "Enter phone number",
     "emailLabel": "Email address",
-    "emailPlaceholder": "user@example.com",
+    "emailPlaceholder": "user{'@'}example.com",
     "saveButton": "Save profile",
     "uploadingImage": "Uploading...",
     "saving": "Saving...",

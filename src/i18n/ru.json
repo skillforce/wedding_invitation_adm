@@ -316,7 +316,7 @@
     "phoneNumberLabel": "Номер телефона",
     "phoneNumberPlaceholder": "Введите номер телефона",
     "emailLabel": "Электронная почта",
-    "emailPlaceholder": "user@example.com",
+    "emailPlaceholder": "user{'@'}example.com",
     "saveButton": "Сохранить профиль",
     "uploadingImage": "Загрузка...",
     "saving": "Сохранение...",
