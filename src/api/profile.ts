@@ -29,7 +29,7 @@ export const PROFILE_API = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch(`${BASE_API_URL}/users/profile/image`, {
+    const response = await apiFetch(`${BASE_API_URL}/users/profile/image`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
