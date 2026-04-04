@@ -1,4 +1,4 @@
-import { BASE_API_URL, apiFetch, parseApiError } from '@/api/consts'
+import { apiFetch, parseApiError } from '@/api/consts'
 import type { ProfileDto } from '@/api/auth'
 
 export interface UpdateProfileDto {
@@ -23,15 +23,11 @@ export const PROFILE_API = {
   },
 
   async uploadProfileImage(file: File): Promise<ProfileDto> {
-    const token = localStorage.getItem('token')
-    if (!token) throw new Error('errors.auth.unauthorized')
-
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await apiFetch(`${BASE_API_URL}/users/profile/image`, {
+    const response = await apiFetch('/users/profile/image', {
       method: 'PATCH',
-      headers: { Authorization: `Bearer ${token}` },
       body: formData,
     })
 

@@ -73,8 +73,8 @@ function onDrop(e: DragEvent) {
 
 function onFileInputChange(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
-  if (file) handleFile(file)
-  ;(e.target as HTMLInputElement).value = ''
+  if (file) handleFile(file);
+  (e.target as HTMLInputElement).value = ''
 }
 
 function openFilePicker() {

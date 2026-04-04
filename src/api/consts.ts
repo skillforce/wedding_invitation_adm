@@ -47,12 +47,14 @@ function doRefresh(): Promise<string> {
   return _refreshPromise
 }
 
-function buildHeaders(token: string, extra?: HeadersInit): HeadersInit {
-  return {
-    'Content-Type': 'application/json',
+function buildHeaders(token: string, body: BodyInit | null | undefined, extra?: HeadersInit): HeadersInit {
+  const base: Record<string, string> = {
     Authorization: `Bearer ${token}`,
-    ...(extra ?? {}),
   }
+  if (!(body instanceof FormData)) {
+    base['Content-Type'] = 'application/json'
+  }
+  return { ...base, ...(extra ?? {}) }
 }
 
 export async function apiFetch(path: string, options: RequestInit = {}, authToken?: string | null): Promise<Response> {
@@ -61,7 +63,7 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
 
   const response = await fetch(`${BASE_API_URL}${path}`, {
     ...options,
-    headers: buildHeaders(token, options.headers),
+    headers: buildHeaders(token, options.body, options.headers),
   })
 
   if (response.status === 401 && _onRefresh) {
@@ -69,7 +71,7 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
       const newToken = await doRefresh()
       return fetch(`${BASE_API_URL}${path}`, {
         ...options,
-        headers: buildHeaders(newToken, options.headers),
+        headers: buildHeaders(newToken, options.body, options.headers),
       })
     } catch {
       await _onUnauthorized?.()
