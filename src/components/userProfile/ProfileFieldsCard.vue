@@ -27,6 +27,10 @@ const urlInputRef = ref<InstanceType<typeof InputWithError> | null>(null)
 const emailInputRef = ref<InstanceType<typeof InputWithError> | null>(null)
 const phoneInputRef = ref<InstanceType<typeof PhoneInputWithError> | null>(null)
 
+const urlDirty = ref(false)
+const emailDirty = ref(false)
+const phoneDirty = ref(false)
+
 onMounted(() => {
   const profile = authStore.user?.profile
   if (!profile) return
@@ -53,16 +57,25 @@ const phoneError = computed(() => {
   return isPhoneValid.value ? '' : t('errors.userProfile.invalidPhone')
 })
 
-const isFormValid = computed(() => !urlError.value && !emailError.value && !phoneError.value)
+const isFormValid = computed(() =>
+  (!urlDirty.value || !urlError.value) &&
+  (!emailDirty.value || !emailError.value) &&
+  (!phoneDirty.value || !phoneError.value)
+)
+
+function toLocalDateStr(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
 
 const isUnchanged = computed(() => {
   const profile = authStore.user?.profile
   if (!profile) return false
   const norm = (v: string | null | undefined) => v ?? ''
-  const profileDateStr = profile.weddingDate
-    ? new Date(profile.weddingDate).toISOString().slice(0, 10)
-    : ''
-  const formDateStr = weddingDate.value ? weddingDate.value.toISOString().slice(0, 10) : ''
+  const profileDateStr = profile.weddingDate?.slice(0, 10) ?? ''
+  const formDateStr = weddingDate.value ? toLocalDateStr(weddingDate.value) : ''
   return (
     norm(invitationUrl.value) === norm(profile.invitationUrl) &&
     formDateStr === profileDateStr &&
@@ -72,9 +85,9 @@ const isUnchanged = computed(() => {
 })
 
 async function handleSave() {
-  urlInputRef.value?.touch()
-  emailInputRef.value?.touch()
-  phoneInputRef.value?.touch()
+  if (urlDirty.value) urlInputRef.value?.touch()
+  if (emailDirty.value) emailInputRef.value?.touch()
+  if (phoneDirty.value) phoneInputRef.value?.touch()
   if (!isFormValid.value || isUnchanged.value) return
 
   isSaving.value = true
@@ -82,7 +95,7 @@ async function handleSave() {
   try {
     await authStore.updateProfile({
       invitationUrl: invitationUrl.value || null,
-      weddingDate: weddingDate.value ? weddingDate.value.toISOString().slice(0, 10) : null,
+      weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null,
       phoneNumber: phoneNumber.value ?? null,
       email: email.value || null,
     })
@@ -110,6 +123,7 @@ async function handleSave() {
             :placeholder="t('userProfile.invitationUrlPlaceholder')"
             :invalid="Boolean(urlError)"
             :error-message="urlError"
+            @input="urlDirty = true"
           />
         </div>
 
@@ -135,7 +149,7 @@ async function handleSave() {
             :invalid="Boolean(phoneError)"
             :error-message="phoneError"
             :pending="phoneNumber === null"
-            @update:model-value="phoneNumber = $event"
+            @update:model-value="phoneNumber = $event; phoneDirty = true"
             @validate="isPhoneValid = $event"
           />
         </div>
@@ -148,6 +162,7 @@ async function handleSave() {
             :placeholder="t('userProfile.emailPlaceholder')"
             :invalid="Boolean(emailError)"
             :error-message="emailError"
+            @input="emailDirty = true"
           />
         </div>
       </div>

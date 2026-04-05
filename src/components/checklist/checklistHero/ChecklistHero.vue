@@ -1,19 +1,9 @@
-<template>
-  <header class="hero">
-    <div class="hero-inner">
-      <ChecklistHeroText :done-count="doneCount" :total-count="totalCount" />
-      <ChecklistProgressRing :done-pct="donePct" />
-    </div>
-
-    <ChecklistFilters :active-filter="activeFilter" @filter-change="$emit('filter-change', $event)" />
-  </header>
-</template>
-
 <script setup lang="ts">
 import ChecklistHeroText from './ChecklistHeroText.vue'
 import ChecklistProgressRing from './ChecklistProgressRing.vue'
 import ChecklistFilters from './ChecklistFilters.vue'
 import type { FilterValue } from "@/components/checklist/checklistHero/ChecklistFilters.vue";
+import WeddingCountdown from "@/components/checklist/countdown/WeddingCountdown.vue";
 
 defineProps<{
   donePct: number
@@ -26,6 +16,18 @@ defineEmits<{
   'filter-change': [value: FilterValue]
 }>()
 </script>
+
+<template>
+  <header class="hero">
+    <div class="hero-inner">
+      <ChecklistHeroText :done-count="doneCount" :total-count="totalCount" />
+      <ChecklistProgressRing :done-pct="donePct" />
+    </div>
+    <WeddingCountdown />
+    <ChecklistFilters :active-filter="activeFilter" @filter-change="$emit('filter-change', $event)" />
+  </header>
+</template>
+
 
 <style scoped>
 .hero {

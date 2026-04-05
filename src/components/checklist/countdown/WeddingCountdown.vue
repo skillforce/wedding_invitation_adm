@@ -72,28 +72,35 @@ onMounted(() => {
 onUnmounted(() => {
   if (timer !== null) clearInterval(timer)
 })
-
 </script>
 
 <template>
-  <div v-if="weddingDate" class="countdown-wrap">
-    <div v-if="isToday" class="countdown-today">
-      {{ t('checklist.countdown.today') }}
+  <div v-if="weddingDate" class="cd-wrap">
+    <!-- TODAY STATE -->
+    <div v-if="isToday" class="cd-card cd-card--today">
+      <div class="cd-today">
+        <i class="pi pi-heart-fill cd-today__icon" />
+        <span class="cd-today__text">{{ t('checklist.countdown.today') }}</span>
+      </div>
     </div>
 
-    <div v-else-if="isPassed" class="countdown-passed">
-      {{ t('checklist.countdown.passed') }}
+    <!-- PASSED STATE -->
+    <div v-else-if="isPassed" class="cd-card cd-card--passed">
+      <i class="pi pi-check-circle cd-passed__icon" />
+      <span class="cd-passed__text">{{ t('checklist.countdown.passed') }}</span>
     </div>
 
-    <div v-else-if="timeLeft" class="countdown">
-      <p class="countdown-title">{{ t('checklist.countdown.title') }}</p>
-      <div class="countdown-units">
+    <!-- COUNTDOWN STATE -->
+    <div v-else-if="timeLeft" class="cd-card">
+      <p class="cd-card__title">{{ t('checklist.countdown.title') }}</p>
+      <div class="cd-grid">
         <template v-for="(unit, i) in COUNTDOWN_UNITS" :key="unit.key">
-          <span v-if="i > 0" class="countdown-sep">:</span>
+          <span v-if="i > 0" class="cd-sep" :style="{ '--i': i }">:</span>
           <CountdownUnit
             :value="timeLeft[unit.key]"
             :label-key="unit.labelKey"
             :pad="unit.pad"
+            :index="i"
           />
         </template>
       </div>
@@ -102,79 +109,169 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.countdown-wrap {
+.cd-wrap {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 20px 24px;
 }
 
-.countdown {
+.cd-card {
+  position: relative;
   background: var(--color-surface-soft);
   border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  animation: phaseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  overflow: hidden;
 }
 
-.countdown-title {
-  margin: 0;
-  font-size: 0.8rem;
+.cd-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--p-primary-400, #a78bfa) 55%, transparent),
+    transparent
+  );
+}
+
+.cd-card__title {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--color-text-muted);
-  white-space: nowrap;
 }
 
-.countdown-units {
+.cd-grid {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
 }
 
-
-.countdown-sep {
-  font-size: 1.5rem;
+.cd-sep {
+  font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-text-muted);
+  color: color-mix(in srgb, var(--p-primary-400, #a78bfa) 40%, var(--color-text-muted));
   align-self: flex-start;
-  margin-top: 2px;
-  line-height: 1.75rem;
+  margin-top: 6px;
+  line-height: 2rem;
+  animation: cdTileIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 0.08s);
 }
 
-.countdown-today {
-  background: color-mix(in srgb, var(--p-green-500) 12%, var(--color-surface-soft));
-  border: 1px solid color-mix(in srgb, var(--p-green-500) 35%, transparent);
-  border-radius: 14px;
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
+/* TODAY STATE */
+.cd-card--today {
+  background: color-mix(in srgb, var(--p-green-500) 10%, var(--color-surface-soft));
+  border-color: color-mix(in srgb, var(--p-green-500) 30%, transparent);
+}
+
+.cd-card--today::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--p-green-500) 55%, transparent),
+    transparent
+  );
+}
+
+.cd-today {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.cd-today__icon {
+  font-size: 1.5rem;
   color: var(--p-green-500);
-  text-align: center;
+  animation: cdPulse 2s ease-in-out infinite;
 }
 
-.countdown-passed {
-  background: var(--color-surface-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 1rem 1.5rem;
-  font-size: 0.9rem;
+.cd-today__text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--p-green-500);
+}
+
+/* PASSED STATE */
+.cd-card--passed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0.65;
+}
+
+.cd-passed__icon {
+  font-size: 1rem;
   color: var(--color-text-muted);
-  text-align: center;
+}
+
+.cd-passed__text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+/* KEYFRAMES */
+@keyframes phaseIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cdTileIn {
+  0%   { opacity: 0; transform: scale(0.88) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes cdPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.2); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .cd-card {
+    padding: 1.25rem 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .countdown-wrap {
-    padding: 0 16px 16px;
+  .cd-wrap {
+    padding: 0 12px 16px;
   }
 
-  .countdown {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+  .cd-card {
+    padding: 0.875rem 0.75rem;
+  }
+
+  .cd-grid {
+    gap: 0.25rem;
+  }
+
+  .cd-sep {
+    font-size: 1.25rem;
+    margin-top: 4px;
+    line-height: 1.6rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .cd-card {
+    padding: 0.75rem;
+    border-radius: 12px;
   }
 }
 </style>

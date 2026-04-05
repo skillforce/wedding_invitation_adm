@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, reactive, watch, onMounted } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useChecklistStore } from '@/stores/checklist'
 import ChecklistHero from '@/components/checklist/checklistHero/ChecklistHero.vue'
 import ChecklistNormalView from '@/components/checklist/normalView/ChecklistNormalView.vue'
 import ChecklistEditView from '@/components/checklist/editView/ChecklistEditView.vue'
 import ChecklistEditFab from '@/components/checklist/ChecklistEditFab.vue'
-import WeddingCountdown from '@/components/checklist/countdown/WeddingCountdown.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
 
 const EXPANDED_PHASES_STORAGE_KEY = 'wedding-checklist-expanded-phases'
@@ -94,8 +93,6 @@ onMounted(() => {
       :active-filter="activeFilter"
       @filter-change="activeFilter = $event"
     />
-
-    <WeddingCountdown />
 
     <main class="timeline-area">
       <ChecklistNormalView
