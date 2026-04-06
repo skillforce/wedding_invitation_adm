@@ -317,11 +317,34 @@
     "phoneNumberPlaceholder": "Enter phone number",
     "emailLabel": "Email address",
     "emailPlaceholder": "user{'@'}example.com",
+    "cropDialog": {
+      "title": "Crop photo",
+      "confirm": "Apply",
+      "cancel": "Cancel",
+      "processing": "Processing...",
+      "rotateLeft": "Rotate left",
+      "rotateRight": "Rotate right"
+    },
     "saveButton": "Save profile",
     "uploadingImage": "Uploading...",
     "saving": "Saving...",
     "saveSuccess": "Profile saved",
-    "uploadSuccess": "Photo updated"
+    "uploadSuccess": "Photo updated",
+    "sessions": {
+      "title": "Active devices",
+      "currentDevice": "This device",
+      "unknownDevice": "Unknown device",
+      "lastActive": "Last active",
+      "signOutOther": "Sign out other devices",
+      "signOutOtherConfirmHeader": "Sign out other devices?",
+      "signOutOtherConfirmMessage": "All sessions except the current one will be terminated.",
+      "confirmSignOut": "Sign out",
+      "cancel": "Cancel",
+      "noOtherSessions": "No active sessions",
+      "revokeSuccess": "Device signed out",
+      "revokeOtherSuccess": "Other devices signed out",
+      "revokeAriaLabel": "Sign out device"
+    }
   },
   "errors": {
     "internalServerError": "Internal server error",

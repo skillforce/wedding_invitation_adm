@@ -317,11 +317,34 @@
     "phoneNumberPlaceholder": "Введите номер телефона",
     "emailLabel": "Электронная почта",
     "emailPlaceholder": "user{'@'}example.com",
+    "cropDialog": {
+      "title": "Обрезать фото",
+      "confirm": "Применить",
+      "cancel": "Отмена",
+      "processing": "Обработка...",
+      "rotateLeft": "Повернуть влево",
+      "rotateRight": "Повернуть вправо"
+    },
     "saveButton": "Сохранить профиль",
     "uploadingImage": "Загрузка...",
     "saving": "Сохранение...",
     "saveSuccess": "Профиль сохранён",
-    "uploadSuccess": "Фото обновлено"
+    "uploadSuccess": "Фото обновлено",
+    "sessions": {
+      "title": "Активные устройства",
+      "currentDevice": "Это устройство",
+      "unknownDevice": "Неизвестное устройство",
+      "lastActive": "Последняя активность",
+      "signOutOther": "Выйти на других устройствах",
+      "signOutOtherConfirmHeader": "Выйти на других устройствах?",
+      "signOutOtherConfirmMessage": "Все сессии, кроме текущей, будут завершены.",
+      "confirmSignOut": "Выйти",
+      "cancel": "Отмена",
+      "noOtherSessions": "Нет активных сессий",
+      "revokeSuccess": "Устройство отключено",
+      "revokeOtherSuccess": "Другие устройства отключены",
+      "revokeAriaLabel": "Отключить устройство"
+    }
   },
   "errors": {
     "internalServerError": "Внутренняя ошибка сервера",

@@ -21,3 +21,8 @@ export enum AppChildRoute {
   MiniGame = 'mini-game',
   UserProfile = 'profile',
 }
+
+export const DEVICE_ID_KEY = 'app-device-id'
+export const THEME_STORAGE_KEY = 'app-theme'
+export const SIDEBAR_OPTION_STORAGE_KEY = 'sidebar-selected-option'
+export const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed'

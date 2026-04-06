@@ -1,4 +1,20 @@
 import { BASE_API_URL, apiFetch, parseApiError } from '@/api/consts'
+import { DEVICE_ID_KEY } from '@/constants/app'
+import { v4 as uuidv4 } from 'uuid';
+
+
+function getOrCreateDeviceId(): string {
+  let id = localStorage.getItem(DEVICE_ID_KEY)
+  if (!id) {
+    id = uuidv4();
+    localStorage.setItem(DEVICE_ID_KEY, id)
+  }
+  return id
+}
+
+function saveDeviceId(id: string): void {
+  localStorage.setItem(DEVICE_ID_KEY, id)
+}
 
 export interface AuthDto {
   login: string
@@ -33,9 +49,10 @@ const DEFAULT_PROFILE: ProfileDto = {
 
 export const AUTH_API = {
   async login(authDto: AuthDto): Promise<LoginResponseDto> {
+    const deviceId = getOrCreateDeviceId()
     const response = await fetch(`${BASE_API_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Device-Id': deviceId },
       body: JSON.stringify(authDto),
       credentials: 'include',
     })
@@ -44,9 +61,13 @@ export const AUTH_API = {
       throw await parseApiError(response)
     }
 
-    const payload = (await response.json()) as Partial<LoginResponseDto>
+    const payload = (await response.json()) as Partial<LoginResponseDto & { deviceId: string }>
     if (!payload.accessToken || typeof payload.id !== 'number' || typeof payload.login !== 'string') {
       throw new Error('errors.auth.noAccessToken')
+    }
+
+    if (payload.deviceId) {
+      saveDeviceId(payload.deviceId)
     }
 
     return {
@@ -58,8 +79,10 @@ export const AUTH_API = {
   },
 
   async refresh(): Promise<string> {
+    const deviceId = getOrCreateDeviceId()
     const response = await fetch(`${BASE_API_URL}/auth/refresh`, {
       method: 'POST',
+      headers: { 'X-Device-Id': deviceId },
       credentials: 'include',
     })
 

@@ -1,6 +1,6 @@
-import { AppTheme } from '@/constants/app'
+import { AppTheme, THEME_STORAGE_KEY } from '@/constants/app'
 
-export const THEME_STORAGE_KEY = 'app-theme'
+export { THEME_STORAGE_KEY }
 export const THEME_NAMES = [AppTheme.Dark, AppTheme.Light] as const
 export const DEFAULT_THEME = AppTheme.Light
 

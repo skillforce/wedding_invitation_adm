@@ -1,11 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { AppRoute } from '@/constants/app'
+import { AppRoute, SIDEBAR_OPTION_STORAGE_KEY, SIDEBAR_COLLAPSED_KEY } from '@/constants/app'
 import { ApiError } from '@/api/consts'
 import i18n from '@/i18n'
 
-const SIDEBAR_OPTION_STORAGE_KEY = 'sidebar-selected-option'
-const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed'
 const DEFAULT_SIDEBAR_OPTION = AppRoute.Guests
 
 export const useAppCommonStore = defineStore('app_common', () => {

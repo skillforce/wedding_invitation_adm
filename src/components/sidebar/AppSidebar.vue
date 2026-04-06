@@ -2,7 +2,7 @@
 import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import ProfileCard from '@/components/ProfileCard.vue'
+import ProfileCard from '@/components/profile/ProfileCard.vue'
 import SidebarCollapseButton from './SidebarCollapseButton.vue'
 import NavButton from './NavButton.vue'
 import { navItems, miniGameNavItem } from './sidebarConfig'

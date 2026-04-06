@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ProfileAvatarCard from '@/components/userProfile/ProfileAvatarCard.vue'
-import ProfileFieldsCard from '@/components/userProfile/ProfileFieldsCard.vue'
+import ProfileAvatarCard from '@/components/profile/ProfileAvatarCard.vue'
+import ProfileFieldsCard from '@/components/profile/ProfileFieldsCard.vue'
+import ProfileSecurityCard from '@/components/profile/ProfileSecurityCard.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
 
@@ -33,6 +34,7 @@ onMounted(async () => {
       <ProfileAvatarCard :pending="isPending" />
       <ProfileFieldsCard :pending="isPending" />
     </div>
+    <ProfileSecurityCard />
   </div>
 </template>
 
@@ -58,9 +60,9 @@ onMounted(async () => {
 
 .profile-content {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 340px 1fr;
   gap: 1.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 768px) {
