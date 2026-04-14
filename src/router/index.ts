@@ -3,6 +3,7 @@ import { AppChildRoute, AppRoute } from '@/constants/app'
 
 const routes = [
   { path: AppRoute.Login, component: () => import('../views/Login.vue') },
+  { path: AppRoute.ConfirmEmail, component: () => import('../views/ConfirmEmail.vue') },
   {
     path: AppRoute.Login,
     component: () => import('../views/AuthorizedLayout.vue'),
@@ -31,6 +32,10 @@ const routes = [
       {
         path: AppChildRoute.UserProfile,
         component: () => import('../views/UserProfile.vue'),
+      },
+      {
+        path: AppChildRoute.UserManagement,
+        component: () => import('../views/UserManagement.vue'),
       },
     ],
   },

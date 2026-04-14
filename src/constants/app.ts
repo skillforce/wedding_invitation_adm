@@ -5,12 +5,14 @@ export enum AppTheme {
 
 export enum AppRoute {
   Login = '/',
+  ConfirmEmail = '/confirm',
   Guests = '/guests',
   SeatingArrangements = '/seating-arrangements',
   Budget = '/budget',
   Checklist = '/checklist',
   MiniGame = '/mini-game',
   UserProfile = '/profile',
+  UserManagement = '/user-management',
 }
 
 export enum AppChildRoute {
@@ -20,6 +22,7 @@ export enum AppChildRoute {
   Checklist = 'checklist',
   MiniGame = 'mini-game',
   UserProfile = 'profile',
+  UserManagement = 'user-management',
 }
 
 export const DEVICE_ID_KEY = 'app-device-id'

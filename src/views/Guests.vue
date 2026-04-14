@@ -8,6 +8,10 @@ import { useAuthStore } from '@/stores/auth'
 import type { GuestDetailViewDto } from '@/api/guests'
 import GuestsManageList from '@/components/guests/GuestsManageList.vue'
 import GuestResponsePanel from '@/components/guests/GuestResponsePanel/index.vue'
+import UserSwitcher from '@/components/shared/UserSwitcher.vue'
+import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
+import { useSelectedUser } from '@/composables/useSelectedUser'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 
 const guestsStore = useGuestsStore()
 const authStore = useAuthStore()
@@ -16,6 +20,10 @@ const selectedGuestId = ref<string | null>(null)
 const openEditSignal = ref(0)
 const { t } = useI18n()
 const hasInvitationUrl = computed(() => Boolean(authStore.user?.profile?.invitationUrl))
+const { selectedUserId } = useSelectedUser()
+const { isSuperUser } = useCurrentUser()
+
+const showPrompt = computed(() => isSuperUser.value && selectedUserId.value === null)
 
 const selectedGuest = computed<GuestDetailViewDto | null>(
   () => guests.value.find((guest) => guest.id === selectedGuestId.value) ?? null,
@@ -37,8 +45,14 @@ watch(
   { immediate: true },
 )
 
+watch(selectedUserId, (userId) => {
+  if (isSuperUser.value && userId === null) return
+  guestsStore.fetchGuests(userId ?? undefined)
+})
+
 onMounted(async () => {
-  await guestsStore.fetchGuests()
+  if (isSuperUser.value && selectedUserId.value === null) return
+  await guestsStore.fetchGuests(selectedUserId.value ?? undefined)
 })
 
 function requestEditSelectedGuest() {
@@ -50,29 +64,37 @@ function requestEditSelectedGuest() {
   <div class="guests-page">
     <ConfirmDialog :breakpoints="{'640px': '70vw'}" />
     <Card class="guests-card">
-      <template #title>{{ t('guests.title') }}</template>
-      <template #content>
-        <p v-if="guestsStore.isLoading">{{ t('guests.loading') }}</p>
-        <div v-else class="guests-layout">
-          <GuestsManageList
-            :guests="guests"
-            :is-adding="guestsStore.isAdding"
-            :is-updating="guestsStore.isUpdating"
-            :selected-guest-id="selectedGuestId"
-            :selected-guest="selectedGuest"
-            :open-edit-signal="openEditSignal"
-            @add="guestsStore.addGuest"
-            @update="guestsStore.updateGuestForm"
-            @remove="guestsStore.removeGuest"
-            @select="selectedGuestId = $event"
-          />
-          <GuestResponsePanel
-            v-if="hasInvitationUrl"
-            :guest="selectedGuest"
-            :is-updating="guestsStore.isUpdating"
-            @edit="requestEditSelectedGuest"
-          />
+      <template #title>
+        <div class="guests-card-title">
+          <span>{{ t('guests.title') }}</span>
+          <UserSwitcher v-model="selectedUserId" />
         </div>
+      </template>
+      <template #content>
+        <SelectUserPrompt v-if="showPrompt" />
+        <template v-else>
+          <p v-if="guestsStore.isLoading">{{ t('guests.loading') }}</p>
+          <div v-else class="guests-layout">
+            <GuestsManageList
+              :guests="guests"
+              :is-adding="guestsStore.isAdding"
+              :is-updating="guestsStore.isUpdating"
+              :selected-guest-id="selectedGuestId"
+              :selected-guest="selectedGuest"
+              :open-edit-signal="openEditSignal"
+              @add="guestsStore.addGuest"
+              @update="guestsStore.updateGuestForm"
+              @remove="guestsStore.removeGuest"
+              @select="selectedGuestId = $event"
+            />
+            <GuestResponsePanel
+              v-if="hasInvitationUrl"
+              :guest="selectedGuest"
+              :is-updating="guestsStore.isUpdating"
+              @edit="requestEditSelectedGuest"
+            />
+          </div>
+        </template>
       </template>
     </Card>
   </div>
@@ -84,6 +106,14 @@ function requestEditSelectedGuest() {
   border: none;
   box-shadow: none;
   color: var(--color-text-primary);
+}
+
+.guests-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .guests-page :deep(.p-card-body) {

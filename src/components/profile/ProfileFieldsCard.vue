@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
@@ -9,12 +9,22 @@ import PhoneInputWithError from '@/components/shared/PhoneInputWithError.vue'
 import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
+import { useCurrentUser } from '@/composables/useCurrentUser'
+import type { ProfileDto } from '@/api/auth'
+import type { UpdateProfileDto } from '@/api/profile'
 
-defineProps<{ pending?: boolean }>()
+const props = defineProps<{
+  pending?: boolean
+  overrideProfile?: ProfileDto | null
+  saveFn?: (dto: UpdateProfileDto) => Promise<ProfileDto>
+}>()
 
 const { t } = useI18n()
 const authStore = useAuthStore()
 const appCommon = useAppCommonStore()
+const { isSuperUser } = useCurrentUser()
+
+const isEditingPlainUser = computed(() => Boolean(props.overrideProfile))
 
 const invitationUrl = ref('')
 const weddingDate = ref<Date | null>(null)
@@ -30,16 +40,23 @@ const phoneInputRef = ref<InstanceType<typeof PhoneInputWithError> | null>(null)
 const urlDirty = ref(false)
 const emailDirty = ref(false)
 const phoneDirty = ref(false)
+const loadedPhoneNumber = ref<string | null>(null)
 
-onMounted(() => {
-  const profile = authStore.user?.profile
+function loadFromProfile(profile: ProfileDto | null | undefined) {
   if (!profile) return
   invitationUrl.value = profile.invitationUrl ?? ''
   phoneNumber.value = profile.phoneNumber ?? ''
+  loadedPhoneNumber.value = profile.phoneNumber ?? null
   email.value = profile.email ?? ''
-  if (profile.weddingDate) {
-    weddingDate.value = new Date(profile.weddingDate)
-  }
+  weddingDate.value = profile.weddingDate ? new Date(profile.weddingDate) : null
+}
+
+onMounted(() => {
+  loadFromProfile(props.overrideProfile ?? authStore.user?.profile)
+})
+
+watch(() => props.overrideProfile, (profile) => {
+  if (profile) loadFromProfile(profile)
 })
 
 const urlError = computed(() => {
@@ -71,18 +88,26 @@ function toLocalDateStr(d: Date): string {
 }
 
 const isUnchanged = computed(() => {
-  const profile = authStore.user?.profile
+  const profile = props.overrideProfile ?? authStore.user?.profile
   if (!profile) return false
   const norm = (v: string | null | undefined) => v ?? ''
   const profileDateStr = profile.weddingDate?.slice(0, 10) ?? ''
   const formDateStr = weddingDate.value ? toLocalDateStr(weddingDate.value) : ''
+  const hasDateWeddingField = isEditingPlainUser.value || !isSuperUser.value
+  const dateUnchanged = hasDateWeddingField
+    ? norm(invitationUrl.value) === norm(profile.invitationUrl) && formDateStr === profileDateStr
+    : true
   return (
-    norm(invitationUrl.value) === norm(profile.invitationUrl) &&
-    formDateStr === profileDateStr &&
-    norm(phoneNumber.value) === norm(profile.phoneNumber) &&
+    dateUnchanged &&
+    norm(phoneDirty.value ? (phoneNumber.value || null) : loadedPhoneNumber.value) === norm(profile.phoneNumber) &&
     norm(email.value) === norm(profile.email)
   )
 })
+
+function onPhoneInput(value: string, isAutoFill: boolean) {
+  phoneNumber.value = value
+  if (!isAutoFill) phoneDirty.value = true
+}
 
 async function handleSave() {
   if (urlDirty.value) urlInputRef.value?.touch()
@@ -93,12 +118,19 @@ async function handleSave() {
   isSaving.value = true
   appCommon.showSpinner()
   try {
-    await authStore.updateProfile({
-      invitationUrl: invitationUrl.value || null,
-      weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null,
-      phoneNumber: phoneNumber.value ?? null,
+    const dto: UpdateProfileDto = {
+      ...((!isSuperUser.value || isEditingPlainUser.value) && {
+        invitationUrl: invitationUrl.value || null,
+        weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null,
+      }),
+      phoneNumber: phoneDirty.value ? (phoneNumber.value || null) : loadedPhoneNumber.value,
       email: email.value || null,
-    })
+    }
+    if (props.saveFn) {
+      await props.saveFn(dto)
+    } else {
+      await authStore.updateProfile(dto)
+    }
     appCommon.showSuccess(t('userProfile.saveSuccess'))
   } catch (err) {
     appCommon.showError(err)
@@ -115,19 +147,19 @@ async function handleSave() {
       <SkeletonBlock v-if="pending" height="320px" />
 
       <div v-else class="form-fields">
-        <div class="form-field">
+        <div v-if="!isSuperUser || isEditingPlainUser" class="form-field">
           <label class="field-label">{{ t('userProfile.invitationUrlLabel') }}</label>
           <InputWithError
             ref="urlInputRef"
             v-model="invitationUrl"
             :placeholder="t('userProfile.invitationUrlPlaceholder')"
-            :invalid="Boolean(urlError)"
-            :error-message="urlError"
+            :invalid="urlDirty && Boolean(urlError)"
+            :error-message="urlDirty ? urlError : ''"
             @input="urlDirty = true"
           />
         </div>
 
-        <div class="form-field">
+        <div v-if="!isSuperUser || isEditingPlainUser" class="form-field">
           <label class="field-label">{{ t('userProfile.weddingDateLabel') }}</label>
           <DatePicker
             v-model="weddingDate"
@@ -146,10 +178,10 @@ async function handleSave() {
             ref="phoneInputRef"
             :model-value="phoneNumber ?? ''"
             :placeholder="t('userProfile.phoneNumberPlaceholder')"
-            :invalid="Boolean(phoneError)"
-            :error-message="phoneError"
+            :invalid="phoneDirty && Boolean(phoneError)"
+            :error-message="phoneDirty ? phoneError : ''"
             :pending="phoneNumber === null"
-            @update:model-value="phoneNumber = $event; phoneDirty = true"
+            @update:model-value="onPhoneInput"
             @validate="isPhoneValid = $event"
           />
         </div>
@@ -160,8 +192,8 @@ async function handleSave() {
             ref="emailInputRef"
             v-model="email"
             :placeholder="t('userProfile.emailPlaceholder')"
-            :invalid="Boolean(emailError)"
-            :error-message="emailError"
+            :invalid="emailDirty && Boolean(emailError)"
+            :error-message="emailDirty ? emailError : ''"
             @input="emailDirty = true"
           />
         </div>

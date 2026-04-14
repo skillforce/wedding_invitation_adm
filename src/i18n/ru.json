@@ -22,7 +22,8 @@
     "checklist": "Чеклист",
     "miniGame": "Когда все достало",
     "logout": "Выйти",
-    "profile": "Профиль"
+    "profile": "Профиль",
+    "userManagement": "Пользователи"
   },
   "profile": {
     "loggedAs": "Вы вошли как",
@@ -325,6 +326,7 @@
       "rotateLeft": "Повернуть влево",
       "rotateRight": "Повернуть вправо"
     },
+    "editingUser": "Редактирование: {login}",
     "saveButton": "Сохранить профиль",
     "uploadingImage": "Загрузка...",
     "saving": "Сохранение...",
@@ -344,6 +346,57 @@
       "revokeSuccess": "Устройство отключено",
       "revokeOtherSuccess": "Другие устройства отключены",
       "revokeAriaLabel": "Отключить устройство"
+    }
+  },
+  "confirmEmail": {
+    "loading": "Подтверждаем вашу почту…",
+    "successTitle": "Почта подтверждена!",
+    "successMessage": "Ваш аккаунт активирован. Теперь вы можете войти.",
+    "errorTitle": "Ссылка недействительна",
+    "errorMessage": "Ссылка для подтверждения устарела или уже использована. Обратитесь к администратору за новой ссылкой.",
+    "noTokenTitle": "Ссылка некорректна",
+    "noTokenMessage": "Токен подтверждения отсутствует в ссылке. Проверьте письмо и попробуйте снова.",
+    "goToLogin": "Перейти к входу"
+  },
+  "userSwitcher": {
+    "label": "Просматривать данные:",
+    "placeholder": "— выберите пользователя —",
+    "promptTitle": "Выберите пользователя",
+    "promptSubtitle": "Выберите пользователя в выпадающем списке выше, чтобы просмотреть его данные."
+  },
+  "userManagement": {
+    "eyebrow": "Управление аккаунтами",
+    "title": "Пользователи",
+    "subtitle": "Создано пользователей: {count}",
+    "addUser": "Добавить пользователя",
+    "loading": "Загрузка...",
+    "empty": "Нет созданных пользователей",
+    "statusActive": "Активен",
+    "statusPending": "Ожидает подтверждения",
+    "loginField": "Логин",
+    "emailField": "Email",
+    "statusField": "Статус",
+    "editProfile": "Редактировать профиль",
+    "deleteUser": "Удалить",
+    "cancel": "Отмена",
+    "deleteConfirmHeader": "Удалить пользователя?",
+    "deleteConfirmMessage": "Пользователь «{login}» и все его данные будут удалены. Это действие нельзя отменить.",
+    "resendConfirmation": "Отправить письмо повторно",
+    "resendSuccess": "Письмо с подтверждением отправлено повторно",
+    "deleteSuccess": "Пользователь удалён",
+    "createSuccess": "Пользователь создан. Письмо с подтверждением отправлено.",
+    "form": {
+      "title": "Новый пользователь",
+      "loginLabel": "Логин",
+      "loginPlaceholder": "3–10 символов",
+      "loginError": "Логин должен содержать от 3 до 10 символов",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "3–30 символов",
+      "passwordError": "Пароль должен содержать от 3 до 30 символов",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "user@example.com",
+      "emailError": "Введите корректный адрес электронной почты",
+      "submitButton": "Создать"
     }
   },
   "errors": {
@@ -404,6 +457,12 @@
       "failedToCreateTask": "Не удалось создать задачу",
       "failedToDeleteTask": "Не удалось удалить задачу",
       "failedToReset": "Не удалось сбросить чеклист"
+    },
+    "userManagement": {
+      "failedToLoad": "Не удалось загрузить пользователей",
+      "failedToCreate": "Не удалось создать пользователя",
+      "failedToDelete": "Не удалось удалить пользователя",
+      "failedToResend": "Не удалось отправить письмо повторно"
     }
   }
 }

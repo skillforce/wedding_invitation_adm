@@ -2,18 +2,18 @@
 import ChecklistHeroText from './ChecklistHeroText.vue'
 import ChecklistProgressRing from './ChecklistProgressRing.vue'
 import ChecklistFilters from './ChecklistFilters.vue'
-import type { FilterValue } from "@/components/checklist/checklistHero/ChecklistFilters.vue";
+import { ChecklistFilter } from '@/types/checklist'
 import WeddingCountdown from "@/components/checklist/countdown/WeddingCountdown.vue";
 
 defineProps<{
   donePct: number
   doneCount: number
   totalCount: number
-  activeFilter: FilterValue
+  activeFilter: ChecklistFilter
 }>()
 
 defineEmits<{
-  'filter-change': [value: FilterValue]
+  'filter-change': [value: ChecklistFilter]
 }>()
 </script>
 

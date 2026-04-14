@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Layer as VLayer, Stage as VStage } from 'vue-konva'
 import type { KonvaEventObject } from 'konva/lib/Node'
@@ -8,6 +8,10 @@ import { useConfirm } from 'primevue/useconfirm'
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useSeatingStore } from '@/stores/seating'
 import { useGuestsStore } from '@/stores/guests'
+import UserSwitcher from '@/components/shared/UserSwitcher.vue'
+import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
+import { useSelectedUser } from '@/composables/useSelectedUser'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
 import { useGuestDrag } from '@/composables/useGuestDrag'
@@ -30,11 +34,25 @@ const stageRef = ref<{ getNode(): Stage } | null>(null)
 const { stageConfig, isMobile } = useStageSize(containerRef)
 const { onWheel, fitToStage, isFitted } = useZoom(stageRef)
 const { dropTargetTableId, onGuestDrag, onGuestDragEnd, onGuestDrop } = useGuestDrag(stageRef)
+const { selectedUserId } = useSelectedUser()
+const { isSuperUser } = useCurrentUser()
+
+const showPrompt = computed(() => isSuperUser.value && selectedUserId.value === null)
+
+watch(selectedUserId, async (userId) => {
+  if (isSuperUser.value && userId === null) return
+  await Promise.all([
+    seatingStore.fetchTables(userId ?? undefined),
+    guestsStore.fetchGuests(userId ?? undefined),
+  ])
+})
 
 onMounted(async () => {
+  if (isSuperUser.value && selectedUserId.value === null) return
+  const userId = selectedUserId.value ?? undefined
   await Promise.all([
-    seatingStore.fetchTables(),
-    guestsStore.guests.length ? Promise.resolve() : guestsStore.fetchGuests(),
+    seatingStore.fetchTables(userId),
+    guestsStore.fetchGuests(userId),
   ])
   await nextTick()
   fitToStage()
@@ -97,6 +115,7 @@ function onTableRotate(id: string, deg: number) {
   <div ref="containerRef" class="board-container">
     <ConfirmDialog :breakpoints="{'640px': '70vw'}" />
     <BoardToolbar
+      v-if="!showPrompt"
       :is-fitted="isFitted"
       :stage-ref="stageRef"
       @add-object="onAddObject"
@@ -105,6 +124,7 @@ function onTableRotate(id: string, deg: number) {
       @fit-to-stage="fitToStage"
     />
     <BoardMobileMenu
+      v-if="!showPrompt"
       :is-fitted="isFitted"
       :stage-ref="stageRef"
       @add-object="onAddObject"
@@ -113,38 +133,45 @@ function onTableRotate(id: string, deg: number) {
       @fit-to-stage="fitToStage"
     />
 
-    <WorkspaceSettings
-      :open="workspaceSettingsOpen"
-      :is-mobile="isMobile"
-      @close="workspaceSettingsOpen = false"
-    />
+    <div class="board-user-switcher">
+      <UserSwitcher v-model="selectedUserId" />
+    </div>
 
-    <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
-      <VLayer>
-        <WorkspaceNode :is-mobile="isMobile" />
-        <TableNode
-          v-for="table in seatingStore.tables"
-          :key="table.id"
-          :table="table"
-          :is-selected="table.id === selectedTableId"
-          :is-drop-target="table.id === dropTargetTableId"
-          @select="onSelectTable"
-          @dragend="onTableDragEnd"
-          @rotate="onTableRotate"
-          @guest-drag="onGuestDrag"
-          @guest-drag-end="onGuestDragEnd"
-          @guest-drop="onGuestDrop"
-        />
-      </VLayer>
-    </VStage>
+    <SelectUserPrompt v-if="showPrompt" class="board-prompt" />
+    <template v-else>
+      <WorkspaceSettings
+        :open="workspaceSettingsOpen"
+        :is-mobile="isMobile"
+        @close="workspaceSettingsOpen = false"
+      />
 
-    <TablePanel
-      :table="selectedTable"
-      :is-mobile="isMobile"
-      @close="selectedTableId = null"
-    />
+      <VStage ref="stageRef" :config="stageConfig" @wheel="onWheel" @click="onStageClick" @tap="onStageClick">
+        <VLayer>
+          <WorkspaceNode :is-mobile="isMobile" />
+          <TableNode
+            v-for="table in seatingStore.tables"
+            :key="table.id"
+            :table="table"
+            :is-selected="table.id === selectedTableId"
+            :is-drop-target="table.id === dropTargetTableId"
+            @select="onSelectTable"
+            @dragend="onTableDragEnd"
+            @rotate="onTableRotate"
+            @guest-drag="onGuestDrag"
+            @guest-drag-end="onGuestDragEnd"
+            @guest-drop="onGuestDrop"
+          />
+        </VLayer>
+      </VStage>
 
-    <AutoSeatMagicOverlay :visible="autoSeatAnimating" />
+      <TablePanel
+        :table="selectedTable"
+        :is-mobile="isMobile"
+        @close="selectedTableId = null"
+      />
+
+      <AutoSeatMagicOverlay :visible="autoSeatAnimating" />
+    </template>
   </div>
 </template>
 
@@ -161,17 +188,23 @@ function onTableRotate(id: string, deg: number) {
   box-shadow: var(--shadow-card);
 }
 
-.board-hint {
+.board-user-switcher {
   position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 12px;
+  right: 12px;
   z-index: 10;
-  margin: 0;
-  font-size: 11px;
-  color: var(--board-hint);
-  pointer-events: none;
-  white-space: nowrap;
+  background: var(--color-surface);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  box-shadow: var(--shadow-card);
+}
+
+.board-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 639px) {
@@ -184,11 +217,6 @@ function onTableRotate(id: string, deg: number) {
 
   .board-container {
     min-height: 0;
-  }
-
-
-  .board-hint {
-    bottom: 68px;
   }
 }
 

@@ -57,6 +57,10 @@ function buildHeaders(token: string, body: BodyInit | null | undefined, extra?: 
   return { ...base, ...(extra ?? {}) }
 }
 
+export function qs(userId?: number): string {
+  return userId ? `?userId=${userId}` : ''
+}
+
 export async function apiFetch(path: string, options: RequestInit = {}, authToken?: string | null): Promise<Response> {
   const token = authToken ?? localStorage.getItem('token')
   if (!token) throw new Error('errors.auth.unauthorized')

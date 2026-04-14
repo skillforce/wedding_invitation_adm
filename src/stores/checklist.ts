@@ -4,6 +4,7 @@ import { CHECKLIST_API } from '@/api/checklist'
 import type { ChecklistPhaseDto, ChecklistItemDto } from '@/api/checklist'
 import { useAppCommonStore } from '@/stores/app_common'
 import { usePreferencesStore } from '@/stores/preferences'
+import { useSelectedUser } from '@/composables/useSelectedUser'
 
 export interface Task {
   id: string
@@ -56,6 +57,8 @@ function createKeyedDebounce(ms: number) {
 }
 
 export const useChecklistStore = defineStore('wedding-checklist', () => {
+  const { selectedUserId } = useSelectedUser()
+
   const phases = ref<Phase[]>([])
   const debouncedSave = createKeyedDebounce(600)
 
@@ -70,12 +73,12 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     () => allTasks.value.filter((task) => task.priority === 'high' && task.completed).length,
   )
 
-  async function fetchChecklist(): Promise<void> {
+  async function fetchChecklist(userId?: number): Promise<void> {
     const appCommon = useAppCommonStore()
     appCommon.showSpinner()
     try {
       const { locale } = usePreferencesStore()
-      const dto = await CHECKLIST_API.getChecklist(locale)
+      const dto = await CHECKLIST_API.getChecklist(locale, userId)
       phases.value = dto.phases.map(mapPhase)
     } catch {
       appCommon.showError(new Error('errors.checklist.failedToLoad'))
@@ -92,7 +95,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
 
     task.completed = !task.completed
     try {
-      const result = await CHECKLIST_API.toggleItem(phaseId, taskId)
+      const result = await CHECKLIST_API.toggleItem(phaseId, taskId, selectedUserId.value ?? undefined)
       task.completed = result.completed
     } catch {
       task.completed = !task.completed
@@ -104,9 +107,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const phase = phases.value.find((p) => p.id === phaseId)
     if (phase) phase.name = name.trim()
 
+    const userId = selectedUserId.value ?? undefined
     debouncedSave(`phase-name-${phaseId}`, async () => {
       try {
-        await CHECKLIST_API.updatePhase(phaseId, { name: name.trim() || null })
+        await CHECKLIST_API.updatePhase(phaseId, { name: name.trim() || null }, userId)
       } catch {
         useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
       }
@@ -117,9 +121,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const phase = phases.value.find((p) => p.id === phaseId)
     if (phase) phase.timeline = timeline.trim()
 
+    const userId = selectedUserId.value ?? undefined
     debouncedSave(`phase-timeline-${phaseId}`, async () => {
       try {
-        await CHECKLIST_API.updatePhase(phaseId, { timeline: timeline.trim() || null })
+        await CHECKLIST_API.updatePhase(phaseId, { timeline: timeline.trim() || null }, userId)
       } catch {
         useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
       }
@@ -130,9 +135,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const phase = phases.value.find((p) => p.id === phaseId)
     if (phase) phase.icon = icon
 
+    const userId = selectedUserId.value ?? undefined
     debouncedSave(`phase-icon-${phaseId}`, async () => {
       try {
-        await CHECKLIST_API.updatePhase(phaseId, { icon })
+        await CHECKLIST_API.updatePhase(phaseId, { icon }, userId)
       } catch {
         useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
       }
@@ -147,7 +153,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     if (!removed) return
     phases.value.splice(index, 1)
     try {
-      await CHECKLIST_API.deletePhase(phaseId)
+      await CHECKLIST_API.deletePhase(phaseId, selectedUserId.value ?? undefined)
     } catch {
       phases.value.splice(index, 0, removed)
       useAppCommonStore().showError(new Error('errors.checklist.failedToDeletePhase'))
@@ -158,7 +164,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const appCommon = useAppCommonStore()
     appCommon.showSpinner()
     try {
-      const dto = await CHECKLIST_API.createPhase({ name: name.trim(), icon })
+      const dto = await CHECKLIST_API.createPhase({ name: name.trim(), icon }, selectedUserId.value ?? undefined)
       phases.value.push(mapPhase(dto))
     } catch {
       appCommon.showError(new Error('errors.checklist.failedToCreatePhase'))
@@ -171,7 +177,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const appCommon = useAppCommonStore()
     appCommon.showSpinner()
     try {
-      const dto = await CHECKLIST_API.createItem(phaseId, { title: title.trim() })
+      const dto = await CHECKLIST_API.createItem(phaseId, { title: title.trim() }, selectedUserId.value ?? undefined)
       const phase = phases.value.find((p) => p.id === phaseId)
       if (phase) phase.tasks.push(mapItem(dto))
     } catch {
@@ -192,7 +198,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     if (!removed) return
     phase.tasks.splice(index, 1)
     try {
-      await CHECKLIST_API.deleteItem(phaseId, taskId)
+      await CHECKLIST_API.deleteItem(phaseId, taskId, selectedUserId.value ?? undefined)
     } catch {
       phase.tasks.splice(index, 0, removed)
       useAppCommonStore().showError(new Error('errors.checklist.failedToDeleteTask'))
@@ -205,9 +211,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const task = phase.tasks.find((t) => t.id === taskId)
     if (task) task.title = title
 
+    const userId = selectedUserId.value ?? undefined
     debouncedSave(`task-title-${taskId}`, async () => {
       try {
-        await CHECKLIST_API.updateItem(phaseId, taskId, { title })
+        await CHECKLIST_API.updateItem(phaseId, taskId, { title }, userId)
       } catch {
         useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
       }
@@ -220,9 +227,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const task = phase.tasks.find((t) => t.id === taskId)
     if (task) task.note = note
 
+    const userId = selectedUserId.value ?? undefined
     debouncedSave(`task-note-${taskId}`, async () => {
       try {
-        await CHECKLIST_API.updateItem(phaseId, taskId, { note: note || null })
+        await CHECKLIST_API.updateItem(phaseId, taskId, { note: note || null }, userId)
       } catch {
         useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
       }
@@ -235,9 +243,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const task = phase.tasks.find((t) => t.id === taskId)
     if (task) task.comment = comment || undefined
 
+    const userId = selectedUserId.value ?? undefined
     debouncedSave(`task-comment-${taskId}`, async () => {
       try {
-        await CHECKLIST_API.updateItem(phaseId, taskId, { comment: comment || null })
+        await CHECKLIST_API.updateItem(phaseId, taskId, { comment: comment || null }, userId)
       } catch {
         useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
       }
@@ -253,7 +262,7 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     const newPriority: 'high' | 'normal' = task.priority === 'high' ? 'normal' : 'high'
     task.priority = newPriority
     try {
-      await CHECKLIST_API.updateItem(phaseId, taskId, { priority: newPriority })
+      await CHECKLIST_API.updateItem(phaseId, taskId, { priority: newPriority }, selectedUserId.value ?? undefined)
     } catch {
       task.priority = newPriority === 'high' ? 'normal' : 'high'
       useAppCommonStore().showError(new Error('errors.checklist.failedToUpdate'))
@@ -275,7 +284,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     toPhase.tasks.splice(toIndex, 0, task)
 
     try {
-      await CHECKLIST_API.moveItem({ itemId: task.id, targetPhaseId: toPhaseId, targetIndex: toIndex })
+      await CHECKLIST_API.moveItem(
+        { itemId: task.id, targetPhaseId: toPhaseId, targetIndex: toIndex },
+        selectedUserId.value ?? undefined,
+      )
     } catch {
       toPhase.tasks.splice(toIndex, 1)
       fromPhase.tasks.splice(fromIndex, 0, task)

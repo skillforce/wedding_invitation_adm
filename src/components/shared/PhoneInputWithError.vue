@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { VueTelInput } from 'vue-tel-input'
 import 'vue-tel-input/vue-tel-input.css'
 import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
@@ -14,12 +14,14 @@ const props = defineProps<{
 
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
+  'update:modelValue': [value: string, isAutoFill: boolean]
   'validate': [valid: boolean]
 }>()
 
 const touched = ref(false)
 const currentDialCode = ref('')
+const isMounted = ref(false)
+onMounted(() => { isMounted.value = true })
 
 const showError = () => props.invalid && touched.value
 
@@ -31,16 +33,17 @@ function onCountryChanged(country: { dialCode: string }) {
   const dialCode = '+' + country.dialCode
   currentDialCode.value = dialCode
   if (!props.modelValue || !props.modelValue.startsWith(dialCode.slice(0, 2))) {
-    emit('update:modelValue', dialCode)
+    emit('update:modelValue', dialCode, true)
   }
 }
 
 function onInput(value: string) {
+  if (!isMounted.value) return
   const val = value ?? ''
   if (currentDialCode.value && !val.startsWith(currentDialCode.value)) {
-    emit('update:modelValue', currentDialCode.value)
+    emit('update:modelValue', currentDialCode.value, false)
   } else {
-    emit('update:modelValue', val)
+    emit('update:modelValue', val, false)
   }
 }
 

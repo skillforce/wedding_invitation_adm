@@ -43,8 +43,8 @@ configureApiAuth(
 
 .global-controls {
   position: fixed;
-  top: 1.5rem;
-  right: 2rem;
+  top: 0.5rem;
+  right: 1.5rem;
   z-index: 60;
   display: inline-flex;
   align-items: center;

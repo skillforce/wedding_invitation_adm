@@ -1,4 +1,4 @@
-import { apiFetch, parseApiError } from '@/api/consts'
+import { apiFetch, parseApiError, qs } from '@/api/consts'
 
 export type WorkspaceShape = 'circle' | 'rect'
 export enum SeatingShape {
@@ -63,6 +63,7 @@ export interface UpdateSeatingTableDto {
 
 const BASE = '/seating-arrangements'
 
+
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await apiFetch(`${BASE}${path}`, init)
   if (!res.ok) throw await parseApiError(res)
@@ -75,47 +76,47 @@ async function requestVoid(path: string, init?: RequestInit): Promise<void> {
 }
 
 export const SEATING_ARRANGEMENT_API = {
-  async getArrangement(): Promise<SeatingArrangementDto> {
-    return requestJson('/tables')
+  async getArrangement(userId?: number): Promise<SeatingArrangementDto> {
+    return requestJson(`/tables${qs(userId)}`)
   },
 
-  async updateArrangement(dto: UpdateSeatingArrangementDto): Promise<SeatingArrangementDto> {
-    return requestJson('/arrangement', {
+  async updateArrangement(dto: UpdateSeatingArrangementDto, userId?: number): Promise<SeatingArrangementDto> {
+    return requestJson(`/arrangement${qs(userId)}`, {
       method: 'PATCH',
       body: JSON.stringify(dto),
     })
   },
 
-  async createTable(dto: CreateSeatingTableDto): Promise<SeatingTableDto> {
-    return requestJson('/tables', {
+  async createTable(dto: CreateSeatingTableDto, userId?: number): Promise<SeatingTableDto> {
+    return requestJson(`/tables${qs(userId)}`, {
       method: 'POST',
       body: JSON.stringify(dto),
     })
   },
 
-  async updateTable(id: string, dto: UpdateSeatingTableDto): Promise<SeatingTableDto> {
-    return requestJson(`/tables/${id}`, {
+  async updateTable(id: string, dto: UpdateSeatingTableDto, userId?: number): Promise<SeatingTableDto> {
+    return requestJson(`/tables/${id}${qs(userId)}`, {
       method: 'PUT',
       body: JSON.stringify(dto),
     })
   },
 
-  async deleteTable(id: string): Promise<void> {
-    return requestVoid(`/tables/${id}`, { method: 'DELETE' })
+  async deleteTable(id: string, userId?: number): Promise<void> {
+    return requestVoid(`/tables/${id}${qs(userId)}`, { method: 'DELETE' })
   },
 
-  async addSeat(tableId: string, guestId: string): Promise<SeatingSeatDto> {
-    return requestJson(`/tables/${tableId}/seats`, {
+  async addSeat(tableId: string, guestId: string, userId?: number): Promise<SeatingSeatDto> {
+    return requestJson(`/tables/${tableId}/seats${qs(userId)}`, {
       method: 'POST',
       body: JSON.stringify({ guest_id: guestId }),
     })
   },
 
-  async removeSeat(tableId: string, seatId: string): Promise<void> {
-    return requestVoid(`/tables/${tableId}/seats/${seatId}`, { method: 'DELETE' })
+  async removeSeat(tableId: string, seatId: string, userId?: number): Promise<void> {
+    return requestVoid(`/tables/${tableId}/seats/${seatId}${qs(userId)}`, { method: 'DELETE' })
   },
 
-  async autoSeat(): Promise<SeatingArrangementDto> {
-    return requestJson('/arrangement/auto-seat', { method: 'POST' })
+  async autoSeat(userId?: number): Promise<SeatingArrangementDto> {
+    return requestJson(`/arrangement/auto-seat${qs(userId)}`, { method: 'POST' })
   },
 }

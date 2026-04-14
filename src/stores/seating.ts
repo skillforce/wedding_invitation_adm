@@ -9,6 +9,7 @@ import {
 import { useGuestsStore } from '@/stores/guests'
 import { useDebouncedAction } from '@/composables/useDebouncedAction'
 import { useAppCommonStore } from '@/stores/app_common'
+import { useSelectedUser } from '@/composables/useSelectedUser'
 import i18n from '@/i18n'
 
 export interface SeatingGuest {
@@ -77,6 +78,8 @@ function clampExtraSeats(value: number | null | undefined) {
 export const useSeatingStore = defineStore('seating', () => {
   const appCommonStore = useAppCommonStore()
   const guestsStore = useGuestsStore()
+  const { selectedUserId } = useSelectedUser()
+  const userId = () => selectedUserId.value ?? undefined
 
   const tables = ref<SeatingTable[]>([])
   const workspaceShape = ref<WorkspaceShape>('rect')
@@ -211,9 +214,9 @@ export const useSeatingStore = defineStore('seating', () => {
     }
   }
 
-  async function fetchTables() {
+  async function fetchTables(userId?: number) {
     try {
-      const data = await SEATING_ARRANGEMENT_API.getArrangement()
+      const data = await SEATING_ARRANGEMENT_API.getArrangement(userId)
       applyArrangement(data)
     } catch (error) {
       appCommonStore.showError(error)
@@ -238,7 +241,7 @@ export const useSeatingStore = defineStore('seating', () => {
     applyWorkspacePatchLocally(patch)
 
     try {
-      const data = await SEATING_ARRANGEMENT_API.updateArrangement(toArrangementPatch(patch))
+      const data = await SEATING_ARRANGEMENT_API.updateArrangement(toArrangementPatch(patch), userId())
       applyArrangement(data)
     } catch (error) {
       applyWorkspacePatchLocally(previous)
@@ -253,7 +256,7 @@ export const useSeatingStore = defineStore('seating', () => {
         const data = await SEATING_ARRANGEMENT_API.updateArrangement({
           width: clamp(width, MIN_WIDTH, MAX_WIDTH),
           height: clamp(height, MIN_HEIGHT, MAX_HEIGHT),
-        })
+        }, userId())
         applyArrangement(data)
       } catch (error) {
         appCommonStore.showError(error)
@@ -291,7 +294,7 @@ export const useSeatingStore = defineStore('seating', () => {
         shape,
         rotation: 0,
         radius: DEFAULT_TABLE_RADIUS,
-      })
+      }, userId())
 
       tables.value.push({
         id: created.id,
@@ -318,7 +321,7 @@ export const useSeatingStore = defineStore('seating', () => {
     table.x = x
     table.y = y
     try {
-      await SEATING_ARRANGEMENT_API.updateTable(id, { position: { x, y } })
+      await SEATING_ARRANGEMENT_API.updateTable(id, { position: { x, y } }, userId())
     } catch (error) {
       appCommonStore.showError(error)
     }
@@ -329,7 +332,7 @@ export const useSeatingStore = defineStore('seating', () => {
     if (!table) return
     table.name = name
     try {
-      await SEATING_ARRANGEMENT_API.updateTable(id, { name })
+      await SEATING_ARRANGEMENT_API.updateTable(id, { name }, userId())
     } catch (error) {
       appCommonStore.showError(error)
     }
@@ -344,7 +347,7 @@ export const useSeatingStore = defineStore('seating', () => {
     }
 
     try {
-      const seat = await SEATING_ARRANGEMENT_API.addSeat(tableId, guestId)
+      const seat = await SEATING_ARRANGEMENT_API.addSeat(tableId, guestId, userId())
       table.guests.push({ id: seat.id, guestId: seat.guest_id, name: seat.name })
     } catch (error) {
       appCommonStore.showError(error)
@@ -355,7 +358,7 @@ export const useSeatingStore = defineStore('seating', () => {
     const table = tables.value.find((item) => item.id === tableId)
     if (!table) return
     try {
-      await SEATING_ARRANGEMENT_API.removeSeat(tableId, seatId)
+      await SEATING_ARRANGEMENT_API.removeSeat(tableId, seatId, userId())
       table.guests = table.guests.filter((guest) => guest.id !== seatId)
     } catch (error) {
       appCommonStore.showError(error)
@@ -384,8 +387,8 @@ export const useSeatingStore = defineStore('seating', () => {
     const targetIndex = targetTable.guests.push(guest) - 1
 
     try {
-      const createdSeat = await SEATING_ARRANGEMENT_API.addSeat(targetTableId, guest.guestId)
-      SEATING_ARRANGEMENT_API.removeSeat(sourceTableId, seatId)
+      const createdSeat = await SEATING_ARRANGEMENT_API.addSeat(targetTableId, guest.guestId, userId())
+      SEATING_ARRANGEMENT_API.removeSeat(sourceTableId, seatId, userId())
 
       if (targetTable.guests[targetIndex]?.id === guest.id) {
         targetTable.guests[targetIndex] = {
@@ -410,7 +413,7 @@ export const useSeatingStore = defineStore('seating', () => {
 
   const debouncedRotation = useDebouncedAction<string, [number]>(
     (id, rotation) => {
-      SEATING_ARRANGEMENT_API.updateTable(id, { rotation })
+      SEATING_ARRANGEMENT_API.updateTable(id, { rotation }, userId())
         .catch((error) => appCommonStore.showError(error))
     },
   )
@@ -424,7 +427,7 @@ export const useSeatingStore = defineStore('seating', () => {
 
   const debouncedRadius = useDebouncedAction<string, [number]>(
     (id, radius) => {
-      SEATING_ARRANGEMENT_API.updateTable(id, { radius })
+      SEATING_ARRANGEMENT_API.updateTable(id, { radius }, userId())
         .catch((error) => appCommonStore.showError(error))
     },
   )
@@ -438,7 +441,7 @@ export const useSeatingStore = defineStore('seating', () => {
 
   async function autoSeat() {
     try {
-      const data = await SEATING_ARRANGEMENT_API.autoSeat()
+      const data = await SEATING_ARRANGEMENT_API.autoSeat(userId())
       applyArrangement(data)
     } catch (error) {
       appCommonStore.showError(error)
@@ -447,7 +450,7 @@ export const useSeatingStore = defineStore('seating', () => {
 
   async function deleteTable(id: string) {
     try {
-      await SEATING_ARRANGEMENT_API.deleteTable(id)
+      await SEATING_ARRANGEMENT_API.deleteTable(id, userId())
       tables.value = tables.value.filter((table) => table.id !== id)
     } catch (error) {
       appCommonStore.showError(error)

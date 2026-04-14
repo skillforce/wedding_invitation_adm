@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
@@ -8,6 +8,7 @@ import NavButton from './NavButton.vue'
 import { navItems, miniGameNavItem } from './sidebarConfig'
 import logoutIconUrl from '@/assets/logout.svg'
 import { useAppCommonStore } from '@/stores/app_common'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 
 defineProps<{
   collapsed: boolean
@@ -23,6 +24,11 @@ const route = useRoute()
 const router = useRouter()
 const appCommonStore = useAppCommonStore()
 const { t } = useI18n()
+const { isSuperUser } = useCurrentUser()
+
+const visibleNavItems = computed(() =>
+  navItems.filter((item) => !item.superUserOnly || isSuperUser.value),
+)
 
 watch(
   () => route.path,
@@ -51,7 +57,7 @@ const onClickOption = async (path: string) => {
 
       <nav class="sidebar-nav">
         <NavButton
-          v-for="item in navItems"
+          v-for="item in visibleNavItems"
           :key="item.path"
           :icon-url="item.iconUrl"
           :label="t(item.labelKey)"

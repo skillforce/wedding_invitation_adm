@@ -94,7 +94,6 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.07);
 }
 
-/* ── Dark theme: gold icon ────────────────────────── */
 .global-controls-btn.theme-dark .pi {
   color: #e8c44a;
   filter: drop-shadow(0 0 5px rgba(232, 185, 60, 0.8)) drop-shadow(0 0 2px rgba(255, 230, 100, 0.5));
@@ -104,7 +103,6 @@ onBeforeUnmount(() => {
   filter: drop-shadow(0 0 8px rgba(232, 185, 60, 1)) drop-shadow(0 0 3px rgba(255, 240, 130, 0.8));
 }
 
-/* ── Light theme: green icon ──────────────────────── */
 .global-controls-btn.theme-light .pi {
   color: #2d7a50;
   filter: drop-shadow(0 0 5px rgba(45, 160, 90, 0.7)) drop-shadow(0 0 2px rgba(100, 220, 140, 0.4));

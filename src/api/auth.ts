@@ -27,6 +27,9 @@ export interface ProfileDto {
   weddingDate: string | null
   phoneNumber: string | null
   email: string | null
+  isSuperUser: boolean
+  isCreatedBySuperUser: boolean
+  isConfirmed: boolean
 }
 
 export interface MeResponseDto {
@@ -45,6 +48,9 @@ const DEFAULT_PROFILE: ProfileDto = {
   weddingDate: null,
   phoneNumber: null,
   email: null,
+  isSuperUser: false,
+  isCreatedBySuperUser: false,
+  isConfirmed: true,
 }
 
 export const AUTH_API = {
@@ -103,6 +109,17 @@ export const AUTH_API = {
       method: 'POST',
       credentials: 'include',
     })
+  },
+
+  async confirmEmail(token: string): Promise<void> {
+    const response = await fetch(`${BASE_API_URL}/auth/confirm-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    })
+    if (!response.ok) {
+      throw await parseApiError(response)
+    }
   },
 
   async me(token?: string): Promise<MeResponseDto> {

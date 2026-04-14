@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useChecklistStore } from '@/stores/checklist'
 import ChecklistHero from '@/components/checklist/checklistHero/ChecklistHero.vue'
 import ChecklistNormalView from '@/components/checklist/normalView/ChecklistNormalView.vue'
 import ChecklistEditView from '@/components/checklist/editView/ChecklistEditView.vue'
 import ChecklistEditFab from '@/components/checklist/ChecklistEditFab.vue'
+import ChecklistEmptyState from '@/components/checklist/ChecklistEmptyState.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
+import { useCurrentUser } from '@/composables/useCurrentUser'
+import UserSwitcher from '@/components/shared/UserSwitcher.vue'
+import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
+import { useSelectedUser } from '@/composables/useSelectedUser'
+import { ChecklistFilter } from '@/types/checklist'
 
 const EXPANDED_PHASES_STORAGE_KEY = 'wedding-checklist-expanded-phases'
 
@@ -26,22 +31,25 @@ function saveExpandedPhases(ids: Set<string>) {
   localStorage.setItem(EXPANDED_PHASES_STORAGE_KEY, JSON.stringify([...ids]))
 }
 
-const { t } = useI18n()
 const store = useChecklistStore()
+const { isCreatedBySuperUser, isSuperUser } = useCurrentUser()
+const { selectedUserId } = useSelectedUser()
 
-const activeFilter = ref<'all' | 'todo' | 'done' | 'high'>('all')
+const showPrompt = computed(() => isSuperUser.value && selectedUserId.value === null)
+
+const activeFilter = ref<ChecklistFilter>(ChecklistFilter.All)
 const expandedPhases = reactive(loadExpandedPhases())
 const isEditing = ref(false)
 
 const plainPhases = computed(() => {
-  const isUnfiltered = activeFilter.value === 'all'
+  const isUnfiltered = activeFilter.value === ChecklistFilter.All
 
   return store.phases
     .map((phase) => {
       let tasks = phase.tasks
-      if (activeFilter.value === 'todo') tasks = tasks.filter((t) => !t.completed)
-      if (activeFilter.value === 'done') tasks = tasks.filter((t) => t.completed)
-      if (activeFilter.value === 'high') tasks = tasks.filter((t) => t.priority === 'high')
+      if (activeFilter.value === ChecklistFilter.Todo) tasks = tasks.filter((t) => !t.completed)
+      if (activeFilter.value === ChecklistFilter.Done) tasks = tasks.filter((t) => t.completed)
+      if (activeFilter.value === ChecklistFilter.High) tasks = tasks.filter((t) => t.priority === 'high')
       return { ...phase, tasks }
     })
     .filter((phase) => isUnfiltered || phase.tasks.length > 0)
@@ -79,43 +87,52 @@ watch(
   { deep: true },
 )
 
+watch(selectedUserId, (userId) => {
+  if (isSuperUser.value && userId === null) return
+  store.fetchChecklist(userId ?? undefined)
+})
+
 onMounted(() => {
-  store.fetchChecklist()
+  if (isSuperUser.value && selectedUserId.value === null) return
+  store.fetchChecklist(selectedUserId.value ?? undefined)
 })
 </script>
 
 <template>
   <div class="checklist-page">
-    <ChecklistHero
-      :done-pct="store.donePct"
-      :done-count="store.doneCount"
-      :total-count="store.totalCount"
-      :active-filter="activeFilter"
-      @filter-change="activeFilter = $event"
-    />
-
-    <main class="timeline-area">
-      <ChecklistNormalView
-        v-if="!isEditing"
-        :phases="plainPhases"
-        :expanded-phases="expandedPhases"
-        @toggle-phase="togglePhase"
+    <div class="checklist-header">
+      <UserSwitcher v-model="selectedUserId" />
+    </div>
+    <SelectUserPrompt v-if="showPrompt" />
+    <template v-else>
+      <ChecklistHero
+        :done-pct="store.donePct"
+        :done-count="store.doneCount"
+        :total-count="store.totalCount"
+        :active-filter="activeFilter"
+        @filter-change="activeFilter = $event"
       />
 
-      <ChecklistEditView
-        v-else
-        :phases="store.phases"
-        :expanded-phases="expandedPhases"
-        @toggle-phase="togglePhase"
-      />
+      <main class="timeline-area">
+        <ChecklistNormalView
+          v-if="!isEditing"
+          :phases="plainPhases"
+          :expanded-phases="expandedPhases"
+          @toggle-phase="togglePhase"
+        />
 
-      <div v-if="plainPhases.length === 0 && !isEditing" class="empty-state">
-        <i class="pi pi-search" />
-        <p>{{ t('checklist.empty') }}</p>
-      </div>
-    </main>
+        <ChecklistEditView
+          v-else
+          :phases="store.phases"
+          :expanded-phases="expandedPhases"
+          @toggle-phase="togglePhase"
+        />
 
-    <ChecklistEditFab :is-editing="isEditing" @toggle="isEditing = !isEditing" />
+        <ChecklistEmptyState v-if="plainPhases.length === 0 && !isEditing" />
+      </main>
+
+      <ChecklistEditFab v-if="!isCreatedBySuperUser" :is-editing="isEditing" @toggle="isEditing = !isEditing" />
+    </template>
     <ConfirmDialog :breakpoints="{ '640px': '70vw' }" />
   </div>
 </template>
@@ -123,30 +140,22 @@ onMounted(() => {
 <style scoped>
 .checklist-page {
   min-height: 100%;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.checklist-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 0.5rem;
+}
+
+.checklist-header:empty {
+  display: none;
 }
 
 .timeline-area {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 20px 50px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--color-text-muted);
-}
-
-.empty-state i {
-  font-size: 36px;
-  display: block;
-  margin-bottom: 12px;
-  opacity: 0.5;
-}
-
-.empty-state p {
-  font-size: 14px;
 }
 
 @media (max-width: 768px) {

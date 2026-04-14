@@ -7,6 +7,7 @@ import {
 } from '@/api/guests'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useAuthStore } from '@/stores/auth'
+import { useSelectedUser } from '@/composables/useSelectedUser'
 
 interface GuestsState {
   guests: GuestDetailViewDto[]
@@ -34,13 +35,13 @@ export const useGuestsStore = defineStore('guests', {
   },
 
   actions: {
-    async fetchGuests() {
+    async fetchGuests(userId?: number) {
       const appCommon = useAppCommonStore()
       this.isLoading = true
       appCommon.showSpinner()
 
       try {
-        this.guests = await GUESTS_API.getAllGuests()
+        this.guests = await GUESTS_API.getAllGuests(userId)
       } catch (error) {
         appCommon.showError(error)
       } finally {
@@ -54,6 +55,8 @@ export const useGuestsStore = defineStore('guests', {
       if (!authStore.user) return
 
       const appCommon = useAppCommonStore()
+      const { selectedUserId } = useSelectedUser()
+      const userId = selectedUserId.value ?? undefined
 
       const trimmedName = payload.guest_name.trim()
       const isDuplicate = this.guests.some(
@@ -70,9 +73,9 @@ export const useGuestsStore = defineStore('guests', {
       try {
         const affected = await GUESTS_API.createGuest({
           guest_name: trimmedName,
-          user_id: authStore.user.id,
+          user_id: userId ?? authStore.user.id,
           guestForm: payload.guestForm,
-        })
+        }, userId)
         const affectedById = new Map(affected.map((a) => [a.id, a]))
         for (let i = 0; i < this.guests.length; i++) {
           const updated = affectedById.get(this.guests[i]!.id)
@@ -94,11 +97,14 @@ export const useGuestsStore = defineStore('guests', {
 
     async updateGuestForm(id: string, payload: UpdateGuestFormPayload) {
       const appCommon = useAppCommonStore()
+      const { selectedUserId } = useSelectedUser()
+      const userId = selectedUserId.value ?? undefined
+
       this.isUpdating = true
       appCommon.showSpinner()
 
       try {
-        const affected = await GUESTS_API.updateGuestForm(id, payload)
+        const affected = await GUESTS_API.updateGuestForm(id, payload, userId)
         const affectedById = new Map(affected.map((a) => [a.id, a]))
         for (let i = 0; i < this.guests.length; i++) {
           const updated = affectedById.get(this.guests[i]!.id)
@@ -116,10 +122,13 @@ export const useGuestsStore = defineStore('guests', {
 
     async removeGuest(id: string) {
       const appCommon = useAppCommonStore()
+      const { selectedUserId } = useSelectedUser()
+      const userId = selectedUserId.value ?? undefined
+
       appCommon.showSpinner()
 
       try {
-        await GUESTS_API.deleteGuest(id)
+        await GUESTS_API.deleteGuest(id, userId)
         this.guests = this.guests.filter((g) => g.id !== id)
       } catch (error) {
         appCommon.showError(error)

@@ -4,15 +4,23 @@ import budgetIconUrl from '@/assets/budget.svg'
 import checklistIconUrl from '@/assets/checklist.svg'
 import gamepadIconUrl from '@/assets/gamepad.svg'
 import personIconUrl from '@/assets/person.svg'
+import usersManagementIconUrl from '@/assets/usersManagement.svg'
 import { AppRoute } from '@/constants/app'
 
 export interface NavItem {
   labelKey: string
   iconUrl: string
   path: string
+  superUserOnly?: boolean
 }
 
 export const navItems: NavItem[] = [
+  {
+    labelKey: 'nav.userManagement',
+    iconUrl: usersManagementIconUrl,
+    path: AppRoute.UserManagement,
+    superUserOnly: true,
+  },
   { labelKey: 'nav.profile', iconUrl: personIconUrl, path: AppRoute.UserProfile },
   { labelKey: 'nav.guests', iconUrl: guestsIconUrl, path: AppRoute.Guests },
   { labelKey: 'nav.seatingArrangements', iconUrl: seatingsIconUrl, path: AppRoute.SeatingArrangements },

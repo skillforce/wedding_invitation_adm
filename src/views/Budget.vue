@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import SummaryBar from '@/components/budget/summary/SummaryBar.vue'
@@ -9,13 +9,28 @@ import ExportExcel from "@/components/budget/ExportExcel.vue"
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useBudgetStore } from '@/stores/budget'
 import { useCurrencyStore } from '@/stores/currency'
+import UserSwitcher from '@/components/shared/UserSwitcher.vue'
+import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
+import { useSelectedUser } from '@/composables/useSelectedUser'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 
 const { t } = useI18n()
 const budgetStore = useBudgetStore()
 const currencyStore = useCurrencyStore()
+const { selectedUserId } = useSelectedUser()
+const { isSuperUser } = useCurrentUser()
+
+const showPrompt = computed(() => isSuperUser.value && selectedUserId.value === null)
+
+watch(selectedUserId, (userId) => {
+  if (isSuperUser.value && userId === null) return
+  budgetStore.fetchBudget(userId ?? undefined)
+})
 
 onMounted(() => {
-  budgetStore.fetchBudget()
+  if (!isSuperUser.value || selectedUserId.value !== null) {
+    budgetStore.fetchBudget(selectedUserId.value ?? undefined)
+  }
   currencyStore.fetchRates()
 })
 </script>
@@ -25,24 +40,29 @@ onMounted(() => {
     <ConfirmDialog />
     <div class="page-header">
       <h1 class="page-title">{{ t('budget.title') }}</h1>
-
+      <UserSwitcher v-model="selectedUserId" />
     </div>
 
-    <SummaryBar class="summary-bar" />
+    <template v-if="showPrompt">
+      <SelectUserPrompt />
+    </template>
+    <template v-else>
+      <SummaryBar class="summary-bar" />
 
-    <div class="page-body">
-      <div class="main-col">
-        <Card class="table-card">
-          <template #content>
-            <BudgetTable />
-            <div class="add-row-footer">
-              <AddRowMenu />
-              <ExportExcel />
-            </div>
-          </template>
-        </Card>
+      <div class="page-body">
+        <div class="main-col">
+          <Card class="table-card">
+            <template #content>
+              <BudgetTable />
+              <div class="add-row-footer">
+                <AddRowMenu />
+                <ExportExcel />
+              </div>
+            </template>
+          </Card>
+        </div>
       </div>
-    </div>
+    </template>
 
   </div>
 </template>
@@ -104,20 +124,12 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
-.sidebar-col {
-  flex-shrink: 0;
-}
-
 @media (max-width: 1440px) {
   .page-body {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .sidebar-col {
-    width: 100%;
-    max-width: 100%;
-  }
 }
 
 @media (max-width: 768px) {

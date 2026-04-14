@@ -22,7 +22,8 @@
     "checklist": "Checklist",
     "miniGame": "When It's Too Much",
     "logout": "Logout",
-    "profile": "Profile"
+    "profile": "Profile",
+    "userManagement": "Users"
   },
   "profile": {
     "loggedAs": "Logged as",
@@ -325,6 +326,7 @@
       "rotateLeft": "Rotate left",
       "rotateRight": "Rotate right"
     },
+    "editingUser": "Editing: {login}",
     "saveButton": "Save profile",
     "uploadingImage": "Uploading...",
     "saving": "Saving...",
@@ -344,6 +346,57 @@
       "revokeSuccess": "Device signed out",
       "revokeOtherSuccess": "Other devices signed out",
       "revokeAriaLabel": "Sign out device"
+    }
+  },
+  "confirmEmail": {
+    "loading": "Confirming your email…",
+    "successTitle": "Email confirmed!",
+    "successMessage": "Your account is now active. You can sign in.",
+    "errorTitle": "Link is invalid",
+    "errorMessage": "The confirmation link has expired or has already been used. Ask your administrator to resend it.",
+    "noTokenTitle": "Invalid link",
+    "noTokenMessage": "The confirmation token is missing from the link. Check your email and try again.",
+    "goToLogin": "Go to sign in"
+  },
+  "userSwitcher": {
+    "label": "Viewing data for:",
+    "placeholder": "— select user —",
+    "promptTitle": "Select a user",
+    "promptSubtitle": "Use the dropdown above to choose a user and view their data."
+  },
+  "userManagement": {
+    "eyebrow": "Account Management",
+    "title": "Users management",
+    "subtitle": "Users created: {count}",
+    "addUser": "Add User",
+    "loading": "Loading...",
+    "empty": "No users created yet",
+    "statusActive": "Active",
+    "statusPending": "Pending confirmation",
+    "loginField": "Login",
+    "emailField": "Email",
+    "statusField": "Status",
+    "editProfile": "Edit profile",
+    "deleteUser": "Delete",
+    "cancel": "Cancel",
+    "deleteConfirmHeader": "Delete user?",
+    "deleteConfirmMessage": "User \"{login}\" and all their data will be permanently deleted. This cannot be undone.",
+    "resendConfirmation": "Resend confirmation email",
+    "resendSuccess": "Confirmation email resent",
+    "deleteSuccess": "User deleted",
+    "createSuccess": "User created. Confirmation email sent.",
+    "form": {
+      "title": "New User",
+      "loginLabel": "Login",
+      "loginPlaceholder": "3–10 characters",
+      "loginError": "Login must be 3–10 characters",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "3–30 characters",
+      "passwordError": "Password must be 3–30 characters",
+      "emailLabel": "Email",
+      "emailPlaceholder": "user@example.com",
+      "emailError": "Please enter a valid email address",
+      "submitButton": "Create"
     }
   },
   "errors": {
@@ -404,6 +457,12 @@
       "failedToCreateTask": "Failed to create task",
       "failedToDeleteTask": "Failed to delete task",
       "failedToReset": "Failed to reset checklist"
+    },
+    "userManagement": {
+      "failedToLoad": "Failed to load users",
+      "failedToCreate": "Failed to create user",
+      "failedToDelete": "Failed to delete user",
+      "failedToResend": "Failed to resend confirmation email"
     }
   }
 }

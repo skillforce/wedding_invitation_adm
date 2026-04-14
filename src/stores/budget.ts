@@ -17,6 +17,7 @@ import type {
 import { BUDGET_API } from '@/api/budget'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useCurrencyStore } from '@/stores/currency'
+import { useSelectedUser } from '@/composables/useSelectedUser'
 
 const PRIORITY_CYCLE: Priority[] = ['must', 'want', 'maybe']
 const COLLAPSED_STORAGE_KEY = 'wedly_budget_collapsed'
@@ -93,6 +94,8 @@ function flattenSections(sections: BudgetSectionState[]): BudgetRow[] {
 }
 
 export const useBudgetStore = defineStore('budget', () => {
+  const { selectedUserId } = useSelectedUser()
+
   const sections = ref<BudgetSectionState[]>([])
   const budgetLimit = ref<number>(0)
   const currency = ref<BudgetCurrency>('BYN')
@@ -178,11 +181,11 @@ export const useBudgetStore = defineStore('budget', () => {
     })
   }
 
-  async function fetchBudget(): Promise<void> {
+  async function fetchBudget(userId?: number): Promise<void> {
     const appCommon = useAppCommonStore()
     appCommon.showSpinner()
     try {
-      const dto = await BUDGET_API.getBudget()
+      const dto = await BUDGET_API.getBudget(userId)
       applyBudget(dto)
     } catch {
       appCommon.showError(new Error('errors.budget.failedToLoad'))
@@ -195,7 +198,7 @@ export const useBudgetStore = defineStore('budget', () => {
     if (limit === budgetLimit.value) return
     const appCommon = useAppCommonStore()
     try {
-      const dto = await BUDGET_API.patchBudget({ budgetLimit: limit })
+      const dto = await BUDGET_API.patchBudget({ budgetLimit: limit }, selectedUserId.value ?? undefined)
       applyBudget(dto)
     } catch {
       appCommon.showError(new Error('errors.budget.failedToUpdate'))
@@ -206,7 +209,7 @@ export const useBudgetStore = defineStore('budget', () => {
     if (c === currency.value) return
     const appCommon = useAppCommonStore()
     try {
-      const dto = await BUDGET_API.patchBudget({ currency: c })
+      const dto = await BUDGET_API.patchBudget({ currency: c }, selectedUserId.value ?? undefined)
       applyBudget(dto)
     } catch {
       appCommon.showError(new Error('errors.budget.failedToUpdate'))
@@ -216,7 +219,7 @@ export const useBudgetStore = defineStore('budget', () => {
   async function addSection(name: string): Promise<void> {
     const appCommon = useAppCommonStore()
     try {
-      const dto = await BUDGET_API.createSection({ name })
+      const dto = await BUDGET_API.createSection({ name }, selectedUserId.value ?? undefined)
       applyBudget(dto)
     } catch {
       appCommon.showError(new Error('errors.budget.failedToCreateSection'))
@@ -228,7 +231,7 @@ export const useBudgetStore = defineStore('budget', () => {
     if (current && changes.name !== undefined && changes.name === current.name) return
     const appCommon = useAppCommonStore()
     try {
-      const dto = await BUDGET_API.patchSection(id, { name: changes.name })
+      const dto = await BUDGET_API.patchSection(id, { name: changes.name }, selectedUserId.value ?? undefined)
       applyBudget(dto)
     } catch {
       appCommon.showError(new Error('errors.budget.failedToUpdateSection'))
@@ -238,7 +241,7 @@ export const useBudgetStore = defineStore('budget', () => {
   async function deleteSection(id: number): Promise<void> {
     const appCommon = useAppCommonStore()
     try {
-      await BUDGET_API.deleteSection(id)
+      await BUDGET_API.deleteSection(id, selectedUserId.value ?? undefined)
       collapsedSections.delete(id)
       saveCollapsed(collapsedSections)
       sections.value = sections.value.filter((section) => section.id !== id)
@@ -276,7 +279,7 @@ export const useBudgetStore = defineStore('budget', () => {
   async function addItem(sectionId: number, name = ''): Promise<void> {
     const appCommon = useAppCommonStore()
     try {
-      const dto = await BUDGET_API.createItem({ sectionId, name, currency: currency.value })
+      const dto = await BUDGET_API.createItem({ sectionId, name, currency: currency.value }, selectedUserId.value ?? undefined)
       collapsedSections.delete(sectionId)
       saveCollapsed(collapsedSections)
       applyBudget(dto)
@@ -302,7 +305,7 @@ export const useBudgetStore = defineStore('budget', () => {
         deposit: changes.deposit,
         priority: changes.priority,
         paid: changes.paid,
-      })
+      }, selectedUserId.value ?? undefined)
 
       if (!current) return
 
@@ -321,7 +324,7 @@ export const useBudgetStore = defineStore('budget', () => {
   async function deleteItem(id: number): Promise<void> {
     const appCommon = useAppCommonStore()
     try {
-      await BUDGET_API.deleteItem(id)
+      await BUDGET_API.deleteItem(id, selectedUserId.value ?? undefined)
       const location = findItem(id)
       if (location) {
         location.section.items.splice(location.index, 1)
@@ -359,7 +362,7 @@ export const useBudgetStore = defineStore('budget', () => {
       const updatedSections = await BUDGET_API.moveSection({
         sectionId: section.id,
         targetIndex: toIndex,
-      })
+      }, selectedUserId.value ?? undefined)
       applyMovedSections(updatedSections)
     } catch (error) {
       sections.value = snapshot
@@ -399,7 +402,7 @@ export const useBudgetStore = defineStore('budget', () => {
         itemId: item.id,
         targetSectionId: toSectionId,
         targetIndex: toIndex,
-      })
+      }, selectedUserId.value ?? undefined)
       applyMovedSections(updatedSections)
     } catch (error) {
       sections.value = snapshot

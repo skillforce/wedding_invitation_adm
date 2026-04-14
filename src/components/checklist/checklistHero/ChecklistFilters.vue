@@ -5,7 +5,7 @@
       :key="f.value"
       class="filter-pill"
       :class="{ 'filter-pill--active': activeFilter === f.value }"
-      @click="$emit('filter-change', f.value as FilterValue)"
+      @click="$emit('filter-change', f.value)"
     >
       <i :class="f.icon" class="filter-icon" />
       <span class="pill-text">{{ t(f.labelKey) }}</span>
@@ -15,25 +15,24 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { ChecklistFilter } from '@/types/checklist'
 
 defineProps<{
-  activeFilter: FilterValue
+  activeFilter: ChecklistFilter
 }>()
 
 defineEmits<{
-  'filter-change': [value: FilterValue]
+  'filter-change': [value: ChecklistFilter]
 }>()
 
 const { t } = useI18n()
 
 const filters = [
-  { value: 'all' as const, labelKey: 'checklist.filter.all', icon: 'pi pi-list' },
-  { value: 'todo' as const, labelKey: 'checklist.filter.todo', icon: 'pi pi-circle' },
-  { value: 'done' as const, labelKey: 'checklist.filter.done', icon: 'pi pi-check-circle' },
-  { value: 'high' as const, labelKey: 'checklist.filter.priority', icon: 'pi pi-star-fill' },
+  { value: ChecklistFilter.All, labelKey: 'checklist.filter.all', icon: 'pi pi-list' },
+  { value: ChecklistFilter.Todo, labelKey: 'checklist.filter.todo', icon: 'pi pi-circle' },
+  { value: ChecklistFilter.Done, labelKey: 'checklist.filter.done', icon: 'pi pi-check-circle' },
+  { value: ChecklistFilter.High, labelKey: 'checklist.filter.priority', icon: 'pi pi-star-fill' },
 ]
-
-export type FilterValue = 'all' | 'todo' | 'done' | 'high'
 </script>
 
 <style scoped>

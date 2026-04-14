@@ -1,4 +1,4 @@
-import { HttpMethod, apiFetch, parseApiError } from '@/api/consts'
+import { HttpMethod, apiFetch, parseApiError, qs } from '@/api/consts'
 
 export interface GuestResponseViewDto {
   id: string
@@ -48,14 +48,14 @@ export interface CreateGuestInputDto extends NewGuestPayload {
 export type UpdateGuestFormPayload = Partial<GuestFormDto>
 
 export const GUESTS_API = {
-  async getAllGuests(): Promise<GuestDetailViewDto[]> {
-    const res = await apiFetch('/guests')
+  async getAllGuests(userId?: number): Promise<GuestDetailViewDto[]> {
+    const res = await apiFetch(`/guests${qs(userId)}`)
     if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
-  async createGuest(dto: CreateGuestInputDto): Promise<GuestDetailViewDto[]> {
-    const res = await apiFetch('/guests', {
+  async createGuest(dto: CreateGuestInputDto, userId?: number): Promise<GuestDetailViewDto[]> {
+    const res = await apiFetch(`/guests${qs(userId)}`, {
       method: HttpMethod.POST,
       body: JSON.stringify(dto),
     })
@@ -64,8 +64,8 @@ export const GUESTS_API = {
     return res.json()
   },
 
-  async updateGuestForm(id: string, dto: UpdateGuestFormPayload): Promise<GuestDetailViewDto[]> {
-    const res = await apiFetch(`/guests/${id}/form`, {
+  async updateGuestForm(id: string, dto: UpdateGuestFormPayload, userId?: number): Promise<GuestDetailViewDto[]> {
+    const res = await apiFetch(`/guests/${id}/form${qs(userId)}`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
@@ -74,8 +74,8 @@ export const GUESTS_API = {
     return res.json()
   },
 
-  async deleteGuest(id: string): Promise<void> {
-    const res = await apiFetch(`/guests/${id}`, { method: HttpMethod.DELETE })
+  async deleteGuest(id: string, userId?: number): Promise<void> {
+    const res = await apiFetch(`/guests/${id}${qs(userId)}`, { method: HttpMethod.DELETE })
     if (!res.ok) throw await parseApiError(res)
   },
 }

@@ -1,4 +1,4 @@
-import { HttpMethod, apiFetch, parseApiError } from '@/api/consts'
+import { HttpMethod, apiFetch, parseApiError, qs } from '@/api/consts'
 import type { BudgetCurrency, BudgetDto, BudgetSectionDto, Priority } from '@/types/budget'
 
 export interface PatchBudgetDto {
@@ -45,14 +45,14 @@ export interface MoveItemDto {
 }
 
 export const BUDGET_API = {
-  async getBudget(): Promise<BudgetDto> {
-    const res = await apiFetch('/budget')
+  async getBudget(userId?: number): Promise<BudgetDto> {
+    const res = await apiFetch(`/budget${qs(userId)}`)
     if (!res.ok) throw await parseApiError(res)
     return res.json()
   },
 
-  async patchBudget(dto: PatchBudgetDto): Promise<BudgetDto> {
-    const res = await apiFetch('/budget', {
+  async patchBudget(dto: PatchBudgetDto, userId?: number): Promise<BudgetDto> {
+    const res = await apiFetch(`/budget${qs(userId)}`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
@@ -60,8 +60,8 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async createSection(dto: CreateSectionDto): Promise<BudgetDto> {
-    const res = await apiFetch('/budget/sections', {
+  async createSection(dto: CreateSectionDto, userId?: number): Promise<BudgetDto> {
+    const res = await apiFetch(`/budget/sections${qs(userId)}`, {
       method: HttpMethod.POST,
       body: JSON.stringify(dto),
     })
@@ -69,8 +69,8 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async patchSection(id: number, dto: PatchSectionDto): Promise<BudgetDto> {
-    const res = await apiFetch(`/budget/sections/${id}`, {
+  async patchSection(id: number, dto: PatchSectionDto, userId?: number): Promise<BudgetDto> {
+    const res = await apiFetch(`/budget/sections/${id}${qs(userId)}`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
@@ -78,8 +78,8 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async moveSection(dto: MoveSectionDto): Promise<BudgetSectionDto[]> {
-    const res = await apiFetch('/budget/sections/move', {
+  async moveSection(dto: MoveSectionDto, userId?: number): Promise<BudgetSectionDto[]> {
+    const res = await apiFetch(`/budget/sections/move${qs(userId)}`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
@@ -87,15 +87,15 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async deleteSection(id: number): Promise<void> {
-    const res = await apiFetch(`/budget/sections/${id}`, {
+  async deleteSection(id: number, userId?: number): Promise<void> {
+    const res = await apiFetch(`/budget/sections/${id}${qs(userId)}`, {
       method: HttpMethod.DELETE,
     })
     if (!res.ok) throw await parseApiError(res)
   },
 
-  async createItem(dto: CreateItemDto): Promise<BudgetDto> {
-    const res = await apiFetch('/budget/items', {
+  async createItem(dto: CreateItemDto, userId?: number): Promise<BudgetDto> {
+    const res = await apiFetch(`/budget/items${qs(userId)}`, {
       method: HttpMethod.POST,
       body: JSON.stringify(dto),
     })
@@ -103,8 +103,8 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async patchItem(id: number, dto: PatchItemDto): Promise<BudgetDto> {
-    const res = await apiFetch(`/budget/items/${id}`, {
+  async patchItem(id: number, dto: PatchItemDto, userId?: number): Promise<BudgetDto> {
+    const res = await apiFetch(`/budget/items/${id}${qs(userId)}`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
@@ -112,8 +112,8 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async moveItem(dto: MoveItemDto): Promise<BudgetSectionDto[]> {
-    const res = await apiFetch('/budget/items/move', {
+  async moveItem(dto: MoveItemDto, userId?: number): Promise<BudgetSectionDto[]> {
+    const res = await apiFetch(`/budget/items/move${qs(userId)}`, {
       method: HttpMethod.PATCH,
       body: JSON.stringify(dto),
     })
@@ -121,8 +121,8 @@ export const BUDGET_API = {
     return res.json()
   },
 
-  async deleteItem(id: number): Promise<void> {
-    const res = await apiFetch(`/budget/items/${id}`, {
+  async deleteItem(id: number, userId?: number): Promise<void> {
+    const res = await apiFetch(`/budget/items/${id}${qs(userId)}`, {
       method: HttpMethod.DELETE,
     })
     if (!res.ok) throw await parseApiError(res)

@@ -8,12 +8,19 @@ import ProfileAvatarFileInput from './ProfileAvatarFileInput.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
 import { ApiError } from '@/api/consts'
+import type { ProfileDto } from '@/api/auth'
 
 const AvatarCropperDialog = defineAsyncComponent(
   () => import('./avatarCropper/AvatarCropperDialog.vue'),
 )
 
-defineProps<{ pending?: boolean }>()
+const props = defineProps<{
+  pending?: boolean
+  // When set, this image URL is shown instead of the logged-in user's avatar.
+  overrideProfileImg?: string | null
+  // When set, called instead of authStore.uploadProfileImage.
+  uploadFn?: (file: File) => Promise<ProfileDto>
+}>()
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -31,7 +38,10 @@ const cropperSrc = ref('')
 const pendingFileName = ref('avatar.jpg')
 
 onMounted(() => {
-  imagePreview.value = authStore.user?.profile?.profileImg ?? null
+  imagePreview.value =
+    props.overrideProfileImg !== undefined
+      ? (props.overrideProfileImg ?? null)
+      : (authStore.user?.profile?.profileImg ?? null)
 })
 
 function validateFile(file: File): string | null {
@@ -60,8 +70,13 @@ async function handleCroppedFile(file: File) {
   isUploading.value = true
   appCommon.showSpinner()
   try {
-    await authStore.uploadProfileImage(file)
-    imagePreview.value = authStore.user?.profile?.profileImg ?? null
+    if (props.uploadFn) {
+      const profile = await props.uploadFn(file)
+      imagePreview.value = profile.profileImg ?? null
+    } else {
+      await authStore.uploadProfileImage(file)
+      imagePreview.value = authStore.user?.profile?.profileImg ?? null
+    }
     appCommon.showSuccess(t('userProfile.uploadSuccess'))
   } catch (err) {
     imagePreview.value = previousImage
