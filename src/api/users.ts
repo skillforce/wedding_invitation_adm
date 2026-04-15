@@ -8,10 +8,13 @@ export interface UsersViewDto {
   profile: ProfileDto
 }
 
+export type EmailLocale = 'en' | 'ru'
+
 export interface CreatePlainUserDto {
   login: string
   password: string
   email: string
+  locale?: EmailLocale
 }
 
 export const USERS_API = {
@@ -35,8 +38,11 @@ export const USERS_API = {
     if (!response.ok) throw await parseApiError(response)
   },
 
-  async resendConfirmation(id: number): Promise<void> {
-    const response = await apiFetch(`/users/${id}/resend-confirmation`, { method: 'POST' })
+  async resendConfirmation(id: number, locale?: EmailLocale): Promise<void> {
+    const url = locale
+      ? `/users/${id}/resend-confirmation?locale=${locale}`
+      : `/users/${id}/resend-confirmation`
+    const response = await apiFetch(url, { method: 'POST' })
     if (!response.ok) throw await parseApiError(response)
   },
 

@@ -6,6 +6,7 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { useUsersStore } from '@/stores/users'
 import { useAppCommonStore } from '@/stores/app_common'
+import { usePreferencesStore } from '@/stores/preferences'
 
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ 'update:visible': [value: boolean] }>()
@@ -13,6 +14,7 @@ const emit = defineEmits<{ 'update:visible': [value: boolean] }>()
 const { t } = useI18n()
 const store = useUsersStore()
 const appCommon = useAppCommonStore()
+const preferences = usePreferencesStore()
 
 const createForm = ref({ login: '', password: '', email: '' })
 const createErrors = ref({ login: '', password: '', email: '' })
@@ -53,6 +55,7 @@ async function submit() {
       login: createForm.value.login.trim(),
       password: createForm.value.password,
       email: createForm.value.email.trim(),
+      locale: preferences.locale,
     })
     emit('update:visible', false)
     appCommon.showSuccess(t('userManagement.createSuccess'))

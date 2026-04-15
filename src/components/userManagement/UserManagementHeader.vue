@@ -45,9 +45,9 @@ const { t } = useI18n()
   isolation: isolate;
   border-bottom: 1px solid var(--color-border);
   padding: 40px 20px 28px;
+  border-radius: 12px;
 }
 
-/* ── Background atmosphere ─────────────────────────────── */
 .bg-layers {
   position: absolute;
   inset: 0;
@@ -79,7 +79,7 @@ const { t } = useI18n()
   );
   filter: blur(6px);
   pointer-events: none;
-  animation: drift 14s ease-in-out infinite alternate;
+  animation: drift 14s ease-in-out infinite alternate;;
 }
 
 .bg-vignette {
@@ -94,7 +94,6 @@ const { t } = useI18n()
   to   { transform: translate3d(3%, -3%, 0) scale(1.08); }
 }
 
-/* ── Content column ────────────────────────────────────── */
 .header-content {
   max-width: 720px;
   margin: 0 auto;
@@ -158,7 +157,6 @@ const { t } = useI18n()
   color: var(--color-text-secondary);
 }
 
-/* ── CTA button ────────────────────────────────────────── */
 .add-btn :deep(.p-button) {
   background: color-mix(in srgb, var(--p-primary-400, #a78bfa) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--p-primary-400, #a78bfa) 45%, transparent);

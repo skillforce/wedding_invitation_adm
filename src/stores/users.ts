@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { USERS_API, type UsersViewDto, type CreatePlainUserDto } from '@/api/users'
+import { USERS_API, type UsersViewDto, type CreatePlainUserDto, type EmailLocale } from '@/api/users'
 import type { UpdateProfileDto } from '@/api/profile'
 import type { ProfileDto } from '@/api/auth'
 
@@ -28,8 +28,8 @@ export const useUsersStore = defineStore('users', () => {
     users.value = users.value.filter((u) => u.id !== id)
   }
 
-  async function resendConfirmation(id: number) {
-    await USERS_API.resendConfirmation(id)
+  async function resendConfirmation(id: number, locale?: EmailLocale) {
+    await USERS_API.resendConfirmation(id, locale)
   }
 
   async function updateUserProfile(id: number, dto: UpdateProfileDto): Promise<ProfileDto> {

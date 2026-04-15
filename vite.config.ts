@@ -22,11 +22,7 @@ export default defineConfig(({ command }) => ({
           groups: [
             {
               name: 'vendor-core',
-              test: /node_modules\/(vue|pinia|vue-router|vue-i18n)\//,
-            },
-            {
-              name: 'vendor-ui',
-              test: /node_modules\/(primevue|@primeuix)\//,
+              test: /node_modules\/(vue|pinia|vue-router|vue-i18n|primevue|@primeuix)\//,
             },
             {
               name: 'vendor-konva',

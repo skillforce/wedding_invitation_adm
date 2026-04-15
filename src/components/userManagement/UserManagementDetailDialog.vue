@@ -9,6 +9,7 @@ import UserAvatar from '@/components/shared/UserAvatar.vue'
 import { useUsersStore } from '@/stores/users'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useSelectedUser } from '@/composables/useSelectedUser'
+import { usePreferencesStore } from '@/stores/preferences'
 import { AppRoute } from '@/constants/app'
 import type { UsersViewDto } from '@/api/users'
 
@@ -21,13 +22,14 @@ const confirm = useConfirm()
 const store = useUsersStore()
 const appCommon = useAppCommonStore()
 const { editingUserId } = useSelectedUser()
+const preferences = usePreferencesStore()
 
 const isResending = ref(false)
 
 async function handleResend(user: UsersViewDto) {
   isResending.value = true
   try {
-    await store.resendConfirmation(user.id)
+    await store.resendConfirmation(user.id, preferences.locale)
     appCommon.showSuccess(t('userManagement.resendSuccess'))
   } catch {
     appCommon.showError(t('errors.userManagement.failedToResend'))
