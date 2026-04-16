@@ -394,7 +394,7 @@
       "passwordPlaceholder": "3–30 characters",
       "passwordError": "Password must be 3–30 characters",
       "emailLabel": "Email",
-      "emailPlaceholder": "user@example.com",
+      "emailPlaceholder": "user{'@'}example.com",
       "emailError": "Please enter a valid email address",
       "submitButton": "Create"
     }

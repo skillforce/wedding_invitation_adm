@@ -394,7 +394,7 @@
       "passwordPlaceholder": "3–30 символов",
       "passwordError": "Пароль должен содержать от 3 до 30 символов",
       "emailLabel": "Электронная почта",
-      "emailPlaceholder": "user@example.com",
+      "emailPlaceholder": "user{'@'}example.com",
       "emailError": "Введите корректный адрес электронной почты",
       "submitButton": "Создать"
     }
