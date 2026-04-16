@@ -208,13 +208,6 @@ function onTableRotate(id: string, deg: number) {
 }
 
 @media (max-width: 639px) {
-  :global(.authorized-content) {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    overflow-y: hidden;
-    overscroll-behavior-y: none;
-  }
-
   .board-container {
     min-height: 0;
   }
