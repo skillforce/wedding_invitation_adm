@@ -4,7 +4,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-// https://vite.dev/config/
 export default defineConfig(({ command }) => ({
   plugins: [
     vue(),
@@ -16,23 +15,18 @@ export default defineConfig(({ command }) => ({
     },
   },
   build: {
-    rolldownOptions: {
+    rollupOptions: {
       output: {
-        codeSplitting: {
-          groups: [
-            {
-              name: 'vendor-core',
-              test: /node_modules\/(vue|pinia|vue-router|vue-i18n|primevue|@primeuix)\//,
-            },
-            {
-              name: 'vendor-konva',
-              test: /node_modules\/(konva|vue-konva)\//,
-            },
-            {
-              name: 'vendor-pdf',
-              test: /node_modules\/(jspdf|html2canvas)\//,
-            },
-          ],
+        manualChunks(id) {
+          if (/node_modules\/(vue|pinia|vue-router|vue-i18n|primevue|@primeuix)\//.test(id)) {
+            return 'vendor-core'
+          }
+          if (/node_modules\/(konva|vue-konva)\//.test(id)) {
+            return 'vendor-konva'
+          }
+          if (/node_modules\/(jspdf|html2canvas)\//.test(id)) {
+            return 'vendor-pdf'
+          }
         },
       },
     },
