@@ -133,10 +133,6 @@ function onTableRotate(id: string, deg: number) {
       @fit-to-stage="fitToStage"
     />
 
-    <div class="board-user-switcher">
-      <UserSwitcher v-model="selectedUserId" />
-    </div>
-
     <SelectUserPrompt v-if="showPrompt" class="board-prompt" />
     <template v-else>
       <WorkspaceSettings

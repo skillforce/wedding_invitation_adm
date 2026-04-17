@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import UserAvatar from '@/components/shared/UserAvatar.vue'
+import GuestTag from '@/components/shared/GuestTag.vue'
+import type { GuestRelationshipToCouple } from '@/api/guests'
 
 const props = defineProps<{
   guestId: string
   name: string
   number: number
+  side: GuestRelationshipToCouple
   extraCount?: number
   highlightQuery?: string
 }>()
-
-const { t } = useI18n()
 
 const normalizedHighlightQuery = computed(() => props.highlightQuery?.trim() ?? '')
 const highlightedGuestNameParts = computed(() => {
@@ -39,7 +38,6 @@ const highlightedGuestNameParts = computed(() => {
 
 <template>
   <span class="guest-number">{{ number }}</span>
-  <UserAvatar :size="28" :alt="t('a11y.guestAvatar')" class="guest-avatar" />
   <span class="guest-name">
     <span
       v-for="(part, index) in highlightedGuestNameParts"
@@ -49,6 +47,9 @@ const highlightedGuestNameParts = computed(() => {
       {{ part.text }}
     </span>
     <span v-if="extraCount && extraCount > 0" class="guest-extra-count">+{{ extraCount }}</span>
+  </span>
+  <span class="guest-tags">
+    <GuestTag :side="side" />
   </span>
 </template>
 
@@ -102,17 +103,14 @@ const highlightedGuestNameParts = computed(() => {
   line-height: 1;
 }
 
-@media (max-width: 480px) {
-  .guest-name {
-    max-width: 140px;
-  }
+.guest-tags {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
 }
 
 @media (max-width: 390px) {
-  .guest-avatar {
-    display: none;
-  }
-
   .guest-name {
     max-width: 100px;
   }

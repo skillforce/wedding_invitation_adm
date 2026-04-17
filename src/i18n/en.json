@@ -112,7 +112,7 @@
     "responsePanel": {
       "kicker": "Selected response",
       "emptyTitle": "Pick a guest",
-      "emptyDescription": "Select a guest from the list to inspect their RSVP details.",
+      "emptyDescription": "Select a guest from the list to inspect their details.",
       "profileTitle": "Guest profile",
       "responseTitle": "Guest response",
       "responded": "Responded",
@@ -247,12 +247,15 @@
     },
     "export": {
       "button": "Export to Excel",
+      "sheetTitle": "Wedding Budget Estimate",
       "section": "Section",
       "deviation": "Deviation",
       "total": "Total",
       "subtotal": "Section subtotal",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "deposit": "Deposit",
+      "notes": "Notes"
     },
     "sidebar": {
       "distribution": "Distribution by priority",
@@ -263,6 +266,7 @@
     }
   },
   "checklist": {
+    "title": "Checklist",
     "countdown": {
       "title": "Until the wedding",
       "days": "days",
@@ -314,8 +318,6 @@
     "invitationUrlLabel": "Invitation site URL",
     "invitationUrlPlaceholder": "https://example.com/invite",
     "weddingDateLabel": "Wedding date",
-    "phoneNumberLabel": "Phone number",
-    "phoneNumberPlaceholder": "Enter phone number",
     "emailLabel": "Email address",
     "emailPlaceholder": "user{'@'}example.com",
     "cropDialog": {
@@ -360,7 +362,7 @@
   },
   "userSwitcher": {
     "label": "Viewing data for:",
-    "placeholder": "— select user —",
+    "placeholder": "Select user",
     "promptTitle": "Select a user",
     "promptSubtitle": "Use the dropdown above to choose a user and view their data."
   },
@@ -441,7 +443,6 @@
     "userProfile": {
       "invalidUrl": "Please enter a valid URL starting with http:// or https://",
       "invalidEmail": "Please enter a valid email address",
-      "invalidPhone": "Please enter a valid phone number",
       "imageTooLarge": "File exceeds the maximum allowed size of 15 MB",
       "imageInvalidType": "Allowed formats: JPEG, PNG, WebP, AVIF, GIF",
       "imageRejected": "File is too large or has an unsupported format",

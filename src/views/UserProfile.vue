@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import ProfileAvatarCard from '@/components/profile/ProfileAvatarCard.vue'
 import ProfileContextBanner from '@/components/profile/ProfileContextBanner.vue'
 import ProfileFieldsCard from '@/components/profile/ProfileFieldsCard.vue'
@@ -60,9 +61,7 @@ function makeUploadFn(userId: number) {
   <div class="profile-page">
     <ProfileContextBanner v-if="targetUser" :login="targetUser.login" @back="goBack" />
 
-    <div class="page-header">
-      <h1 class="page-title">{{ t('userProfile.title') }}</h1>
-    </div>
+    <PageHeader :title="t('userProfile.title')" />
     <div class="profile-content">
       <ProfileAvatarCard
         :pending="isPending"
@@ -85,18 +84,6 @@ function makeUploadFn(userId: number) {
   flex-direction: column;
   gap: 1.5rem;
   padding-bottom: 2rem;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-}
-
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--color-text-primary);
 }
 
 .profile-content {

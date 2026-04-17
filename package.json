@@ -32,7 +32,6 @@
     "vue-konva": "^3.3.0",
     "vue-picture-cropper": "^1.0.0",
     "vue-router": "^5.0.1",
-    "vue-tel-input": "^9.8.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

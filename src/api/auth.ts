@@ -25,7 +25,6 @@ export interface ProfileDto {
   invitationUrl: string | null
   profileImg: string | null
   weddingDate: string | null
-  phoneNumber: string | null
   email: string | null
   isSuperUser: boolean
   isCreatedBySuperUser: boolean
@@ -46,7 +45,6 @@ const DEFAULT_PROFILE: ProfileDto = {
   invitationUrl: null,
   profileImg: null,
   weddingDate: null,
-  phoneNumber: null,
   email: null,
   isSuperUser: false,
   isCreatedBySuperUser: false,

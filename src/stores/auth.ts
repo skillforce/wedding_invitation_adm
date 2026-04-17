@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { AUTH_API, type MeResponseDto } from '@/api/auth'
 import { PROFILE_API, type UpdateProfileDto } from '@/api/profile'
+import { useSelectedUserStore } from '@/stores/selectedUser'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -18,6 +19,9 @@ export const useAuthStore = defineStore('auth', {
       const { accessToken, id, profile } = await AUTH_API.login({ login, password })
       this.token = accessToken
       this.user = { id, login, profile }
+      if (!profile.isSuperUser) {
+        useSelectedUserStore().selectedUserId = null
+      }
     },
 
     async fetchMe() {

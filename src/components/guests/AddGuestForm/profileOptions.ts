@@ -20,7 +20,7 @@ export function useGuestProfileOptions(t: (key: string) => string) {
     { label: t('guests.profile.relationshipOptions.mutual'), value: 'mutual' },
   ])
 
-  const ageOptions = computed<SelectOption<GuestAgeGroup>[]>(() => [
+const ageOptions = computed<SelectOption<GuestAgeGroup>[]>(() => [
     { label: t('guests.profile.ageOptions.child'), value: 'child' },
     { label: t('guests.profile.ageOptions.young'), value: 'young' },
     { label: t('guests.profile.ageOptions.adult'), value: 'adult' },

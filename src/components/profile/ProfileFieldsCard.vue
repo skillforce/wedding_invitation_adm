@@ -5,7 +5,6 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import InputWithError from '@/components/shared/InputWithError.vue'
-import PhoneInputWithError from '@/components/shared/PhoneInputWithError.vue'
 import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
@@ -28,25 +27,18 @@ const isEditingPlainUser = computed(() => Boolean(props.overrideProfile))
 
 const invitationUrl = ref('')
 const weddingDate = ref<Date | null>(null)
-const phoneNumber = ref<string | null>(null)
 const email = ref('')
 const isSaving = ref(false)
-const isPhoneValid = ref(true)
 
 const urlInputRef = ref<InstanceType<typeof InputWithError> | null>(null)
 const emailInputRef = ref<InstanceType<typeof InputWithError> | null>(null)
-const phoneInputRef = ref<InstanceType<typeof PhoneInputWithError> | null>(null)
 
 const urlDirty = ref(false)
 const emailDirty = ref(false)
-const phoneDirty = ref(false)
-const loadedPhoneNumber = ref<string | null>(null)
 
 function loadFromProfile(profile: ProfileDto | null | undefined) {
   if (!profile) return
   invitationUrl.value = profile.invitationUrl ?? ''
-  phoneNumber.value = profile.phoneNumber ?? ''
-  loadedPhoneNumber.value = profile.phoneNumber ?? null
   email.value = profile.email ?? ''
   weddingDate.value = profile.weddingDate ? new Date(profile.weddingDate) : null
 }
@@ -69,15 +61,9 @@ const emailError = computed(() => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) ? '' : t('errors.userProfile.invalidEmail')
 })
 
-const phoneError = computed(() => {
-  if (!phoneNumber.value) return ''
-  return isPhoneValid.value ? '' : t('errors.userProfile.invalidPhone')
-})
-
 const isFormValid = computed(() =>
   (!urlDirty.value || !urlError.value) &&
-  (!emailDirty.value || !emailError.value) &&
-  (!phoneDirty.value || !phoneError.value)
+  (!emailDirty.value || !emailError.value)
 )
 
 function toLocalDateStr(d: Date): string {
@@ -97,22 +83,12 @@ const isUnchanged = computed(() => {
   const dateUnchanged = hasDateWeddingField
     ? norm(invitationUrl.value) === norm(profile.invitationUrl) && formDateStr === profileDateStr
     : true
-  return (
-    dateUnchanged &&
-    norm(phoneDirty.value ? (phoneNumber.value || null) : loadedPhoneNumber.value) === norm(profile.phoneNumber) &&
-    norm(email.value) === norm(profile.email)
-  )
+  return dateUnchanged && norm(email.value) === norm(profile.email)
 })
-
-function onPhoneInput(value: string, isAutoFill: boolean) {
-  phoneNumber.value = value
-  if (!isAutoFill) phoneDirty.value = true
-}
 
 async function handleSave() {
   if (urlDirty.value) urlInputRef.value?.touch()
   if (emailDirty.value) emailInputRef.value?.touch()
-  if (phoneDirty.value) phoneInputRef.value?.touch()
   if (!isFormValid.value || isUnchanged.value) return
 
   isSaving.value = true
@@ -123,7 +99,6 @@ async function handleSave() {
         invitationUrl: invitationUrl.value || null,
         weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null,
       }),
-      phoneNumber: phoneDirty.value ? (phoneNumber.value || null) : loadedPhoneNumber.value,
       email: email.value || null,
     }
     if (props.saveFn) {
@@ -169,20 +144,6 @@ async function handleSave() {
             :min-date="new Date()"
             class="date-picker"
             panel-class="my-datepicker-panel"
-          />
-        </div>
-
-        <div class="form-field">
-          <label class="field-label">{{ t('userProfile.phoneNumberLabel') }}</label>
-          <PhoneInputWithError
-            ref="phoneInputRef"
-            :model-value="phoneNumber ?? ''"
-            :placeholder="t('userProfile.phoneNumberPlaceholder')"
-            :invalid="phoneDirty && Boolean(phoneError)"
-            :error-message="phoneDirty ? phoneError : ''"
-            :pending="phoneNumber === null"
-            @update:model-value="onPhoneInput"
-            @validate="isPhoneValid = $event"
           />
         </div>
 

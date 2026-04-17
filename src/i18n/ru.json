@@ -112,7 +112,7 @@
     "responsePanel": {
       "kicker": "Выбранный ответ",
       "emptyTitle": "Выберите гостя",
-      "emptyDescription": "Нажмите на гостя в списке, чтобы посмотреть детали RSVP.",
+      "emptyDescription": "Нажмите на гостя в списке, чтобы посмотреть детали.",
       "profileTitle": "Профиль гостя",
       "responseTitle": "Ответ гостя",
       "responded": "Ответил",
@@ -247,12 +247,15 @@
     },
     "export": {
       "button": "Экспорт в Excel",
+      "sheetTitle": "СМЕТА свадебного торжества",
       "section": "Раздел",
       "deviation": "Отклонение",
       "total": "Итого",
       "subtotal": "Итого по разделу",
       "yes": "Да",
-      "no": "Нет"
+      "no": "Нет",
+      "deposit": "Предоплата",
+      "notes": "Примечания"
     },
     "sidebar": {
       "distribution": "Распределение по важности",
@@ -263,6 +266,7 @@
     }
   },
   "checklist": {
+    "title": "Чеклист",
     "countdown": {
       "title": "До свадьбы",
       "days": "дней",
@@ -314,8 +318,6 @@
     "invitationUrlLabel": "URL сайта приглашения",
     "invitationUrlPlaceholder": "https://example.com/invite",
     "weddingDateLabel": "Дата свадьбы",
-    "phoneNumberLabel": "Номер телефона",
-    "phoneNumberPlaceholder": "Введите номер телефона",
     "emailLabel": "Электронная почта",
     "emailPlaceholder": "user{'@'}example.com",
     "cropDialog": {
@@ -360,7 +362,7 @@
   },
   "userSwitcher": {
     "label": "Просматривать данные:",
-    "placeholder": "— выберите пользователя —",
+    "placeholder": "Выберите пользователя",
     "promptTitle": "Выберите пользователя",
     "promptSubtitle": "Выберите пользователя в выпадающем списке выше, чтобы просмотреть его данные."
   },
@@ -441,7 +443,6 @@
     "userProfile": {
       "invalidUrl": "Введите корректный URL, начинающийся с http:// или https://",
       "invalidEmail": "Введите корректный адрес электронной почты",
-      "invalidPhone": "Введите корректный номер телефона",
       "imageTooLarge": "Файл превышает допустимый размер 15 МБ",
       "imageInvalidType": "Допустимые форматы: JPEG, PNG, WebP, AVIF, GIF",
       "imageRejected": "Файл слишком большой или имеет недопустимый формат",

@@ -45,6 +45,7 @@ const extraCount = computed(() => {
       :guest-id="guest.id"
       :name="guest.name"
       :number="number"
+      :side="guest.guestForm?.relationship_to_couple"
       :extra-count="extraCount"
       :highlight-query="highlightQuery"
     />

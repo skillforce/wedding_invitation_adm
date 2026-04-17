@@ -6,9 +6,9 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import { useGuestsStore } from '@/stores/guests'
 import { useAuthStore } from '@/stores/auth'
 import type { GuestDetailViewDto } from '@/api/guests'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import GuestsManageList from '@/components/guests/GuestsManageList.vue'
 import GuestResponsePanel from '@/components/guests/GuestResponsePanel/index.vue'
-import UserSwitcher from '@/components/shared/UserSwitcher.vue'
 import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
 import { useSelectedUser } from '@/composables/useSelectedUser'
 import { useCurrentUser } from '@/composables/useCurrentUser'
@@ -65,10 +65,7 @@ function requestEditSelectedGuest() {
     <ConfirmDialog :breakpoints="{'640px': '70vw'}" />
     <Card class="guests-card">
       <template #title>
-        <div class="guests-card-title">
-          <span>{{ t('guests.title') }}</span>
-          <UserSwitcher v-model="selectedUserId" />
-        </div>
+        <PageHeader :title="t('guests.title')" />
       </template>
       <template #content>
         <SelectUserPrompt v-if="showPrompt" />
@@ -106,14 +103,6 @@ function requestEditSelectedGuest() {
   border: none;
   box-shadow: none;
   color: var(--color-text-primary);
-}
-
-.guests-card-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .guests-page :deep(.p-card-body) {

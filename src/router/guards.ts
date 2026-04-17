@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
+import { useSelectedUserStore } from '@/stores/selectedUser'
 import { navItems } from '@/components/sidebar/sidebarConfig'
 import { AppRoute } from '@/constants/app'
 import router from './index'
@@ -13,6 +14,9 @@ router.beforeEach(async (to) => {
 
   if (!auth.isAuthChecked) {
     await auth.checkAuthOnAppOpen()
+    if (!auth.user?.profile.isSuperUser) {
+      useSelectedUserStore().selectedUserId = null
+    }
   }
 
   if (!isPublicRoute && !auth.isAuthenticated) {

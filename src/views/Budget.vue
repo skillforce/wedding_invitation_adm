@@ -9,8 +9,8 @@ import ExportExcel from "@/components/budget/ExportExcel.vue"
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useBudgetStore } from '@/stores/budget'
 import { useCurrencyStore } from '@/stores/currency'
-import UserSwitcher from '@/components/shared/UserSwitcher.vue'
 import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import { useSelectedUser } from '@/composables/useSelectedUser'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 
@@ -38,10 +38,7 @@ onMounted(() => {
 <template>
   <div class="budget-page">
     <ConfirmDialog />
-    <div class="page-header">
-      <h1 class="page-title">{{ t('budget.title') }}</h1>
-      <UserSwitcher v-model="selectedUserId" />
-    </div>
+    <PageHeader :title="t('budget.title')" />
 
     <template v-if="showPrompt">
       <SelectUserPrompt />
@@ -73,19 +70,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
 }
 
 .summary-bar {

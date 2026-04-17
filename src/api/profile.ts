@@ -4,7 +4,6 @@ import type { ProfileDto } from '@/api/auth'
 export interface UpdateProfileDto {
   invitationUrl?: string | null
   weddingDate?: string | null
-  phoneNumber?: string | null
   email?: string | null
 }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GlobalControls from '@/components/global/GlobalControls.vue'
+import UserSwitcherButton from '@/components/global/UserSwitcherButton.vue'
 import GlobalAlert from '@/components/global/GlobalAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 import { useRouter } from 'vue-router'
@@ -31,6 +32,7 @@ configureApiAuth(
     <RouterView />
   </div>
   <div class="global-controls">
+    <UserSwitcherButton />
     <GlobalControls />
   </div>
 </template>
@@ -55,7 +57,6 @@ configureApiAuth(
   .global-controls {
     top: 0.5rem;
     right: 0.5rem;
-    flex-direction: column;
     align-items: flex-start;
   }
 }

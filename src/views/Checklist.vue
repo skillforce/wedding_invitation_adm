@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useChecklistStore } from '@/stores/checklist'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import ChecklistHero from '@/components/checklist/checklistHero/ChecklistHero.vue'
 import ChecklistNormalView from '@/components/checklist/normalView/ChecklistNormalView.vue'
 import ChecklistEditView from '@/components/checklist/editView/ChecklistEditView.vue'
@@ -8,7 +10,6 @@ import ChecklistEditFab from '@/components/checklist/ChecklistEditFab.vue'
 import ChecklistEmptyState from '@/components/checklist/ChecklistEmptyState.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useCurrentUser } from '@/composables/useCurrentUser'
-import UserSwitcher from '@/components/shared/UserSwitcher.vue'
 import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
 import { useSelectedUser } from '@/composables/useSelectedUser'
 import { ChecklistFilter } from '@/types/checklist'
@@ -31,6 +32,7 @@ function saveExpandedPhases(ids: Set<string>) {
   localStorage.setItem(EXPANDED_PHASES_STORAGE_KEY, JSON.stringify([...ids]))
 }
 
+const { t } = useI18n()
 const store = useChecklistStore()
 const { isCreatedBySuperUser, isSuperUser } = useCurrentUser()
 const { selectedUserId } = useSelectedUser()
@@ -100,9 +102,7 @@ onMounted(() => {
 
 <template>
   <div class="checklist-page">
-    <div class="checklist-header">
-      <UserSwitcher v-model="selectedUserId" />
-    </div>
+    <PageHeader :title="t('checklist.title')" />
     <SelectUserPrompt v-if="showPrompt" />
     <template v-else>
       <ChecklistHero
@@ -140,16 +140,6 @@ onMounted(() => {
 <style scoped>
 .checklist-page {
   min-height: 100%;
-}
-
-.checklist-header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 20px 0.5rem;
-}
-
-.checklist-header:empty {
-  display: none;
 }
 
 .timeline-area {
