@@ -25,7 +25,7 @@ defineEmits<{
 <style scoped>
 .edit-fab {
   position: fixed;
-  top: 4rem;
+  top: 7.8rem;
   right: 4rem;
   z-index: 40;
   display: flex;
@@ -82,7 +82,7 @@ defineEmits<{
 @media (max-width: 768px) {
   .edit-fab {
     height: 34px;
-    top: 5rem;
+    top: 6.5rem;
     right: 1rem;
     padding: 0 10px 0 10px;
   }

@@ -1,4 +1,5 @@
 import guestsIconUrl from '@/assets/guestsIcon.svg'
+import scenarioIconUrl from '@/assets/scenario/ido.svg'
 import seatingsIconUrl from '@/assets/seatings.svg'
 import budgetIconUrl from '@/assets/budget.svg'
 import checklistIconUrl from '@/assets/checklist.svg'
@@ -26,6 +27,7 @@ export const navItems: NavItem[] = [
   { labelKey: 'nav.seatingArrangements', iconUrl: seatingsIconUrl, path: AppRoute.SeatingArrangements },
   { labelKey: 'nav.budget', iconUrl: budgetIconUrl, path: AppRoute.Budget },
   { labelKey: 'nav.checklist', iconUrl: checklistIconUrl, path: AppRoute.Checklist },
+  { labelKey: 'nav.scenario', iconUrl: scenarioIconUrl, path: AppRoute.Scenario },
 ]
 
 export const miniGameNavItem: NavItem = {

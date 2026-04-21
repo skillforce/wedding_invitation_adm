@@ -13,6 +13,7 @@ import i18n, {
   SUPPORTED_LOCALES,
   type AppLocale,
 } from '@/i18n'
+import type { TimeFormat } from '@/utils/scenario/scenario.utils'
 
 // ── Theme helpers ─────────────────────────────────────────────────────────────
 
@@ -74,6 +75,7 @@ function applyLocale(nextLocale: AppLocale) {
 export const usePreferencesStore = defineStore('preferences', () => {
   const theme = ref<ThemeName>(DEFAULT_THEME)
   const locale = ref<AppLocale>(DEFAULT_LOCALE)
+  const timeFormat = ref<TimeFormat>('24h')
   const themeInitialized = ref(false)
   const localeInitialized = ref(false)
 
@@ -121,6 +123,10 @@ export const usePreferencesStore = defineStore('preferences', () => {
     localeInitialized.value = true
   }
 
+  function setTimeFormat(fmt: TimeFormat) {
+    timeFormat.value = fmt
+  }
+
   function setLocale(nextLocale: AppLocale) {
     const normalized = normalizeLocale(nextLocale)
     if (locale.value === normalized && localeInitialized.value) {
@@ -135,6 +141,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
   return {
     theme,
     locale,
+    timeFormat,
     isDarkTheme,
     availableThemes: THEME_NAMES,
     availableLocales: SUPPORTED_LOCALES,
@@ -143,6 +150,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
     setTheme,
     toggleTheme,
     setLocale,
+    setTimeFormat,
   }
 }, {
   persist: [
@@ -170,6 +178,19 @@ export const usePreferencesStore = defineStore('preferences', () => {
         },
         deserialize: (value) => ({
           locale: normalizeLocale(typeof value === 'string' ? value : undefined),
+        }),
+      },
+    },
+    {
+      key: 'app-time-format',
+      pick: ['timeFormat'],
+      serializer: {
+        serialize: (state) => {
+          const fmt = (state as { timeFormat?: string }).timeFormat
+          return fmt === '12h' ? '12h' : '24h'
+        },
+        deserialize: (value) => ({
+          timeFormat: (value === '12h' ? '12h' : '24h') as TimeFormat,
         }),
       },
     },

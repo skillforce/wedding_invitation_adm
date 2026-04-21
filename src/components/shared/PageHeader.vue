@@ -3,12 +3,12 @@ defineProps<{ title: string }>()
 </script>
 
 <template>
-  <div class="page-header">
+  <header class="page-header">
     <h1 class="page-title">{{ title }}</h1>
-    <div v-if="$slots.default" class="page-header-actions">
+    <section v-if="$slots.default" class="page-header-actions">
       <slot />
-    </div>
-  </div>
+    </section>
+  </header>
 </template>
 
 <style scoped>

@@ -5,6 +5,7 @@ import type { ChecklistPhaseDto, ChecklistItemDto } from '@/api/checklist'
 import { useAppCommonStore } from '@/stores/app_common'
 import { usePreferencesStore } from '@/stores/preferences'
 import { useSelectedUser } from '@/composables/useSelectedUser'
+import { createKeyedDebounce } from '@/utils/scenario/scenario.utils'
 
 export interface Task {
   id: string
@@ -44,17 +45,6 @@ function mapPhase(phase: ChecklistPhaseDto): Phase {
   }
 }
 
-function createKeyedDebounce(ms: number) {
-  const timers = new Map<string, ReturnType<typeof setTimeout>>()
-  return function debounced(key: string, fn: () => void): void {
-    const existing = timers.get(key)
-    if (existing) clearTimeout(existing)
-    timers.set(key, setTimeout(() => {
-      timers.delete(key)
-      fn()
-    }, ms))
-  }
-}
 
 export const useChecklistStore = defineStore('wedding-checklist', () => {
   const { selectedUserId } = useSelectedUser()

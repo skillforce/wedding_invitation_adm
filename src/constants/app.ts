@@ -13,6 +13,7 @@ export enum AppRoute {
   MiniGame = '/mini-game',
   UserProfile = '/profile',
   UserManagement = '/user-management',
+  Scenario = '/scenario',
 }
 
 export enum AppChildRoute {
@@ -23,6 +24,7 @@ export enum AppChildRoute {
   MiniGame = 'mini-game',
   UserProfile = 'profile',
   UserManagement = 'user-management',
+  Scenario = 'scenario',
 }
 
 export const DEVICE_ID_KEY = 'app-device-id'

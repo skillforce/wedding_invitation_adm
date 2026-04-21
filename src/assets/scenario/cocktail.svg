@@ -1,0 +1,82 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px" width="463px" height="463px" viewBox="0 0 463 463">
+<defs>
+<g id="Symbol_1_0_Layer0_0_FILL">
+<path fill="#000000" stroke="none" d="
+M 14 0
+L 0 0 0 14 14 14 14 0 Z"/>
+</g>
+
+<path id="Layer3_0_1_STROKES" stroke="#000000" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" fill="none" d="
+M 19.55 412.45
+L 435 412.45
+Q 430.7166015625 447.4439453125 400 448.45
+L 53.05 448.45
+Q 23.8154296875 443.894921875 19.55 412.45 Z"/>
+
+<path id="Layer2_0_1_STROKES" stroke="#000000" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" fill="none" d="
+M 137.05 71.05
+L 157.05 71.05 157.05 54.05
+Q 157.98125 38.8515625 143.05 35.55
+L 116.55 35.55
+Q 104.6138671875 34.9275390625 102.55 54.05
+L 102.55 107.05 157.05 107.05 157.05 71.05
+M 40.05 412.45
+L 40.05 366.45 40.05 231.95
+Q 48.1111328125 186.362890625 95.05 178.95
+L 102.55 178.95 102.55 107.05
+M 102.55 178.95
+L 157.05 178.95 157.05 107.05
+M 157.05 178.95
+L 164.05 178.95
+Q 215.675 185.6916015625 219.55 234.45
+M 40.05 231.95
+L 185.05 231.95
+M 40.05 366.45
+L 187.05 366.45"/>
+
+<path id="Layer1_0_1_STROKES" stroke="#000000" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" fill="none" d="
+M 293 210.55
+L 251.05 160.95 221.55 126.05 364.5 126.05 293 210.55 293 267.45 435 267.45 362.5 352.45 362.5 412.45
+M 251.05 160.95
+L 300.05 160.95
+M 178.95 305.1
+L 219.05 352.45 293 267.45 147.05 267.45 178.95 305.1 229.05 305.1
+M 362.5 352.45
+L 323.775 305.1 293 267.45
+M 323.775 305.1
+L 371.5 305.1
+M 219.05 352.45
+L 219.05 412.45"/>
+</defs>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer3_0_1_STROKES"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer2_0_1_STROKES"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer1_0_1_STROKES"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 69.55,288.45) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Symbol_1_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 69.55,324.15) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Symbol_1_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 105.75,324.15) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Symbol_1_0_Layer0_0_FILL"/>
+</g>
+</g>
+</svg>

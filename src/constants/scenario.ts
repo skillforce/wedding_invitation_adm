@@ -1,0 +1,2 @@
+export const SCENARIO_MAX_POINTS = 40
+export const SCENARIO_NOTE_MAX_LENGTH = 50

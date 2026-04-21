@@ -34,7 +34,7 @@ function saveExpandedPhases(ids: Set<string>) {
 
 const { t } = useI18n()
 const store = useChecklistStore()
-const { isCreatedBySuperUser, isSuperUser } = useCurrentUser()
+const { isSuperUser } = useCurrentUser()
 const { selectedUserId } = useSelectedUser()
 
 const showPrompt = computed(() => isSuperUser.value && selectedUserId.value === null)
@@ -131,7 +131,7 @@ onMounted(() => {
         <ChecklistEmptyState v-if="plainPhases.length === 0 && !isEditing" />
       </main>
 
-      <ChecklistEditFab v-if="!isCreatedBySuperUser" :is-editing="isEditing" @toggle="isEditing = !isEditing" />
+      <ChecklistEditFab :is-editing="isEditing" @toggle="isEditing = !isEditing" />
     </template>
     <ConfirmDialog :breakpoints="{ '640px': '70vw' }" />
   </div>

@@ -23,7 +23,8 @@
     "miniGame": "When It's Too Much",
     "logout": "Logout",
     "profile": "Profile",
-    "userManagement": "Users"
+    "userManagement": "Users",
+    "scenario": "Day Scenario"
   },
   "profile": {
     "loggedAs": "Logged as",
@@ -300,6 +301,57 @@
       "subtitle": "You're ready for your big day"
     }
   },
+  "scenario": {
+    "title": "Wedding Day Scenario",
+    "newPoint": "New point",
+    "addPoint": "Add point",
+    "deletePoint": "Delete point",
+    "confirmDelete": "Delete point \"{title}\"?",
+    "notePlaceholder": "Short note",
+    "save": "Save",
+    "cancel": "Cancel",
+    "fields": {
+      "time": "Time",
+      "title": "Title",
+      "note": "Note",
+      "icon": "Icon"
+    },
+    "noteCounter": "{count}/50",
+    "timeFormat": {
+      "label": "Time:",
+      "h12": "12h",
+      "h24": "24h"
+    },
+    "empty": "No scenario points yet. Switch to edit mode to add some.",
+    "limitReachedHint": "Limit reached — maximum 40 points",
+    "export": {
+      "txt": "Download TXT",
+      "pdf": "Download PDF"
+    },
+    "seedButton": "Load default scenario",
+    "seedConfirmHeader": "Load default scenario?",
+    "seedConfirmMessage": "All current points will be deleted and replaced with a standard wedding day template. This cannot be undone.",
+    "icons": {
+      "breakfast": "Breakfast",
+      "cake": "Cake",
+      "ceremony": "Ceremony",
+      "cocktail": "Cocktail",
+      "dinner": "Dinner",
+      "dress": "Dress",
+      "entrance": "Entrance",
+      "exit": "Exit",
+      "firework": "Fireworks",
+      "first": "First dance",
+      "ido": "Vows",
+      "limo": "Limousine",
+      "lunch": "Lunch",
+      "party": "Party",
+      "photo": "Photo session",
+      "session": "Session",
+      "sun-rise": "Sunrise",
+      "toast": "Toast"
+    }
+  },
   "miniGame": {
     "title": "Wedding Run",
     "subtitle": "Press space or tap to start",
@@ -458,6 +510,15 @@
       "failedToCreateTask": "Failed to create task",
       "failedToDeleteTask": "Failed to delete task",
       "failedToReset": "Failed to reset checklist"
+    },
+    "scenario": {
+      "failedToLoad": "Failed to load scenario",
+      "failedToCreate": "Failed to add point",
+      "failedToUpdate": "Failed to update point",
+      "failedToDelete": "Failed to delete point",
+      "failedToSeed": "Failed to load default scenario",
+      "limitReached": "Cannot add more than 40 points",
+      "timeAlreadyExists": "A point with this time already exists"
     },
     "userManagement": {
       "failedToLoad": "Failed to load users",

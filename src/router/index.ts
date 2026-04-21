@@ -37,6 +37,10 @@ const routes = [
         path: AppChildRoute.UserManagement,
         component: () => import('../views/UserManagement.vue'),
       },
+      {
+        path: AppChildRoute.Scenario,
+        component: () => import('../views/Scenario.vue'),
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: AppRoute.Login },
