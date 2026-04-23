@@ -19,6 +19,8 @@ import 'primeicons/primeicons.css'
 import { usePreferencesStore } from '@/stores/preferences'
 import i18n from '@/i18n'
 
+const nonce = document.querySelector<HTMLMetaElement>('meta[name="csp-nonce"]')?.content ?? ''
+
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
@@ -28,6 +30,7 @@ app.use(router)
 app.use(i18n)
 app.use(ConfirmationService)
 app.use(PrimeVue, {
+  csp: { nonce },
   theme: {
     preset: AppPreset,
     options: {

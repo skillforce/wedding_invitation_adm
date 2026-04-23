@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import ProfileFieldsCardItem from '@/components/profile/ProfileFieldsCard/ProfileFieldsCardItem.vue'
 import { useUsersStore } from '@/stores/users'
 import { useAppCommonStore } from '@/stores/app_common'
 import { usePreferencesStore } from '@/stores/preferences'
+import { EMAIL_RE } from '@/utils/validation'
 
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ 'update:visible': [value: boolean] }>()
@@ -19,6 +21,27 @@ const preferences = usePreferencesStore()
 const createForm = ref({ login: '', password: '', email: '' })
 const createErrors = ref({ login: '', password: '', email: '' })
 const isCreating = ref(false)
+
+const fields = computed(() => [
+  {
+    key: 'login',
+    type: 'text',
+    label: t('userManagement.form.loginLabel'),
+    placeholder: t('userManagement.form.loginPlaceholder'),
+  },
+  {
+    key: 'password',
+    type: 'password',
+    label: t('userManagement.form.passwordLabel'),
+    placeholder: t('userManagement.form.passwordPlaceholder'),
+  },
+  {
+    key: 'email',
+    type: 'email',
+    label: t('userManagement.form.emailLabel'),
+    placeholder: t('userManagement.form.emailPlaceholder'),
+  },
+] as const)
 
 watch(() => props.visible, (val) => {
   if (val) {
@@ -39,8 +62,7 @@ function validate(): boolean {
     createErrors.value.password = t('userManagement.form.passwordError')
     valid = false
   }
-  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRe.test(createForm.value.email.trim())) {
+  if (!EMAIL_RE.test(createForm.value.email.trim())) {
     createErrors.value.email = t('userManagement.form.emailError')
     valid = false
   }
@@ -77,40 +99,23 @@ async function submit() {
     @update:visible="$emit('update:visible', $event)"
   >
     <form class="create-form" @submit.prevent="submit">
-      <div class="field">
-        <label class="field-label">{{ t('userManagement.form.loginLabel') }}</label>
+      <ProfileFieldsCardItem
+        v-for="field in fields"
+        :key="field.key"
+        :label="field.label"
+        :error="createErrors[field.key]"
+      >
         <InputText
-          v-model="createForm.login"
-          :placeholder="t('userManagement.form.loginPlaceholder')"
+          :model-value="createForm[field.key]"
+          :type="field.type"
+          :placeholder="field.placeholder"
           class="w-full"
-          :class="{ 'p-invalid': createErrors.login }"
+          :class="{ 'p-invalid': createErrors[field.key] }"
+          @update:model-value="(value) => {
+            createForm[field.key] = typeof value === 'string' ? value : ''
+          }"
         />
-        <small v-if="createErrors.login" class="field-error">{{ createErrors.login }}</small>
-      </div>
-
-      <div class="field">
-        <label class="field-label">{{ t('userManagement.form.passwordLabel') }}</label>
-        <InputText
-          v-model="createForm.password"
-          type="password"
-          :placeholder="t('userManagement.form.passwordPlaceholder')"
-          class="w-full"
-          :class="{ 'p-invalid': createErrors.password }"
-        />
-        <small v-if="createErrors.password" class="field-error">{{ createErrors.password }}</small>
-      </div>
-
-      <div class="field">
-        <label class="field-label">{{ t('userManagement.form.emailLabel') }}</label>
-        <InputText
-          v-model="createForm.email"
-          type="email"
-          :placeholder="t('userManagement.form.emailPlaceholder')"
-          class="w-full"
-          :class="{ 'p-invalid': createErrors.email }"
-        />
-        <small v-if="createErrors.email" class="field-error">{{ createErrors.email }}</small>
-      </div>
+      </ProfileFieldsCardItem>
 
       <div class="form-actions">
         <Button
@@ -136,23 +141,6 @@ async function submit() {
   flex-direction: column;
   gap: 16px;
   padding-top: 4px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
-
-.field-error {
-  font-size: 12px;
-  color: var(--p-red-500, #ef4444);
 }
 
 .form-actions {

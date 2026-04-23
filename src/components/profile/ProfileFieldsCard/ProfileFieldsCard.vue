@@ -9,8 +9,11 @@ import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useCurrentUser } from '@/composables/useCurrentUser'
+import { URL_RE, EMAIL_RE, normStr } from '@/utils/validation'
+import { toLocalDateStr } from '@/utils/date'
 import type { ProfileDto } from '@/api/auth'
 import type { UpdateProfileDto } from '@/api/profile'
+import ProfileFieldsCardItem from './ProfileFieldsCardItem.vue'
 
 const props = defineProps<{
   pending?: boolean
@@ -24,6 +27,8 @@ const appCommon = useAppCommonStore()
 const { isSuperUser } = useCurrentUser()
 
 const isEditingPlainUser = computed(() => Boolean(props.overrideProfile))
+const hasInvitationUrlField = computed(() => isSuperUser.value && isEditingPlainUser.value)
+const hasWeddingDateField = computed(() => isEditingPlainUser.value || !isSuperUser.value)
 
 const invitationUrl = ref('')
 const weddingDate = ref<Date | null>(null)
@@ -53,12 +58,12 @@ watch(() => props.overrideProfile, (profile) => {
 
 const urlError = computed(() => {
   if (!invitationUrl.value) return ''
-  return /^https?:\/\/.+/.test(invitationUrl.value) ? '' : t('errors.userProfile.invalidUrl')
+  return URL_RE.test(invitationUrl.value) ? '' : t('errors.userProfile.invalidUrl')
 })
 
 const emailError = computed(() => {
   if (!email.value) return ''
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) ? '' : t('errors.userProfile.invalidEmail')
+  return EMAIL_RE.test(email.value) ? '' : t('errors.userProfile.invalidEmail')
 })
 
 const isFormValid = computed(() =>
@@ -66,24 +71,14 @@ const isFormValid = computed(() =>
   (!emailDirty.value || !emailError.value)
 )
 
-function toLocalDateStr(d: Date): string {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-}
-
 const isUnchanged = computed(() => {
   const profile = props.overrideProfile ?? authStore.user?.profile
   if (!profile) return false
-  const norm = (v: string | null | undefined) => v ?? ''
   const profileDateStr = profile.weddingDate?.slice(0, 10) ?? ''
   const formDateStr = weddingDate.value ? toLocalDateStr(weddingDate.value) : ''
-  const hasDateWeddingField = isEditingPlainUser.value || !isSuperUser.value
-  const dateUnchanged = hasDateWeddingField
-    ? norm(invitationUrl.value) === norm(profile.invitationUrl) && formDateStr === profileDateStr
-    : true
-  return dateUnchanged && norm(email.value) === norm(profile.email)
+  const urlUnchanged = !hasInvitationUrlField.value || normStr(invitationUrl.value) === normStr(profile.invitationUrl)
+  const dateUnchanged = !hasWeddingDateField.value || formDateStr === profileDateStr
+  return urlUnchanged && dateUnchanged && normStr(email.value) === normStr(profile.email)
 })
 
 async function handleSave() {
@@ -95,10 +90,8 @@ async function handleSave() {
   appCommon.showSpinner()
   try {
     const dto: UpdateProfileDto = {
-      ...((!isSuperUser.value || isEditingPlainUser.value) && {
-        invitationUrl: invitationUrl.value || null,
-        weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null,
-      }),
+      ...(hasInvitationUrlField.value && { invitationUrl: invitationUrl.value || null }),
+      ...(hasWeddingDateField.value && { weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null }),
       email: email.value || null,
     }
     if (props.saveFn) {
@@ -122,8 +115,10 @@ async function handleSave() {
       <SkeletonBlock v-if="pending" height="320px" />
 
       <div v-else class="form-fields">
-        <div v-if="!isSuperUser || isEditingPlainUser" class="form-field">
-          <label class="field-label">{{ t('userProfile.invitationUrlLabel') }}</label>
+        <ProfileFieldsCardItem
+          v-if="hasInvitationUrlField"
+          :label="t('userProfile.invitationUrlLabel')"
+        >
           <InputWithError
             ref="urlInputRef"
             v-model="invitationUrl"
@@ -132,10 +127,12 @@ async function handleSave() {
             :error-message="urlDirty ? urlError : ''"
             @input="urlDirty = true"
           />
-        </div>
+        </ProfileFieldsCardItem>
 
-        <div v-if="!isSuperUser || isEditingPlainUser" class="form-field">
-          <label class="field-label">{{ t('userProfile.weddingDateLabel') }}</label>
+        <ProfileFieldsCardItem
+          v-if="hasWeddingDateField"
+          :label="t('userProfile.weddingDateLabel')"
+        >
           <DatePicker
             v-model="weddingDate"
             date-format="yy-mm-dd"
@@ -145,10 +142,9 @@ async function handleSave() {
             class="date-picker"
             panel-class="my-datepicker-panel"
           />
-        </div>
+        </ProfileFieldsCardItem>
 
-        <div class="form-field">
-          <label class="field-label">{{ t('userProfile.emailLabel') }}</label>
+        <ProfileFieldsCardItem :label="t('userProfile.emailLabel')">
           <InputWithError
             ref="emailInputRef"
             v-model="email"
@@ -157,7 +153,7 @@ async function handleSave() {
             :error-message="emailDirty ? emailError : ''"
             @input="emailDirty = true"
           />
-        </div>
+        </ProfileFieldsCardItem>
       </div>
 
       <Button
@@ -181,18 +177,6 @@ async function handleSave() {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.field-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text-primary);
 }
 
 .date-picker {
