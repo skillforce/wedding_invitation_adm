@@ -17,12 +17,16 @@ function buildCsp(nonce: string, dev = false): string {
     dev
       ? `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`
       : `script-src 'self' 'nonce-${nonce}'`,
-    dev
-      ? `style-src 'self' 'nonce-${nonce}' 'unsafe-inline'`
-      : `style-src 'self' 'nonce-${nonce}'`,
+    // dev: Vite HMR injects <style> tags without a nonce; 'unsafe-inline' is ignored when a nonce
+    // is present, so skip the nonce on style-src in dev to avoid CSP noise from tooling
+    dev ? "style-src 'self' 'unsafe-inline'" : `style-src 'self' 'nonce-${nonce}'`,
+    // inline style="..." attributes (PrimeVue overlays/tooltips set el.style.x) — can't carry a nonce
+    "style-src-attr 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
     dev ? "connect-src 'self' ws:" : "connect-src 'self'",
+    // dev: Vue DevTools spawns a blob: worker
+    dev ? "worker-src blob:" : "worker-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
