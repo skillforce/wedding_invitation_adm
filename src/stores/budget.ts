@@ -525,6 +525,12 @@ export const useBudgetStore = defineStore('budget', () => {
     return findSection(sectionId)?.items ?? []
   }
 
+  function reset() {
+    sections.value = []
+    budgetLimit.value = 0
+    currency.value = 'BYN'
+  }
+
   return {
     rows,
     budgetLimit,
@@ -549,5 +555,6 @@ export const useBudgetStore = defineStore('budget', () => {
     setBudgetLimit,
     setCurrency,
     getSectionTotal,
+    reset,
   }
 })

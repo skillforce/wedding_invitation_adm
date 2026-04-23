@@ -24,8 +24,8 @@ defineProps<{ side: GuestRelationshipToCouple }>()
   justify-content: center;
   flex-shrink: 0;
   border-radius: 6px;
-  width: 24px;
-  height: 30px;
+  width: 22px;
+  height: 24px;
   padding: 2px;
   gap: 1px;
 }
@@ -37,7 +37,7 @@ defineProps<{ side: GuestRelationshipToCouple }>()
 }
 
 .tag-icon--mutual {
-  width: 10px;
+  width: 14px;
   height: 18px;
 }
 

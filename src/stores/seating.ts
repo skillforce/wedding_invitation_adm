@@ -457,6 +457,15 @@ export const useSeatingStore = defineStore('seating', () => {
     }
   }
 
+  function reset() {
+    tables.value = []
+    workspaceShape.value = 'rect'
+    workspaceWidth.value = MIN_WIDTH
+    workspaceHeight.value = MIN_HEIGHT
+    maxTablesAmount.value = 20
+    maxSeatsPerTableAmount.value = 8
+  }
+
   return {
     tables,
     workspaceShape,
@@ -488,5 +497,6 @@ export const useSeatingStore = defineStore('seating', () => {
     getSeatOccupiedSeats,
     getSeatDisplayName,
     getTableOccupiedSeats,
+    reset,
   }
 })

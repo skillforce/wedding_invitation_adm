@@ -10,23 +10,36 @@ const STATIC_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 }
 
-function buildCsp(nonce: string, dev = false): string {
+function getApiOrigin(apiUrl?: string): string | null {
+  if (!apiUrl) {
+    return null
+  }
+
+  try {
+    return new URL(apiUrl).origin
+  } catch {
+    return null
+  }
+}
+
+function buildCsp(nonce: string, apiUrl?: string): string {
+  const connectSrc = ["'self'"]
+  const apiOrigin = getApiOrigin(apiUrl)
+
+  if (apiOrigin) {
+    connectSrc.push(apiOrigin)
+  }
+
   return [
     "default-src 'self'",
-    // dev: Vite injects its own scripts (HMR, @vite/client) without a nonce and uses eval
-    dev
-      ? `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`
-      : `script-src 'self' 'nonce-${nonce}'`,
-    // dev: Vite HMR injects <style> tags without a nonce; 'unsafe-inline' is ignored when a nonce
-    // is present, so skip the nonce on style-src in dev to avoid CSP noise from tooling
-    dev ? "style-src 'self' 'unsafe-inline'" : `style-src 'self' 'nonce-${nonce}'`,
+    `script-src 'self' 'nonce-${nonce}'`,
+    `style-src 'self' 'nonce-${nonce}'`,
     // inline style="..." attributes (PrimeVue overlays/tooltips set el.style.x) — can't carry a nonce
     "style-src-attr 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    dev ? "connect-src 'self' ws:" : "connect-src 'self'",
-    // dev: Vue DevTools spawns a blob: worker
-    dev ? "worker-src blob:" : "worker-src 'none'",
+    `connect-src ${connectSrc.join(' ')}`,
+    "worker-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -49,7 +62,7 @@ function injectNonce(html: string, nonce: string): string {
     )
 }
 
-export function securityHeadersPlugin(): Plugin {
+export function securityHeadersPlugin(apiUrl?: string): Plugin {
   const bytes = new Uint8Array(16)
   globalThis.crypto.getRandomValues(bytes)
   const devNonce = btoa(String.fromCharCode(...bytes))
@@ -60,7 +73,6 @@ export function securityHeadersPlugin(): Plugin {
 
     configureServer(server: ViteDevServer) {
       server.middlewares.use((_req, res, next) => {
-        res.setHeader('Content-Security-Policy', buildCsp(devNonce, true))
         for (const [key, value] of Object.entries(STATIC_HEADERS)) {
           res.setHeader(key, value)
         }
@@ -71,7 +83,23 @@ export function securityHeadersPlugin(): Plugin {
     transformIndexHtml: {
       order: 'post',
       handler(html, ctx) {
-        return injectNonce(html, ctx.server ? devNonce : NONCE_PLACEHOLDER)
+        if (ctx.server) {
+          return html
+        }
+
+        return {
+          html: injectNonce(html, NONCE_PLACEHOLDER),
+          tags: [
+            {
+              tag: 'meta',
+              attrs: {
+                'http-equiv': 'Content-Security-Policy',
+                content: buildCsp(NONCE_PLACEHOLDER, apiUrl),
+              },
+              injectTo: 'head',
+            },
+          ],
+        }
       },
     },
   }

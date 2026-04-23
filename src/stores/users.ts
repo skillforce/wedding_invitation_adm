@@ -46,6 +46,10 @@ export const useUsersStore = defineStore('users', () => {
     return profile
   }
 
+  function reset() {
+    users.value = []
+  }
+
   return {
     users,
     isLoading,
@@ -55,5 +59,6 @@ export const useUsersStore = defineStore('users', () => {
     resendConfirmation,
     updateUserProfile,
     uploadUserProfileImage,
+    reset,
   }
 })

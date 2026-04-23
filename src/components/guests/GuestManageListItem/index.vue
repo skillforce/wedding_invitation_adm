@@ -35,7 +35,7 @@ const extraCount = computed(() => {
 <template>
   <div
     :class="['guest-row', isSelected && 'guest-row--selected']"
-    role="button"
+    role="cell"
     tabindex="0"
     @click="emit('select', guest.id)"
     @keydown.enter.prevent="emit('select', guest.id)"

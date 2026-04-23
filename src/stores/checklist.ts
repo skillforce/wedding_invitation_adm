@@ -299,6 +299,10 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     }
   }
 
+  function reset() {
+    phases.value = []
+  }
+
   return {
     phases,
     allTasks,
@@ -322,5 +326,6 @@ export const useChecklistStore = defineStore('wedding-checklist', () => {
     togglePriority,
     moveTask,
     resetAll,
+    reset,
   }
 })

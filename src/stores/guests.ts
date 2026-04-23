@@ -136,6 +136,10 @@ export const useGuestsStore = defineStore('guests', {
         appCommon.hideSpinner()
       }
     },
+
+    reset() {
+      this.$reset()
+    },
   },
 
 })

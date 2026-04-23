@@ -55,8 +55,8 @@ const highlightedGuestNameParts = computed(() => {
 
 <style scoped>
 .guest-number {
-  min-width: 1.4rem;
-  font-size: 0.75rem;
+  min-width: 0.9rem;
+  font-size:14px;
   font-weight: 600;
   color: var(--color-text-muted);
   text-align: right;
@@ -65,7 +65,7 @@ const highlightedGuestNameParts = computed(() => {
 
 .guest-name {
   flex: 1;
-  font-size: 0.95rem;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text-primary);
   overflow: hidden;
@@ -110,6 +110,11 @@ const highlightedGuestNameParts = computed(() => {
   flex-shrink: 0;
 }
 
+@media (max-width: 640px) {
+  .guest-name {
+    font-size: 14px;
+  }
+}
 @media (max-width: 390px) {
   .guest-name {
     max-width: 100px;

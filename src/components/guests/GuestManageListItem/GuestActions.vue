@@ -73,7 +73,7 @@ function confirmRemove() {
 </template>
 
 <style scoped>
-@media (max-width: 390px) {
+@media (max-width: 640px) {
   .link-btn {
     width: 20px;
     height: 20px;

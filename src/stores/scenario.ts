@@ -124,6 +124,10 @@ export const useScenarioStore = defineStore('wedding-scenario', () => {
     }
   }
 
+  function reset() {
+    points.value = []
+  }
+
   return {
     points,
     canAddPoint,
@@ -136,5 +140,6 @@ export const useScenarioStore = defineStore('wedding-scenario', () => {
     updatePointNote,
     updatePointIcon,
     seedScenario,
+    reset,
   }
 })

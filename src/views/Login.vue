@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import LoginForm from '@/components/login/LoginForm.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
+import { resetAllStores } from '@/stores/resetAllStores'
 import { AppRoute } from '@/constants/app'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const appCommon = useAppCommonStore()
 const { t } = useI18n()
+
+onMounted(resetAllStores)
 
 const isLoading = ref(false)
 

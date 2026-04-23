@@ -10,13 +10,3 @@ defineProps<{
 <template>
     <GuestSideTag :side="side" />
 </template>
-
-<style scoped>
-
-.labeled-tag__prefix {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-</style>

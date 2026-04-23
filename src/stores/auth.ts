@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { AUTH_API, type MeResponseDto } from '@/api/auth'
 import { PROFILE_API, type UpdateProfileDto } from '@/api/profile'
 import { useSelectedUserStore } from '@/stores/selectedUser'
+import { resetAllStores } from '@/stores/resetAllStores'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -50,6 +51,7 @@ export const useAuthStore = defineStore('auth', {
 
     async logout() {
       await AUTH_API.logout()
+      resetAllStores()
       this.token = null
       this.user = null
     },
