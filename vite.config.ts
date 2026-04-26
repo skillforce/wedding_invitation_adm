@@ -11,7 +11,7 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
       vue(),
-      securityHeadersPlugin(env.VITE_API_URL),
+      securityHeadersPlugin(env.VITE_API_URL, env.VITE_CSP_IMG_ORIGINS),
       ...(command === 'serve' ? [vueDevTools()] : []),
     ],
     resolve: {

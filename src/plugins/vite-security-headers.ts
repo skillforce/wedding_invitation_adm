@@ -10,6 +10,29 @@ const STATIC_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 }
 
+function parseOriginsCsv(originsCsv?: string): string[] {
+  if (!originsCsv) {
+    return []
+  }
+
+  const origins = new Set<string>()
+
+  for (const value of originsCsv.split(',')) {
+    const trimmed = value.trim()
+    if (!trimmed) {
+      continue
+    }
+
+    try {
+      origins.add(new URL(trimmed).origin)
+    } catch {
+      // Ignore malformed values to keep CSP generation resilient.
+    }
+  }
+
+  return [...origins]
+}
+
 function getApiOrigin(apiUrl?: string): string | null {
   if (!apiUrl) {
     return null
@@ -22,12 +45,18 @@ function getApiOrigin(apiUrl?: string): string | null {
   }
 }
 
-function buildCsp(nonce: string, apiUrl?: string): string {
+function buildCsp(nonce: string, apiUrl?: string, imgOriginsCsv?: string): string {
   const connectSrc = ["'self'"]
+  const imgSrc = ["'self'", 'data:', 'blob:']
   const apiOrigin = getApiOrigin(apiUrl)
+  const imgOrigins = parseOriginsCsv(imgOriginsCsv)
 
   if (apiOrigin) {
     connectSrc.push(apiOrigin)
+  }
+
+  for (const origin of imgOrigins) {
+    imgSrc.push(origin)
   }
 
   return [
@@ -36,14 +65,13 @@ function buildCsp(nonce: string, apiUrl?: string): string {
     `style-src 'self' 'nonce-${nonce}'`,
     // inline style="..." attributes (PrimeVue overlays/tooltips set el.style.x) — can't carry a nonce
     "style-src-attr 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    `img-src ${imgSrc.join(' ')}`,
     "font-src 'self'",
     `connect-src ${connectSrc.join(' ')}`,
-    "worker-src 'none'",
+    "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
   ].join('; ')
 }
 
@@ -62,7 +90,7 @@ function injectNonce(html: string, nonce: string): string {
     )
 }
 
-export function securityHeadersPlugin(apiUrl?: string): Plugin {
+export function securityHeadersPlugin(apiUrl?: string, imgOriginsCsv?: string): Plugin {
   const bytes = new Uint8Array(16)
   globalThis.crypto.getRandomValues(bytes)
   const devNonce = btoa(String.fromCharCode(...bytes))
@@ -94,7 +122,9 @@ export function securityHeadersPlugin(apiUrl?: string): Plugin {
               tag: 'meta',
               attrs: {
                 'http-equiv': 'Content-Security-Policy',
-                content: buildCsp(NONCE_PLACEHOLDER, apiUrl),
+                // Note: frame-ancestors is intentionally omitted from meta CSP.
+                // Browsers only enforce it from HTTP response headers.
+                content: buildCsp(NONCE_PLACEHOLDER, apiUrl, imgOriginsCsv),
               },
               injectTo: 'head',
             },
