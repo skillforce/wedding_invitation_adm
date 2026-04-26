@@ -10,71 +10,6 @@ const STATIC_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 }
 
-function parseOriginsCsv(originsCsv?: string): string[] {
-  if (!originsCsv) {
-    return []
-  }
-
-  const origins = new Set<string>()
-
-  for (const value of originsCsv.split(',')) {
-    const trimmed = value.trim()
-    if (!trimmed) {
-      continue
-    }
-
-    try {
-      origins.add(new URL(trimmed).origin)
-    } catch {
-      // Ignore malformed values to keep CSP generation resilient.
-    }
-  }
-
-  return [...origins]
-}
-
-function getApiOrigin(apiUrl?: string): string | null {
-  if (!apiUrl) {
-    return null
-  }
-
-  try {
-    return new URL(apiUrl).origin
-  } catch {
-    return null
-  }
-}
-
-function buildCsp(nonce: string, apiUrl?: string, imgOriginsCsv?: string): string {
-  const connectSrc = ["'self'"]
-  const imgSrc = ["'self'", 'data:', 'blob:']
-  const apiOrigin = getApiOrigin(apiUrl)
-  const imgOrigins = parseOriginsCsv(imgOriginsCsv)
-
-  if (apiOrigin) {
-    connectSrc.push(apiOrigin)
-  }
-
-  for (const origin of imgOrigins) {
-    imgSrc.push(origin)
-  }
-
-  return [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'`,
-    `style-src 'self' 'nonce-${nonce}'`,
-    // inline style="..." attributes (PrimeVue overlays/tooltips set el.style.x) — can't carry a nonce
-    "style-src-attr 'unsafe-inline'",
-    `img-src ${imgSrc.join(' ')}`,
-    "font-src 'self'",
-    `connect-src ${connectSrc.join(' ')}`,
-    "worker-src 'self' blob:",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-  ].join('; ')
-}
-
 function injectNonce(html: string, nonce: string): string {
   const meta = `    <meta name="csp-nonce" content="${nonce}">\n`
 
@@ -90,12 +25,7 @@ function injectNonce(html: string, nonce: string): string {
     )
 }
 
-export function securityHeadersPlugin(apiUrl?: string, imgOriginsCsv?: string): Plugin {
-  const bytes = new Uint8Array(16)
-  globalThis.crypto.getRandomValues(bytes)
-  const devNonce = btoa(String.fromCharCode(...bytes))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-
+export function securityHeadersPlugin(): Plugin {
   return {
     name: 'vite-security-headers',
 
@@ -115,21 +45,9 @@ export function securityHeadersPlugin(apiUrl?: string, imgOriginsCsv?: string): 
           return html
         }
 
-        return {
-          html: injectNonce(html, NONCE_PLACEHOLDER),
-          tags: [
-            {
-              tag: 'meta',
-              attrs: {
-                'http-equiv': 'Content-Security-Policy',
-                // Note: frame-ancestors is intentionally omitted from meta CSP.
-                // Browsers only enforce it from HTTP response headers.
-                content: buildCsp(NONCE_PLACEHOLDER, apiUrl, imgOriginsCsv),
-              },
-              injectTo: 'head',
-            },
-          ],
-        }
+        // CSP is enforced from HTTP response headers (Nginx).
+        // Keep build-time nonce stamping for script/link + PrimeVue nonce consumption.
+        return injectNonce(html, NONCE_PLACEHOLDER)
       },
     },
   }

@@ -1,17 +1,15 @@
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import { securityHeadersPlugin } from './src/plugins/vite-security-headers'
 
-export default defineConfig(({ command, mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-
+export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
-      securityHeadersPlugin(env.VITE_API_URL, env.VITE_CSP_IMG_ORIGINS),
+      securityHeadersPlugin(),
       ...(command === 'serve' ? [vueDevTools()] : []),
     ],
     resolve: {
