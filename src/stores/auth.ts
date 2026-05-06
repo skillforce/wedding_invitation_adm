@@ -3,6 +3,7 @@ import { AUTH_API, type MeResponseDto } from '@/api/auth'
 import { PROFILE_API, type UpdateProfileDto } from '@/api/profile'
 import { useSelectedUserStore } from '@/stores/selectedUser'
 import { resetAllStores } from '@/stores/resetAllStores'
+import { clearApiCache } from '@/utils/swCache'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -57,6 +58,7 @@ export const useAuthStore = defineStore('auth', {
       resetAllStores()
       this.token = null
       this.user = null
+      await clearApiCache()
     },
 
     async updateProfile(data: UpdateProfileDto) {

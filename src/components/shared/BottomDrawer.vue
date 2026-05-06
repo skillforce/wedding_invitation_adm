@@ -41,7 +41,7 @@ const { t } = useI18n()
   border-radius: 16px 16px 0 0;
   background: var(--color-sidebar-bg);
   color: var(--color-text-primary);
-  padding: 0.75rem;
+  padding: 0.75rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 0.75rem;
