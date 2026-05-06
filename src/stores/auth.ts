@@ -41,9 +41,12 @@ export const useAuthStore = defineStore('auth', {
 
       try {
         await this.fetchMe()
-      } catch {
-        this.token = null
-        this.user = null
+      } catch (err) {
+        // Network failures (offline) must not clear the session — only real auth errors should
+        if (err instanceof Error && err.message === 'errors.auth.unauthorized') {
+          this.token = null
+          this.user = null
+        }
       } finally {
         this.isAuthChecked = true
       }
@@ -70,17 +73,23 @@ export const useAuthStore = defineStore('auth', {
       }
     },
   },
-  persist: {
-    key: 'token',
-    pick: ['token'],
-    serializer: {
-      serialize: (state) => {
-        const token = (state as { token?: string | null }).token
-        return token || ''
+  persist: [
+    {
+      key: 'token',
+      pick: ['token'],
+      serializer: {
+        serialize: (state) => {
+          const token = (state as { token?: string | null }).token
+          return token || ''
+        },
+        deserialize: (value) => ({
+          token: value || null,
+        }),
       },
-      deserialize: (value) => ({
-        token: value || null,
-      }),
     },
-  },
+    {
+      key: 'auth-user',
+      pick: ['user'],
+    },
+  ],
 })
