@@ -7,7 +7,7 @@ const props = defineProps<{
   guestId: string
   name: string
   number: number
-  side: GuestRelationshipToCouple
+  side?: GuestRelationshipToCouple
   extraCount?: number
   highlightQuery?: string
 }>()

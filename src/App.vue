@@ -2,6 +2,7 @@
 import GlobalControls from '@/components/global/GlobalControls.vue'
 import UserSwitcherButton from '@/components/global/UserSwitcherButton.vue'
 import GlobalAlert from '@/components/global/GlobalAlert.vue'
+import NoNetworkAlert from '@/components/global/NoNetworkAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 import { useRouter } from 'vue-router'
 import { configureApiAuth } from '@/api/consts'
@@ -28,6 +29,7 @@ configureApiAuth(
 <template>
   <GlobalSpinner />
   <GlobalAlert />
+  <NoNetworkAlert />
   <div class="router">
     <RouterView />
   </div>

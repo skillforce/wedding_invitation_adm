@@ -464,6 +464,10 @@
       "submitButton": "Создать"
     }
   },
+  "noNetwork": {
+    "title": "Нет подключения к интернету",
+    "subtitle": "Показаны кэшированные данные"
+  },
   "errors": {
     "internalServerError": "Внутренняя ошибка сервера",
     "auth": {

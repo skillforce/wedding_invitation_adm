@@ -3,7 +3,7 @@ import type { GuestRelationshipToCouple } from '@/api/guests'
 import maleIconUrl from '@/assets/guest_male.svg'
 import femaleIconUrl from '@/assets/guest_female.svg'
 
-defineProps<{ side: GuestRelationshipToCouple }>()
+defineProps<{ side?: GuestRelationshipToCouple }>()
 </script>
 
 <template>

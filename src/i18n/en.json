@@ -464,6 +464,10 @@
       "submitButton": "Create"
     }
   },
+  "noNetwork": {
+    "title": "No internet connection",
+    "subtitle": "Showing cached data"
+  },
   "errors": {
     "internalServerError": "Internal server error",
     "auth": {

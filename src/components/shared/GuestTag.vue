@@ -3,7 +3,7 @@ import type { GuestRelationshipToCouple } from '@/api/guests'
 import GuestSideTag from '@/components/guests/GuestTag/GuestSideTag.vue'
 
 defineProps<{
-  side: GuestRelationshipToCouple
+  side?: GuestRelationshipToCouple
 }>()
 </script>
 
