@@ -184,6 +184,7 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   font-weight: 600;
   min-width: 0;
   word-break: break-word;
+  text-wrap: balance;
 }
 
 .item-name.placeholder {
@@ -271,6 +272,9 @@ const { store, isEditing, editName, editNameInvalid, startEdit, commitName, devi
   .item-amounts {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+  }
+  .card-item{
+    border-bottom: 3px solid var(--color-border, #e5e7eb);
   }
 }
 </style>
