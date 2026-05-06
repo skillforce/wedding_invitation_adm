@@ -6,6 +6,9 @@ import { AppRoute } from '@/constants/app'
 import router from './index'
 
 const NAV_PATH_SET = new Set(navItems.map((item) => item.path))
+const SUPER_USER_ONLY_PATHS = new Set(
+  navItems.filter((item) => item.superUserOnly).map((item) => item.path),
+)
 
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
@@ -21,6 +24,10 @@ router.beforeEach(async (to) => {
 
   if (!isPublicRoute && !auth.isAuthenticated) {
     return { path: AppRoute.Login, replace: true }
+  }
+
+  if (SUPER_USER_ONLY_PATHS.has(to.path) && !auth.user?.profile.isSuperUser) {
+    return { path: AppRoute.Guests, replace: true }
   }
 
   if (to.path === AppRoute.Login && auth.isAuthenticated) {

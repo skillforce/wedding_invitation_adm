@@ -48,11 +48,6 @@ export function pwaPlugin() {
             cacheableResponse: { statuses: [200] },
           },
         },
-        {
-          // All other API calls (auth, mutations) — never cache
-          urlPattern: /^https?:\/\/(?!localhost).+/,
-          handler: 'NetworkOnly',
-        },
       ],
     },
     devOptions: { enabled: false },
