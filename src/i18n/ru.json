@@ -410,7 +410,21 @@
     "errorMessage": "Ссылка для подтверждения устарела или уже использована. Обратитесь к администратору за новой ссылкой.",
     "noTokenTitle": "Ссылка некорректна",
     "noTokenMessage": "Токен подтверждения отсутствует в ссылке. Проверьте письмо и попробуйте снова.",
+    "setPasswordTitle": "Установите пароль",
+    "setPasswordDescription": "Придумайте пароль для входа в аккаунт.",
     "goToLogin": "Перейти к входу"
+  },
+  "setPassword": {
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "Минимум 10 символов",
+    "confirmLabel": "Подтвердите пароль",
+    "confirmPlaceholder": "Повторите пароль",
+    "tooShort": "Пароль должен содержать не менее 10 символов",
+    "tooLong": "Пароль не может быть длиннее 30 символов",
+    "mismatch": "Пароли не совпадают",
+    "hintMinLength": "Не менее 10 символов",
+    "hintMatch": "Пароли совпадают",
+    "submit": "Установить пароль"
   },
   "userSwitcher": {
     "label": "Просматривать данные:",
@@ -444,9 +458,6 @@
       "loginLabel": "Логин",
       "loginPlaceholder": "3–10 символов",
       "loginError": "Логин должен содержать от 3 до 10 символов",
-      "passwordLabel": "Пароль",
-      "passwordPlaceholder": "3–30 символов",
-      "passwordError": "Пароль должен содержать от 3 до 30 символов",
       "emailLabel": "Электронная почта",
       "emailPlaceholder": "user{'@'}example.com",
       "emailError": "Введите корректный адрес электронной почты",

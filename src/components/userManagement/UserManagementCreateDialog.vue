@@ -18,8 +18,8 @@ const store = useUsersStore()
 const appCommon = useAppCommonStore()
 const preferences = usePreferencesStore()
 
-const createForm = ref({ login: '', password: '', email: '' })
-const createErrors = ref({ login: '', password: '', email: '' })
+const createForm = ref({ login: '', email: '' })
+const createErrors = ref({ login: '', email: '' })
 const isCreating = ref(false)
 
 const fields = computed(() => [
@@ -28,12 +28,6 @@ const fields = computed(() => [
     type: 'text',
     label: t('userManagement.form.loginLabel'),
     placeholder: t('userManagement.form.loginPlaceholder'),
-  },
-  {
-    key: 'password',
-    type: 'password',
-    label: t('userManagement.form.passwordLabel'),
-    placeholder: t('userManagement.form.passwordPlaceholder'),
   },
   {
     key: 'email',
@@ -45,21 +39,17 @@ const fields = computed(() => [
 
 watch(() => props.visible, (val) => {
   if (val) {
-    createForm.value = { login: '', password: '', email: '' }
-    createErrors.value = { login: '', password: '', email: '' }
+    createForm.value = { login: '', email: '' }
+    createErrors.value = { login: '', email: '' }
   }
 })
 
 function validate(): boolean {
   let valid = true
-  createErrors.value = { login: '', password: '', email: '' }
+  createErrors.value = { login: '', email: '' }
 
   if (createForm.value.login.trim().length < 3 || createForm.value.login.trim().length > 10) {
     createErrors.value.login = t('userManagement.form.loginError')
-    valid = false
-  }
-  if (createForm.value.password.length < 3 || createForm.value.password.length > 30) {
-    createErrors.value.password = t('userManagement.form.passwordError')
     valid = false
   }
   if (!EMAIL_RE.test(createForm.value.email.trim())) {
@@ -75,7 +65,6 @@ async function submit() {
   try {
     await store.createUser({
       login: createForm.value.login.trim(),
-      password: createForm.value.password,
       email: createForm.value.email.trim(),
       locale: preferences.locale,
     })

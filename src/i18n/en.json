@@ -410,7 +410,21 @@
     "errorMessage": "The confirmation link has expired or has already been used. Ask your administrator to resend it.",
     "noTokenTitle": "Invalid link",
     "noTokenMessage": "The confirmation token is missing from the link. Check your email and try again.",
+    "setPasswordTitle": "Set your password",
+    "setPasswordDescription": "Choose a password to sign in to your account.",
     "goToLogin": "Go to sign in"
+  },
+  "setPassword": {
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "At least 10 characters",
+    "confirmLabel": "Confirm password",
+    "confirmPlaceholder": "Repeat your password",
+    "tooShort": "Password must be at least 10 characters",
+    "tooLong": "Password must not exceed 30 characters",
+    "mismatch": "Passwords do not match",
+    "hintMinLength": "At least 10 characters",
+    "hintMatch": "Passwords match",
+    "submit": "Set password"
   },
   "userSwitcher": {
     "label": "Viewing data for:",
@@ -444,9 +458,6 @@
       "loginLabel": "Login",
       "loginPlaceholder": "3–10 characters",
       "loginError": "Login must be 3–10 characters",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "3–30 characters",
-      "passwordError": "Password must be 3–30 characters",
       "emailLabel": "Email",
       "emailPlaceholder": "user{'@'}example.com",
       "emailError": "Please enter a valid email address",

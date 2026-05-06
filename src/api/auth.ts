@@ -109,11 +109,11 @@ export const AUTH_API = {
     })
   },
 
-  async confirmEmail(token: string): Promise<void> {
+  async confirmEmail(token: string, password: string): Promise<void> {
     const response = await fetch(`${BASE_API_URL}/auth/confirm-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ token, password }),
     })
     if (!response.ok) {
       throw await parseApiError(response)

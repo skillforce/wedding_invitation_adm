@@ -4,12 +4,13 @@ import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
+import InputText from 'primevue/inputtext'
 import InputWithError from '@/components/shared/InputWithError.vue'
 import SkeletonBlock from '@/components/shared/SkeletonBlock.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useCurrentUser } from '@/composables/useCurrentUser'
-import { URL_RE, EMAIL_RE, normStr } from '@/utils/validation'
+import { URL_RE, normStr } from '@/utils/validation'
 import { toLocalDateStr } from '@/utils/date'
 import type { ProfileDto } from '@/api/auth'
 import type { UpdateProfileDto } from '@/api/profile'
@@ -36,10 +37,8 @@ const email = ref('')
 const isSaving = ref(false)
 
 const urlInputRef = ref<InstanceType<typeof InputWithError> | null>(null)
-const emailInputRef = ref<InstanceType<typeof InputWithError> | null>(null)
 
 const urlDirty = ref(false)
-const emailDirty = ref(false)
 
 function loadFromProfile(profile: ProfileDto | null | undefined) {
   if (!profile) return
@@ -61,15 +60,7 @@ const urlError = computed(() => {
   return URL_RE.test(invitationUrl.value) ? '' : t('errors.userProfile.invalidUrl')
 })
 
-const emailError = computed(() => {
-  if (!email.value) return ''
-  return EMAIL_RE.test(email.value) ? '' : t('errors.userProfile.invalidEmail')
-})
-
-const isFormValid = computed(() =>
-  (!urlDirty.value || !urlError.value) &&
-  (!emailDirty.value || !emailError.value)
-)
+const isFormValid = computed(() => !urlDirty.value || !urlError.value)
 
 const isUnchanged = computed(() => {
   const profile = props.overrideProfile ?? authStore.user?.profile
@@ -78,12 +69,11 @@ const isUnchanged = computed(() => {
   const formDateStr = weddingDate.value ? toLocalDateStr(weddingDate.value) : ''
   const urlUnchanged = !hasInvitationUrlField.value || normStr(invitationUrl.value) === normStr(profile.invitationUrl)
   const dateUnchanged = !hasWeddingDateField.value || formDateStr === profileDateStr
-  return urlUnchanged && dateUnchanged && normStr(email.value) === normStr(profile.email)
+  return urlUnchanged && dateUnchanged
 })
 
 async function handleSave() {
   if (urlDirty.value) urlInputRef.value?.touch()
-  if (emailDirty.value) emailInputRef.value?.touch()
   if (!isFormValid.value || isUnchanged.value) return
 
   isSaving.value = true
@@ -92,7 +82,6 @@ async function handleSave() {
     const dto: UpdateProfileDto = {
       ...(hasInvitationUrlField.value && { invitationUrl: invitationUrl.value || null }),
       ...(hasWeddingDateField.value && { weddingDate: weddingDate.value ? toLocalDateStr(weddingDate.value) : null }),
-      email: email.value || null,
     }
     if (props.saveFn) {
       await props.saveFn(dto)
@@ -145,13 +134,11 @@ async function handleSave() {
         </ProfileFieldsCardItem>
 
         <ProfileFieldsCardItem :label="t('userProfile.emailLabel')">
-          <InputWithError
-            ref="emailInputRef"
-            v-model="email"
+          <InputText
+            :model-value="email"
             :placeholder="t('userProfile.emailPlaceholder')"
-            :invalid="emailDirty && Boolean(emailError)"
-            :error-message="emailDirty ? emailError : ''"
-            @input="emailDirty = true"
+            class="w-full"
+            readonly
           />
         </ProfileFieldsCardItem>
       </div>

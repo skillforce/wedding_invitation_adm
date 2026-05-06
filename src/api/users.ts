@@ -12,7 +12,6 @@ export type EmailLocale = 'en' | 'ru'
 
 export interface CreatePlainUserDto {
   login: string
-  password: string
   email: string
   locale?: EmailLocale
 }

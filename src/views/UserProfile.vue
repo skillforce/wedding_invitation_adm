@@ -68,13 +68,15 @@ function makeUploadFn(userId: number) {
         :override-profile-img="targetUser ? targetUser.profile.profileImg : undefined"
         :upload-fn="targetUser ? makeUploadFn(targetUser.id) : undefined"
       />
-      <ProfileFieldsCard
-        :pending="isPending"
-        :override-profile="targetUser ? targetUser.profile : undefined"
-        :save-fn="targetUser ? makeSaveFn(targetUser.id) : undefined"
-      />
+      <div class="profile-right">
+        <ProfileFieldsCard
+          :pending="isPending"
+          :override-profile="targetUser ? targetUser.profile : undefined"
+          :save-fn="targetUser ? makeSaveFn(targetUser.id) : undefined"
+        />
+        <ProfileSecurityCard v-if="!targetUser" />
+      </div>
     </div>
-    <ProfileSecurityCard v-if="!targetUser" />
   </div>
 </template>
 
@@ -90,7 +92,13 @@ function makeUploadFn(userId: number) {
   display: grid;
   grid-template-columns: 340px 1fr;
   gap: 1.5rem;
-  align-items: stretch;
+  align-items: start;
+}
+
+.profile-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 @media (max-width: 768px) {

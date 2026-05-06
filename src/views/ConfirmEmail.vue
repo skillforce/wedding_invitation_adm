@@ -1,35 +1,34 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { AUTH_API } from '@/api/auth'
 import { AppRoute } from '@/constants/app'
-import ConfirmLoading from '@/components/confirmation/ConfirmLoading.vue'
+import SetPasswordForm from '@/components/auth/SetPasswordForm.vue'
 import ConfirmSuccess from '@/components/confirmation/ConfirmSuccess.vue'
 import ConfirmError from '@/components/confirmation/ConfirmError.vue'
 import ConfirmNoToken from '@/components/confirmation/ConfirmNoToken.vue'
 
-type State = 'loading' | 'success' | 'error' | 'no-token'
+type State = 'set-password' | 'loading' | 'success' | 'error' | 'no-token'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const state = ref<State>('loading')
+const rawToken = route.query.token
+const token = typeof rawToken === 'string' ? rawToken : null
+const state = ref<State>(token ? 'set-password' : 'no-token')
 
-onMounted(async () => {
-  const token = route.query.token
-
-  if (!token || typeof token !== 'string') {
-    state.value = 'no-token'
-    return
-  }
-
+async function handleSetPassword(password: string) {
+  if (!token) return
+  state.value = 'loading'
   try {
-    await AUTH_API.confirmEmail(token)
+    await AUTH_API.confirmEmail(token, password)
     state.value = 'success'
   } catch {
     state.value = 'error'
   }
-})
+}
 
 function goToLogin() {
   router.push(AppRoute.Login)
@@ -39,7 +38,13 @@ function goToLogin() {
 <template>
   <div class="confirm-page">
     <div class="confirm-card">
-      <ConfirmLoading v-if="state === 'loading'" />
+      <SetPasswordForm
+        v-if="state === 'set-password' || state === 'loading'"
+        :title="t('confirmEmail.setPasswordTitle')"
+        :description="t('confirmEmail.setPasswordDescription')"
+        :loading="state === 'loading'"
+        @submit="handleSetPassword"
+      />
       <ConfirmSuccess v-else-if="state === 'success'" @go-to-login="goToLogin" />
       <ConfirmError v-else-if="state === 'error'" @go-to-login="goToLogin" />
       <ConfirmNoToken v-else @go-to-login="goToLogin" />

@@ -103,7 +103,7 @@ onMounted(loadSessions)
         {{ t('userProfile.sessions.noOtherSessions') }}
       </div>
 
-      <div v-else class="sessions-list">
+      <div v-else class="sessions-list" :class="{ 'sessions-list--scrollable': sessions.length > 2 }">
         <SessionItem
           v-for="session in sessions"
           :key="session.id"
@@ -167,5 +167,10 @@ onMounted(loadSessions)
 .sessions-list {
   display: flex;
   flex-direction: column;
+}
+
+.sessions-list--scrollable {
+  max-height: 160px;
+  overflow-y: auto;
 }
 </style>
