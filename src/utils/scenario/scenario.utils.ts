@@ -37,6 +37,23 @@ function escHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
+function getCspNonce(): string {
+  return document.querySelector<HTMLMetaElement>('meta[name="csp-nonce"]')?.content ?? ''
+}
+
+function waitForImages(doc: Document): Promise<void> {
+  const images = Array.from(doc.images)
+  if (images.length === 0) return Promise.resolve()
+
+  return Promise.all(images.map((img) => {
+    if (img.complete) return Promise.resolve()
+    return new Promise<void>((resolve) => {
+      img.addEventListener('load', () => resolve(), { once: true })
+      img.addEventListener('error', () => resolve(), { once: true })
+    })
+  })).then(() => undefined)
+}
+
 export function exportScenarioTxt(
   points: ScenarioPoint[],
   title: string,
@@ -81,7 +98,7 @@ export function exportScenarioPdf(
       <tr>
         <td class="col-time">${time}</td>
         <td class="col-icon">
-          <img src="${iconUrl}" alt="${escHtml(iconLabel)}" class="icon-img" />
+          <img src="${iconUrl}" alt="${escHtml(iconLabel)}" class="icon-img" width="22" height="22" />
         </td>
         <td class="col-body">
           <div class="point-title">${escHtml(point.title)}</div>
@@ -89,13 +106,15 @@ export function exportScenarioPdf(
         </td>
       </tr>`
   }).join('')
+  const nonce = getCspNonce()
+  const styleNonce = nonce ? ` nonce="${escHtml(nonce)}"` : ''
 
   const html = `<!DOCTYPE html>
 <html lang="${locale}">
 <head>
   <meta charset="utf-8" />
   <title>${escHtml(title)}</title>
-  <style>
+  <style${styleNonce}>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #1a1a2e; padding: 24px 32px; }
     h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #1a1a2e; }
@@ -106,7 +125,7 @@ export function exportScenarioPdf(
     td { padding: 8px 6px; vertical-align: middle; }
     .col-time { white-space: nowrap; font-size: 11px; font-weight: 700; color: #5a9e7a; width: 52px; }
     .col-icon { width: 32px; text-align: center; }
-    .icon-img { width: 22px; height: 22px; object-fit: contain; }
+    .icon-img { display: inline-block; width: 22px; height: 22px; max-width: 22px; max-height: 22px; object-fit: contain; }
     .col-body { padding-left: 8px; }
     .point-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
     .point-note { font-size: 11px; color: #777; margin-top: 2px; }
@@ -132,7 +151,8 @@ export function exportScenarioPdf(
   doc.write(html)
   doc.close()
 
-  iframe.onload = () => {
+  iframe.onload = async () => {
+    await waitForImages(doc)
     iframe.contentWindow!.print()
     iframe.contentWindow!.onafterprint = () => document.body.removeChild(iframe)
   }
