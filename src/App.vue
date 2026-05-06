@@ -4,26 +4,6 @@ import UserSwitcherButton from '@/components/global/UserSwitcherButton.vue'
 import GlobalAlert from '@/components/global/GlobalAlert.vue'
 import NoNetworkAlert from '@/components/global/NoNetworkAlert.vue'
 import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
-import { useRouter } from 'vue-router'
-import { configureApiAuth } from '@/api/consts'
-import { AUTH_API } from '@/api/auth'
-import { useAuthStore } from '@/stores/auth'
-import { AppRoute } from '@/constants/app'
-
-const authStore = useAuthStore()
-const router = useRouter()
-
-configureApiAuth(
-  async () => {
-    const token = await AUTH_API.refresh()
-    authStore.token = token
-    return token
-  },
-  async () => {
-    await authStore.logout()
-    await router.push(AppRoute.Login)
-  },
-)
 </script>
 
 <template>

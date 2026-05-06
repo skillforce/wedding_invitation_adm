@@ -1,3 +1,5 @@
+import { configureNetworkStatus, markOffline, markOnline } from '@/utils/networkStatus'
+
 export enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
@@ -7,6 +9,8 @@ export enum HttpMethod {
 }
 
 export const BASE_API_URL = import.meta.env.VITE_API_URL ?? ''
+
+configureNetworkStatus(BASE_API_URL)
 
 export class ApiError extends Error {
   serverMessage: string
@@ -65,18 +69,32 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
   const token = authToken ?? localStorage.getItem('token')
   if (!token) throw new Error('errors.auth.unauthorized')
 
-  const response = await fetch(`${BASE_API_URL}${path}`, {
-    ...options,
-    headers: buildHeaders(token, options.body, options.headers),
-  })
+  let response: Response
+  try {
+    response = await fetch(`${BASE_API_URL}${path}`, {
+      ...options,
+      headers: buildHeaders(token, options.body, options.headers),
+    })
+    markOnline()
+  } catch (err) {
+    markOffline()
+    throw err
+  }
 
   if (response.status === 401 && _onRefresh) {
     try {
       const newToken = await doRefresh()
-      return fetch(`${BASE_API_URL}${path}`, {
-        ...options,
-        headers: buildHeaders(newToken, options.body, options.headers),
-      })
+      try {
+        const refreshedResponse = await fetch(`${BASE_API_URL}${path}`, {
+          ...options,
+          headers: buildHeaders(newToken, options.body, options.headers),
+        })
+        markOnline()
+        return refreshedResponse
+      } catch (err) {
+        markOffline()
+        throw err
+      }
     } catch {
       await _onUnauthorized?.()
       throw new Error('errors.auth.unauthorized')

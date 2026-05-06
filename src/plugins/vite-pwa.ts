@@ -20,6 +20,7 @@ export function pwaPlugin() {
       ],
     },
     workbox: {
+      cleanupOutdatedCaches: true,
       globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,woff,ttf}'],
       // Exclude the full-size source logo — only the resized PWA icons are needed
       globIgnores: ['**/logo.png'],
@@ -29,7 +30,8 @@ export function pwaPlugin() {
       runtimeCaching: [
         {
           // Read-only API endpoints — network first, fall back to cache when offline
-          urlPattern: ({ url }) => {
+          urlPattern: ({ request, url }) => {
+            if (request.method !== 'GET') return false
             const p = url.pathname
             return (
               p.endsWith('/guests') ||

@@ -1,19 +1,17 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
+import {
+  isOnline,
+  startNetworkStatusMonitor,
+  stopNetworkStatusMonitor,
+} from '@/utils/networkStatus'
 
 export function useOnlineStatus() {
-  const isOnline = ref(typeof navigator !== 'undefined' ? navigator.onLine : true)
-
-  function handleOnline() { isOnline.value = true }
-  function handleOffline() { isOnline.value = false }
-
   onMounted(() => {
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
+    startNetworkStatusMonitor()
   })
 
   onUnmounted(() => {
-    window.removeEventListener('online', handleOnline)
-    window.removeEventListener('offline', handleOffline)
+    stopNetworkStatusMonitor()
   })
 
   return { isOnline }

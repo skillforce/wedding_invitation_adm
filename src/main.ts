@@ -18,6 +18,7 @@ import './style.css'
 import 'primeicons/primeicons.css'
 import { usePreferencesStore } from '@/stores/preferences'
 import i18n from '@/i18n'
+import { installApiAuth } from '@/api/authLifecycle'
 
 const nonce = document.querySelector<HTMLMetaElement>('meta[name="csp-nonce"]')?.content ?? ''
 
@@ -26,6 +27,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
+installApiAuth(pinia, router)
 app.use(router)
 app.use(i18n)
 app.use(ConfirmationService)
