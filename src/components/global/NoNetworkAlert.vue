@@ -35,12 +35,12 @@ const { isOnline } = useOnlineStatus()
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.55rem 1rem;
-  background: #b45309;
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 500;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  padding: calc(env(safe-area-inset-top) + 0.55rem) 1rem 0.55rem;
+  background: #334155;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 400;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
 }
 
 .no-network-icon {
@@ -48,7 +48,7 @@ const { isOnline } = useOnlineStatus()
   width: 16px;
   height: 16px;
   opacity: 0.9;
-  filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1) opacity(0.6);
 }
 
 .no-network-sub {

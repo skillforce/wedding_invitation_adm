@@ -1,6 +1,6 @@
 import { readonly, ref } from 'vue'
 
-const NETWORK_PROBE_TIMEOUT_MS = 4_000
+const NETWORK_PROBE_TIMEOUT_MS = 5_000
 
 const isOnlineState = ref(typeof navigator !== 'undefined' ? navigator.onLine : true)
 
@@ -25,19 +25,21 @@ async function probeNetwork(): Promise<void> {
   if (typeof fetch === 'undefined') return
 
   const controller = new AbortController()
-  const timeoutId = window.setTimeout(() => controller.abort(), NETWORK_PROBE_TIMEOUT_MS)
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => {
+      controller.abort()
+      reject(new Error('timeout'))
+    }, NETWORK_PROBE_TIMEOUT_MS),
+  )
 
   try {
-    await fetch(probeUrl, {
-      mode: 'no-cors',
-      cache: 'no-store',
-      signal: controller.signal,
-    })
+    await Promise.race([
+      fetch(probeUrl, { mode: 'no-cors', cache: 'no-store', signal: controller.signal }),
+      timeout,
+    ])
     markOnline()
   } catch {
     markOffline()
-  } finally {
-    window.clearTimeout(timeoutId)
   }
 }
 

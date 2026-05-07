@@ -153,7 +153,7 @@ function requestEditSelectedGuest() {
 
 @media (max-width: 900px) {
   .guests-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

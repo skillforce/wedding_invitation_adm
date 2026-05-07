@@ -37,7 +37,7 @@ import GlobalSpinner from '@/components/global/GlobalSpinner.vue'
 }
 @media (max-width: 768px) {
   .global-controls {
-    top: 0.5rem;
+    top: calc(env(safe-area-inset-top) + 0.5rem);
     right: 0.5rem;
     align-items: flex-start;
   }

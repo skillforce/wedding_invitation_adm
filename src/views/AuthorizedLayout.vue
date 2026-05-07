@@ -89,20 +89,20 @@ const onLogout = async () => {
 
   .mobile-header {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: flex-start;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 50;
-    height: 3rem;
-    padding: 0 0.75rem;
+    height: calc(3rem + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 0.75rem 0;
     background: var(--color-bg-app);
   }
 
   .authorized-content {
-    padding-top: calc(3rem + 0.5rem);
+    padding-top: calc(3rem + env(safe-area-inset-top) + 0.5rem);
   }
 }
 </style>
