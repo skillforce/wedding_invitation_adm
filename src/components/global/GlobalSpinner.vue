@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppCommonStore } from '@/stores/app_common.ts'
+import { isOnline } from '@/utils/networkStatus'
 
 const appCommon = useAppCommonStore()
 </script>
@@ -7,7 +8,7 @@ const appCommon = useAppCommonStore()
 <template>
   <Teleport to="body">
     <Transition name="spinner-fade">
-      <div v-if="appCommon.isLoading" class="spinner-backdrop" aria-hidden="true">
+      <div v-if="appCommon.isLoading && isOnline" class="spinner-backdrop" aria-hidden="true">
         <div class="spinner-ring">
           <div /><div /><div /><div />
         </div>

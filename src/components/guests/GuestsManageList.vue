@@ -217,10 +217,9 @@ watch(
   .guest-list {
     max-height: calc(5 * 45px + 4 * 0.5rem);
     overflow-y: auto;
-    overflow-x: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 10px;
-    padding: 0.6rem 3px;
+    padding: 0.6rem 0.4rem;
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(12px);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);

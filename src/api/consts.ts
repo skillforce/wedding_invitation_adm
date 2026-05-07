@@ -61,6 +61,19 @@ function buildHeaders(token: string, body: BodyInit | null | undefined, extra?: 
   return { ...base, ...(extra ?? {}) }
 }
 
+const API_TIMEOUT_MS = 7_000
+
+function fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
+  const controller = new AbortController()
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => {
+      controller.abort()
+      reject(new Error('errors.network.timeout'))
+    }, API_TIMEOUT_MS),
+  )
+  return Promise.race([fetch(url, { ...options, signal: controller.signal }), timeout])
+}
+
 export function qs(userId?: number): string {
   return userId ? `?userId=${userId}` : ''
 }
@@ -69,9 +82,11 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
   const token = authToken ?? localStorage.getItem('token')
   if (!token) throw new Error('errors.auth.unauthorized')
 
+  const url = `${BASE_API_URL}${path}`
+
   let response: Response
   try {
-    response = await fetch(`${BASE_API_URL}${path}`, {
+    response = await fetchWithTimeout(url, {
       ...options,
       headers: buildHeaders(token, options.body, options.headers),
     })
@@ -85,7 +100,7 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
     try {
       const newToken = await doRefresh()
       try {
-        const refreshedResponse = await fetch(`${BASE_API_URL}${path}`, {
+        const refreshedResponse = await fetchWithTimeout(url, {
           ...options,
           headers: buildHeaders(newToken, options.body, options.headers),
         })
