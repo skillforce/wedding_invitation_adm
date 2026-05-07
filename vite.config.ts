@@ -20,6 +20,7 @@ export default defineConfig(({ command }) => {
       },
     },
     build: {
+      cssCodeSplit: false,
       rollupOptions: {
         output: {
           manualChunks(id) {

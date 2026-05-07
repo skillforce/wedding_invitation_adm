@@ -173,4 +173,11 @@ onMounted(loadSessions)
   max-height: 160px;
   overflow-y: auto;
 }
+
+@media (max-width: 768px) {
+  .sessions-list--scrollable {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
 </style>

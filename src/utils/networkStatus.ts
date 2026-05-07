@@ -1,13 +1,11 @@
 import { readonly, ref } from 'vue'
 
-const NETWORK_PROBE_INTERVAL_MS = 15_000
 const NETWORK_PROBE_TIMEOUT_MS = 4_000
 
 const isOnlineState = ref(typeof navigator !== 'undefined' ? navigator.onLine : true)
 
 let probeUrl = '/auth/me'
 let subscriberCount = 0
-let probeInterval: number | null = null
 
 export const isOnline = readonly(isOnlineState)
 
@@ -31,9 +29,8 @@ async function probeNetwork(): Promise<void> {
 
   try {
     await fetch(probeUrl, {
+      mode: 'no-cors',
       cache: 'no-store',
-      credentials: 'include',
-      headers: { 'Cache-Control': 'no-cache' },
       signal: controller.signal,
     })
     markOnline()
@@ -45,7 +42,7 @@ async function probeNetwork(): Promise<void> {
 }
 
 function handleOnline(): void {
-  markOnline()
+  // Browser online event can fire before connectivity is fully restored — probe once to confirm.
   void probeNetwork()
 }
 
@@ -62,15 +59,9 @@ export function startNetworkStatusMonitor(): void {
   window.addEventListener('online', handleOnline)
   window.addEventListener('offline', handleOffline)
 
-  if (navigator.onLine) {
-    void probeNetwork()
-  } else {
+  if (!navigator.onLine) {
     markOffline()
   }
-
-  probeInterval = window.setInterval(() => {
-    void probeNetwork()
-  }, NETWORK_PROBE_INTERVAL_MS)
 }
 
 export function stopNetworkStatusMonitor(): void {
@@ -81,9 +72,4 @@ export function stopNetworkStatusMonitor(): void {
 
   window.removeEventListener('online', handleOnline)
   window.removeEventListener('offline', handleOffline)
-
-  if (probeInterval) {
-    window.clearInterval(probeInterval)
-    probeInterval = null
-  }
 }
