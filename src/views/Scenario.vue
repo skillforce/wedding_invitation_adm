@@ -9,6 +9,7 @@ import ScenarioBody from '@/components/scenario/ScenarioBody.vue'
 import { useScenarioStore } from '@/stores/scenario'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useSelectedUser } from '@/composables/useSelectedUser'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 
 const { t } = useI18n()
 const store = useScenarioStore()
@@ -28,6 +29,11 @@ onMounted(() => {
   if (!isSuperUser.value || selectedUserId.value !== null) {
     store.fetchScenario(selectedUserId.value ?? undefined)
   }
+})
+
+usePullToRefresh(async () => {
+  if (isSuperUser.value && selectedUserId.value === null) return
+  await store.fetchScenario(selectedUserId.value ?? undefined)
 })
 </script>
 

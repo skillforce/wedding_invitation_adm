@@ -4,14 +4,19 @@ import { useRouter } from 'vue-router'
 import AppSidebar from '@/components/sidebar/AppSidebar.vue'
 import MobileDrawer from '@/components/sidebar/MobileDrawer.vue'
 import MobileMenuButton from '@/components/sidebar/MobileMenuButton.vue'
+import PullToRefreshIndicator from '@/components/global/PullToRefreshIndicator.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
 import { AppRoute } from '@/constants/app'
+import { usePullToRefreshHost } from '@/composables/usePullToRefresh'
 
 const authStore = useAuthStore()
 const appCommonStore = useAppCommonStore()
 const router = useRouter()
 const isMobileSidebarOpen = ref(false)
+const contentRef = ref<HTMLElement | null>(null)
+
+usePullToRefreshHost(contentRef)
 
 const login = computed(() => authStore.user?.login)
 
@@ -50,7 +55,7 @@ const onLogout = async () => {
       @logout="onLogout"
     />
 
-    <main class="authorized-content">
+    <main ref="contentRef" class="authorized-content">
       <div class="mobile-header">
         <MobileMenuButton @click="onOpenMobileSidebar" />
       </div>
@@ -58,6 +63,7 @@ const onLogout = async () => {
     </main>
 
   </div>
+  <PullToRefreshIndicator />
 </template>
 
 <style scoped>
@@ -75,6 +81,7 @@ const onLogout = async () => {
   padding: 10px 5px;
   overflow: auto;
   min-height: 0;
+  overscroll-behavior-y: contain;
 }
 
 .mobile-header {

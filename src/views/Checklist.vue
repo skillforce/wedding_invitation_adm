@@ -12,6 +12,7 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
 import { useSelectedUser } from '@/composables/useSelectedUser'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import { ChecklistFilter } from '@/types/checklist'
 
 const EXPANDED_PHASES_STORAGE_KEY = 'wedding-checklist-expanded-phases'
@@ -97,6 +98,11 @@ watch(selectedUserId, (userId) => {
 onMounted(() => {
   if (isSuperUser.value && selectedUserId.value === null) return
   store.fetchChecklist(selectedUserId.value ?? undefined)
+})
+
+usePullToRefresh(async () => {
+  if (isSuperUser.value && selectedUserId.value === null) return
+  await store.fetchChecklist(selectedUserId.value ?? undefined)
 })
 </script>
 

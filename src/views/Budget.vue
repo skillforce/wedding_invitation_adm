@@ -13,6 +13,7 @@ import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import { useSelectedUser } from '@/composables/useSelectedUser'
 import { useCurrentUser } from '@/composables/useCurrentUser'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 
 const { t } = useI18n()
 const budgetStore = useBudgetStore()
@@ -32,6 +33,14 @@ onMounted(() => {
     budgetStore.fetchBudget(selectedUserId.value ?? undefined)
   }
   currencyStore.fetchRates()
+})
+
+usePullToRefresh(async () => {
+  if (isSuperUser.value && selectedUserId.value === null) return
+  await Promise.all([
+    budgetStore.fetchBudget(selectedUserId.value ?? undefined),
+    currencyStore.fetchRates(),
+  ])
 })
 </script>
 

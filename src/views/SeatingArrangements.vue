@@ -15,6 +15,7 @@ import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useStageSize } from '@/components/interactiveBoard/composables/useStageSize'
 import { useZoom } from '@/components/interactiveBoard/composables/useZoom'
 import { useGuestDrag } from '@/composables/useGuestDrag'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import BoardToolbar from '@/components/interactiveBoard/BoardToolbar.vue'
 import BoardMobileMenu from '@/components/interactiveBoard/BoardMobileMenu.vue'
 import TableNode from '@/components/interactiveBoard/TableNode.vue'
@@ -56,6 +57,15 @@ onMounted(async () => {
   ])
   await nextTick()
   fitToStage()
+})
+
+usePullToRefresh(async () => {
+  if (isSuperUser.value && selectedUserId.value === null) return
+  const userId = selectedUserId.value ?? undefined
+  await Promise.all([
+    seatingStore.fetchTables(userId),
+    guestsStore.fetchGuests(userId),
+  ])
 })
 
 const autoSeatAnimating = ref(false)

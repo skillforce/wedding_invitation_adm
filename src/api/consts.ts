@@ -1,5 +1,3 @@
-import { markOffline, markOnline } from '@/utils/networkStatus'
-
 export enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
@@ -88,9 +86,7 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
       ...options,
       headers: buildHeaders(token, options.body, options.headers),
     })
-    markOnline()
   } catch (err) {
-    markOffline()
     throw err
   }
 
@@ -102,10 +98,8 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
           ...options,
           headers: buildHeaders(newToken, options.body, options.headers),
         })
-        markOnline()
         return refreshedResponse
       } catch (err) {
-        markOffline()
         throw err
       }
     } catch {

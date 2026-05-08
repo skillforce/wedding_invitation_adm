@@ -12,6 +12,7 @@ import GuestResponsePanel from '@/components/guests/GuestResponsePanel/index.vue
 import SelectUserPrompt from '@/components/shared/SelectUserPrompt.vue'
 import { useSelectedUser } from '@/composables/useSelectedUser'
 import { useCurrentUser } from '@/composables/useCurrentUser'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 
 const guestsStore = useGuestsStore()
 const authStore = useAuthStore()
@@ -51,6 +52,11 @@ watch(selectedUserId, (userId) => {
 })
 
 onMounted(async () => {
+  if (isSuperUser.value && selectedUserId.value === null) return
+  await guestsStore.fetchGuests(selectedUserId.value ?? undefined)
+})
+
+usePullToRefresh(async () => {
   if (isSuperUser.value && selectedUserId.value === null) return
   await guestsStore.fetchGuests(selectedUserId.value ?? undefined)
 })

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useAppCommonStore } from '@/stores/app_common.ts'
-import { isOnline } from '@/utils/networkStatus'
+import { useBrowserOnlineStatus } from '@/composables/useBrowserOnlineStatus'
 
 const appCommon = useAppCommonStore()
+const { isOnline } = useBrowserOnlineStatus()
 </script>
 
 <template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import { useI18n } from 'vue-i18n'
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useUsersStore } from '@/stores/users'
@@ -30,6 +31,8 @@ onMounted(async () => {
     appCommon.showError(t('errors.userManagement.failedToLoad'))
   }
 })
+
+usePullToRefresh(() => store.fetchUsers())
 </script>
 
 <template>
