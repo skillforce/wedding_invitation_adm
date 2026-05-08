@@ -1,4 +1,4 @@
-import { configureNetworkStatus, markOffline, markOnline } from '@/utils/networkStatus'
+import { markOffline, markOnline } from '@/utils/networkStatus'
 
 export enum HttpMethod {
   GET = 'GET',
@@ -9,8 +9,6 @@ export enum HttpMethod {
 }
 
 export const BASE_API_URL = import.meta.env.VITE_API_URL ?? ''
-
-configureNetworkStatus(BASE_API_URL)
 
 export class ApiError extends Error {
   serverMessage: string

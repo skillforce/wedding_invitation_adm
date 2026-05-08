@@ -40,14 +40,30 @@ export const useAuthStore = defineStore('auth', {
         return
       }
 
+      if (this.user) {
+        // Boot instantly from persisted state; re-validate in background.
+        // Any network failure in the background leaves the session intact — only a real 401 clears it.
+        this.isAuthChecked = true
+        void this.fetchMe().catch((err) => {
+          if (err instanceof Error && err.message === 'errors.auth.unauthorized') {
+            this.token = null
+            this.user = null
+          }
+        })
+        return
+      }
+
+      // Token present but no persisted user — must fetch to identify the user.
+      // Any network failure (including offline with navigator.onLine lying) skips the block
+      // via the finally, so the router boots without waiting for the full timeout.
       try {
         await this.fetchMe()
       } catch (err) {
-        // Network failures (offline) must not clear the session — only real auth errors should
         if (err instanceof Error && err.message === 'errors.auth.unauthorized') {
           this.token = null
           this.user = null
         }
+        // Network errors: leave token intact, router will redirect to login (no user = not authenticated)
       } finally {
         this.isAuthChecked = true
       }
