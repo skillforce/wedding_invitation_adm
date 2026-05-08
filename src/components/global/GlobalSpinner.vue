@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useAppCommonStore } from '@/stores/app_common.ts'
-import { useNetwork } from '@vueuse/core'
+import { useIsOnline } from '@/composables/useIsOnline'
 
 const appCommon = useAppCommonStore()
-const { isOnline } = useNetwork()
+const isOnline = useIsOnline()
 </script>
 
 <template>

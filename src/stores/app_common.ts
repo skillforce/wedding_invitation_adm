@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { AppRoute, SIDEBAR_OPTION_STORAGE_KEY, SIDEBAR_COLLAPSED_KEY } from '@/constants/app'
 import { ApiError } from '@/api/consts'
+import { apiOffline } from '@/composables/useIsOnline'
 import i18n from '@/i18n'
 
 const DEFAULT_SIDEBAR_OPTION = AppRoute.Guests
@@ -26,6 +27,7 @@ export const useAppCommonStore = defineStore('app_common', () => {
   }
 
   function showError(error: unknown) {
+    if (apiOffline.value) return
     if (error instanceof ApiError && error.serverMessage) {
       errorMessage.value = error.serverMessage
     } else if (error instanceof Error && error.message && i18n.global.te(error.message)) {

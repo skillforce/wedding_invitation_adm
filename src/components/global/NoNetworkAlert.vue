@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useNetwork } from '@vueuse/core'
+import { useIsOnline } from '@/composables/useIsOnline'
 import wifiOffUrl from '@/assets/wifi_off.svg'
 
 const { t } = useI18n()
-const { isOnline } = useNetwork()
+const isOnline = useIsOnline()
 </script>
 
 <template>

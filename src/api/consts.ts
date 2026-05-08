@@ -8,6 +8,8 @@ export enum HttpMethod {
 
 export const BASE_API_URL = import.meta.env.VITE_API_URL ?? ''
 
+import { markApiOffline, markApiOnline } from '@/composables/useIsOnline'
+
 export class ApiError extends Error {
   serverMessage: string
   constructor(serverMessage: string) {
@@ -86,7 +88,9 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
       ...options,
       headers: buildHeaders(token, options.body, options.headers),
     })
+    markApiOnline()
   } catch (err) {
+    markApiOffline()
     throw err
   }
 
@@ -98,8 +102,10 @@ export async function apiFetch(path: string, options: RequestInit = {}, authToke
           ...options,
           headers: buildHeaders(newToken, options.body, options.headers),
         })
+        markApiOnline()
         return refreshedResponse
       } catch (err) {
+        markApiOffline()
         throw err
       }
     } catch {
