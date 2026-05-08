@@ -21,7 +21,9 @@ const style = computed(() => ({
       :style="style"
       aria-hidden="true"
     >
-      <div class="ptr-ring" :class="{ 'ptr-ring--spinning': isRefreshing }" />
+      <div class="ptr-ring">
+        <div /><div /><div /><div />
+      </div>
     </div>
   </Teleport>
 </template>
@@ -44,20 +46,30 @@ const style = computed(() => ({
 }
 
 .ptr-ring {
+  position: relative;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  border: 3px solid var(--color-border);
-  border-top-color: #8ec5b4;
-  background: var(--color-surface);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
-.ptr-ring--spinning {
-  animation: ptr-spin 0.75s linear infinite;
+.ptr-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  margin: 3px;
+  border: 3px solid transparent;
+  border-top-color: #8ec5b4;
+  border-radius: 50%;
+  animation: ptr-spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
+
+.ptr-ring div:nth-child(1) { animation-delay: -0.3s; }
+.ptr-ring div:nth-child(2) { animation-delay: -0.2s; }
+.ptr-ring div:nth-child(3) { animation-delay: -0.1s; }
 
 @keyframes ptr-spin {
-  to { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 </style>
