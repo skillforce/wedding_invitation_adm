@@ -5,8 +5,10 @@ import { pullProgress, isRefreshing, isPulling } from '@/composables/usePullToRe
 const TRAVEL = 56
 
 const style = computed(() => ({
-  transform: `translateY(calc(${pullProgress.value} * ${TRAVEL}px - ${TRAVEL}px))`,
-  opacity: String(Math.min(1, pullProgress.value * 2)),
+  transform: isRefreshing.value
+    ? 'translateY(0)'
+    : `translateY(calc(${pullProgress.value} * ${TRAVEL}px - ${TRAVEL}px))`,
+  opacity: isRefreshing.value ? '1' : String(Math.min(1, pullProgress.value * 2)),
   transition: isPulling.value ? 'none' : 'transform 0.32s ease, opacity 0.2s ease',
 }))
 </script>

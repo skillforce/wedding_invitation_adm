@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useAppCommonStore } from '@/stores/app_common.ts'
-import { useBrowserOnlineStatus } from '@/composables/useBrowserOnlineStatus'
+import { useNetwork } from '@vueuse/core'
 
 const appCommon = useAppCommonStore()
-const { isOnline } = useBrowserOnlineStatus()
+const { isOnline } = useNetwork()
 </script>
 
 <template>
