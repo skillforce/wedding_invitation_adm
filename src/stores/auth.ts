@@ -17,8 +17,8 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async login(login: string, password: string) {
-      const { accessToken, id, profile } = await AUTH_API.login({ login, password })
+    async login(loginOrEmail: string, password: string) {
+      const { accessToken, id, login, profile } = await AUTH_API.login({ loginOrEmail, password })
       this.token = accessToken
       this.user = { id, login, profile }
       if (!profile.isSuperUser) {

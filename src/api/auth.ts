@@ -17,7 +17,7 @@ function saveDeviceId(id: string): void {
 }
 
 export interface AuthDto {
-  login: string
+  loginOrEmail: string
   password: string
 }
 

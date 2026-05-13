@@ -18,11 +18,11 @@ onMounted(resetAllStores)
 
 const isLoading = ref(false)
 
-const onSubmit = async (login: string, password: string) => {
+const onSubmit = async (loginOrEmail: string, password: string) => {
   isLoading.value = true
 
   try {
-    await authStore.login(login, password)
+    await authStore.login(loginOrEmail, password)
     await router.push(AppRoute.Guests)
   } catch (error) {
     appCommon.showError(error)

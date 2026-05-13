@@ -1,7 +1,7 @@
 {
   "auth": {
     "signInTitle": "Войдите в аккаунт",
-    "loginLabel": "Логин",
+    "loginLabel": "Логин или email",
     "passwordLabel": "Пароль",
     "signInButton": "Войти"
   },

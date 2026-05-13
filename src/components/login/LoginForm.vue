@@ -10,15 +10,15 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'submit', login: string, password: string): void
+  (event: 'submit', loginOrEmail: string, password: string): void
 }>()
 
-const loginValue = ref('')
+const loginOrEmailValue = ref('')
 const passwordValue = ref('')
 const { t } = useI18n()
 
 const onSubmit = () => {
-  emit('submit', loginValue.value, passwordValue.value)
+  emit('submit', loginOrEmailValue.value, passwordValue.value)
 }
 </script>
 
@@ -26,7 +26,7 @@ const onSubmit = () => {
   <form class="login-form" @submit.prevent="onSubmit">
     <div class="field">
       <label for="login">{{ t('auth.loginLabel') }}</label>
-      <InputText id="login" v-model="loginValue" fluid />
+      <InputText id="login" v-model="loginOrEmailValue" fluid />
     </div>
 
     <div class="field">
