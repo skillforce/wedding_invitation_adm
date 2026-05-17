@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 
+defineProps<{ title?: string; message?: string }>()
 defineEmits<{ 'go-to-login': [] }>()
 
 const { t } = useI18n()
@@ -11,8 +12,8 @@ const { t } = useI18n()
   <div class="icon-wrap icon-error">
     <i class="pi pi-times" />
   </div>
-  <h1 class="card-title">{{ t('confirmEmail.errorTitle') }}</h1>
-  <p class="card-text">{{ t('confirmEmail.errorMessage') }}</p>
+  <h1 class="card-title">{{ title ?? t('confirmEmail.errorTitle') }}</h1>
+  <p class="card-text">{{ message ?? t('confirmEmail.errorMessage') }}</p>
   <Button :label="t('confirmEmail.goToLogin')" severity="secondary" @click="$emit('go-to-login')" />
 </template>
 

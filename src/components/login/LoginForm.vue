@@ -11,6 +11,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (event: 'submit', loginOrEmail: string, password: string): void
+  (event: 'forgot-password'): void
 }>()
 
 const loginOrEmailValue = ref('')
@@ -41,6 +42,14 @@ const onSubmit = () => {
     </div>
 
     <Button type="submit" :label="t('auth.signInButton')" :loading="isLoading" />
+
+    <Button
+      type="button"
+      :label="t('auth.forgotPassword')"
+      variant="link"
+      class="forgot-link"
+      @click="$emit('forgot-password')"
+    />
   </form>
 </template>
 
@@ -57,5 +66,10 @@ const onSubmit = () => {
 
 .field :deep(input) {
   font-size: 16px;
+}
+
+.forgot-link {
+  justify-self: center;
+  font-size: 14px;
 }
 </style>

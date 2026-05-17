@@ -3,7 +3,8 @@
     "signInTitle": "Войдите в аккаунт",
     "loginLabel": "Логин или email",
     "passwordLabel": "Пароль",
-    "signInButton": "Войти"
+    "signInButton": "Войти",
+    "forgotPassword": "Забыли пароль?"
   },
   "theme": {
     "dark": "Темная",
@@ -400,6 +401,16 @@
       "revokeSuccess": "Устройство отключено",
       "revokeOtherSuccess": "Другие устройства отключены",
       "revokeAriaLabel": "Отключить устройство"
+    },
+    "password": {
+      "title": "Изменение пароля",
+      "button": "Сбросить пароль",
+      "dialogTitle": "Сброс пароля",
+      "dialogMessage": "Мы отправим ссылку для сброса пароля на ваш email.",
+      "sendLink": "Отправить ссылку",
+      "successMessage": "Ссылка для сброса пароля отправлена. Проверьте почту и перейдите по ссылке.",
+      "noEmail": "Добавьте email в профиле, чтобы сбросить пароль.",
+      "close": "Закрыть"
     }
   },
   "confirmEmail": {
@@ -541,5 +552,22 @@
       "failedToDelete": "Не удалось удалить пользователя",
       "failedToResend": "Не удалось отправить письмо повторно"
     }
+  },
+  "forgotPassword": {
+    "title": "Восстановление пароля",
+    "description": "Введите ваш email — мы отправим ссылку для сброса пароля.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "user{'@'}example.com",
+    "submit": "Отправить ссылку",
+    "backToLogin": "Вернуться ко входу",
+    "successMessage": "Если адрес зарегистрирован, на него придёт письмо со ссылкой для сброса пароля."
+  },
+  "resetPassword": {
+    "title": "Новый пароль",
+    "description": "Введите новый пароль для вашего аккаунта.",
+    "successTitle": "Пароль изменён",
+    "successMessage": "Ваш пароль успешно изменён. Войдите с новым паролем.",
+    "errorTitle": "Ссылка недействительна",
+    "errorMessage": "Ссылка устарела или уже была использована. Запросите новую в профиле."
   }
 }

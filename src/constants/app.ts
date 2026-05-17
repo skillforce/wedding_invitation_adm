@@ -14,6 +14,7 @@ export enum AppRoute {
   UserProfile = '/profile',
   UserManagement = '/user-management',
   Scenario = '/scenario',
+  ResetPassword = '/reset-password',
 }
 
 export enum AppChildRoute {

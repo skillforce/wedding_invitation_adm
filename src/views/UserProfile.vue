@@ -7,6 +7,7 @@ import ProfileAvatarCard from '@/components/profile/ProfileAvatarCard.vue'
 import ProfileContextBanner from '@/components/profile/ProfileContextBanner.vue'
 import ProfileFieldsCard from '@/components/profile/ProfileFieldsCard/ProfileFieldsCard.vue'
 import ProfileSecurityCard from '@/components/profile/ProfileSecurityCard.vue'
+import ProfilePasswordCard from '@/components/profile/ProfilePasswordCard.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppCommonStore } from '@/stores/app_common'
 import { useUsersStore } from '@/stores/users'
@@ -74,6 +75,7 @@ function makeUploadFn(userId: number) {
           :override-profile="targetUser ? targetUser.profile : undefined"
           :save-fn="targetUser ? makeSaveFn(targetUser.id) : undefined"
         />
+        <ProfilePasswordCard v-if="!targetUser" />
         <ProfileSecurityCard v-if="!targetUser" />
       </div>
     </div>

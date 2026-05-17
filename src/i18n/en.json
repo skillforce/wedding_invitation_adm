@@ -3,7 +3,8 @@
     "signInTitle": "Sign in to your account",
     "loginLabel": "Login or email",
     "passwordLabel": "Password",
-    "signInButton": "Sign In"
+    "signInButton": "Sign In",
+    "forgotPassword": "Forgot password?"
   },
   "theme": {
     "dark": "Dark",
@@ -400,6 +401,16 @@
       "revokeSuccess": "Device signed out",
       "revokeOtherSuccess": "Other devices signed out",
       "revokeAriaLabel": "Sign out device"
+    },
+    "password": {
+      "title": "Change password",
+      "button": "Reset password",
+      "dialogTitle": "Reset password",
+      "dialogMessage": "We will send a password reset link to your email address.",
+      "sendLink": "Send link",
+      "successMessage": "A password reset link has been sent. Check your email and follow the link.",
+      "noEmail": "Add an email to your profile to reset your password.",
+      "close": "Close"
     }
   },
   "confirmEmail": {
@@ -541,5 +552,22 @@
       "failedToDelete": "Failed to delete user",
       "failedToResend": "Failed to resend confirmation email"
     }
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "description": "Enter your email and we will send you a password reset link.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "user{'@'}example.com",
+    "submit": "Send link",
+    "backToLogin": "Back to sign in",
+    "successMessage": "If the address is registered, you will receive an email with a password reset link."
+  },
+  "resetPassword": {
+    "title": "New password",
+    "description": "Enter a new password for your account.",
+    "successTitle": "Password changed",
+    "successMessage": "Your password has been successfully changed. Sign in with your new password.",
+    "errorTitle": "Link is invalid",
+    "errorMessage": "The link has expired or has already been used. Please request a new one from your profile."
   }
 }

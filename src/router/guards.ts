@@ -13,7 +13,10 @@ const SUPER_USER_ONLY_PATHS = new Set(
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
   const appCommon = useAppCommonStore()
-  const isPublicRoute = to.path === AppRoute.Login || to.path === AppRoute.ConfirmEmail
+  const isPublicRoute =
+    to.path === AppRoute.Login ||
+    to.path === AppRoute.ConfirmEmail ||
+    to.path === AppRoute.ResetPassword
 
   if (!auth.isAuthChecked) {
     await auth.checkAuthOnAppOpen()

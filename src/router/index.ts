@@ -4,6 +4,7 @@ import { AppChildRoute, AppRoute } from '@/constants/app'
 const routes = [
   { path: AppRoute.Login, component: () => import('../views/Login.vue') },
   { path: AppRoute.ConfirmEmail, component: () => import('../views/ConfirmEmail.vue') },
+  { path: AppRoute.ResetPassword, component: () => import('../views/ResetPassword.vue') },
   {
     path: AppRoute.Login,
     component: () => import('../views/AuthorizedLayout.vue'),

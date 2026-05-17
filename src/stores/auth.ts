@@ -77,6 +77,18 @@ export const useAuthStore = defineStore('auth', {
       await clearApiCache()
     },
 
+    async forgotPassword(email: string) {
+      await AUTH_API.forgotPassword(email)
+    },
+
+    async resetPassword(token: string, password: string) {
+      await AUTH_API.resetPassword(token, password)
+      resetAllStores()
+      this.token = null
+      this.user = null
+      await clearApiCache()
+    },
+
     async updateProfile(data: UpdateProfileDto) {
       const updatedProfile = await PROFILE_API.updateProfile(data)
       if (this.user) {

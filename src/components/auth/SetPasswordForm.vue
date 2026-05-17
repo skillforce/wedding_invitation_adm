@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import ProfileFieldsCardItem from '@/components/profile/ProfileFieldsCard/ProfileFieldsCardItem.vue'
+import PasswordInputWithHint from '@/components/shared/PasswordInputWithHint.vue'
 
 defineProps<{
   loading?: boolean
@@ -52,35 +52,27 @@ function submit() {
 
     <form class="fields" @submit.prevent="submit">
       <ProfileFieldsCardItem :label="t('setPassword.passwordLabel')" :error="errors.password">
-        <InputText
+        <PasswordInputWithHint
           v-model="password"
-          type="password"
           :placeholder="t('setPassword.passwordPlaceholder')"
-          class="w-full"
-          :class="{ 'p-invalid': errors.password }"
+          :invalid="!!errors.password"
           :disabled="loading"
+          :hint="t('setPassword.hintMinLength')"
+          :hint-met="password.length >= 10"
           autocomplete="new-password"
         />
-        <div v-if="password" class="hint" :class="password.length >= 10 ? 'hint--met' : 'hint--unmet'">
-          <i :class="password.length >= 10 ? 'pi pi-check-circle' : 'pi pi-circle'" />
-          {{ t('setPassword.hintMinLength') }}
-        </div>
       </ProfileFieldsCardItem>
 
       <ProfileFieldsCardItem :label="t('setPassword.confirmLabel')" :error="errors.confirm">
-        <InputText
+        <PasswordInputWithHint
           v-model="confirmPassword"
-          type="password"
           :placeholder="t('setPassword.confirmPlaceholder')"
-          class="w-full"
-          :class="{ 'p-invalid': errors.confirm }"
+          :invalid="!!errors.confirm"
           :disabled="loading"
+          :hint="t('setPassword.hintMatch')"
+          :hint-met="password === confirmPassword"
           autocomplete="new-password"
         />
-        <div v-if="confirmPassword" class="hint" :class="password === confirmPassword ? 'hint--met' : 'hint--unmet'">
-          <i :class="password === confirmPassword ? 'pi pi-check-circle' : 'pi pi-circle'" />
-          {{ t('setPassword.hintMatch') }}
-        </div>
       </ProfileFieldsCardItem>
 
       <Button
@@ -124,20 +116,5 @@ function submit() {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.hint {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-}
-
-.hint--met {
-  color: var(--p-green-500, #22c55e);
-}
-
-.hint--unmet {
-  color: var(--color-text-muted);
 }
 </style>
