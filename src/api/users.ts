@@ -33,7 +33,7 @@ export const USERS_API = {
   },
 
   async delete(id: number): Promise<void> {
-    const response = await apiFetch(`/users/${id}`, { method: 'DELETE' })
+    const response = await apiFetch(`/users/plain/${id}`, { method: 'DELETE' })
     if (!response.ok) throw await parseApiError(response)
   },
 
